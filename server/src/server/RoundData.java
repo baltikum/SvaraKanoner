@@ -4,7 +4,6 @@ import java.awt.Image;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Map;
 
 /**
  * A Class that keeps track of a gamerounds data.
@@ -26,7 +25,8 @@ public class RoundData {
 
 
     public RoundData(ArrayList<String> pickedWords){
-        int nbrWords = pickedWords.size();
+
+        nbrWords = pickedWords.size();
         wordTracker = new ArrayList<WordTracker>();
 
         ListIterator<String> pickedIterator = pickedWords.listIterator();
@@ -57,6 +57,14 @@ public class RoundData {
         } else {
             throw new Exception("Number of guesses does not match the amount of this round");
         }
+    }
+    public String toString() {
+        String words = "";
+        ListIterator<WordTracker> wordIterator = wordTracker.listIterator();;
+        while ( wordIterator.hasNext() ) {
+            words += wordIterator.next().toString();
+        }
+        return words;
     }
 
 }

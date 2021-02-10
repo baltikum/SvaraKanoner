@@ -26,6 +26,6 @@ public class WordTracker {
     public String getWord() { return word; }
     public String getGuess() { return guess; }
     public Image getDrawing() { return image; }
-
+    public String toString() { return "Word: " + word + ". Guess: " + guess + ". Image : " + image + ".\n"; }
 
 }
