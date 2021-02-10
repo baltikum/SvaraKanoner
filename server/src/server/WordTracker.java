@@ -6,7 +6,7 @@ import java.awt.Image;
  * A Class that keeps track of one word.
  * The word,String. The guess, String. The Image image.
  *
- * 
+ *
  * baltikum 20210210
  */
 
