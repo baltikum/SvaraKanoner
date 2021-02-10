@@ -1,7 +1,6 @@
 package common;
 
-import java.io.*;
-import java.util.*;
+
 
 /**
  * Represents all messages between the server and the client and vice versa.
