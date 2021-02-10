@@ -23,7 +23,11 @@ public class RoundData {
     private int nbrWords;
     private List<WordTracker> wordTracker;
 
-
+    /**
+     * Constructor.
+     *
+     * @param pickedWords
+     */
     public RoundData(ArrayList<String> pickedWords){
 
         nbrWords = pickedWords.size();
@@ -35,6 +39,12 @@ public class RoundData {
         }
     }
 
+    /**
+     * Saves the drawn images for this round.
+     *
+     * @param images
+     * @throws Exception
+     */
     public void saveDrawings( ArrayList<Image> images ) throws Exception {
         if ( images.size() == nbrWords ) {
             ListIterator<Image> imagesIterator = images.listIterator();
@@ -47,6 +57,13 @@ public class RoundData {
             throw new Exception("Number of drawn images does not match the amount of this round");
         }
     }
+
+    /**
+     * Saves the guesses for this round.
+     *
+     * @param guesses
+     * @throws Exception
+     */
     public void saveGuesses( ArrayList<String> guesses ) throws Exception {
         if ( guesses.size() == nbrWords ) {
             ListIterator<String> guessesIterator = guesses.listIterator();
@@ -58,6 +75,11 @@ public class RoundData {
             throw new Exception("Number of guesses does not match the amount of this round");
         }
     }
+
+    /**
+     * Displays a RoundData as String.
+     * @return
+     */
     public String toString() {
         String words = "";
         ListIterator<WordTracker> wordIterator = wordTracker.listIterator();;
