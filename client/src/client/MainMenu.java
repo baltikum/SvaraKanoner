@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.net.URLDecoder;
 
 public class MainMenu extends JPanel {
 
@@ -18,7 +19,7 @@ public class MainMenu extends JPanel {
         super(new CardLayout());
 
         try {
-            BufferedImage spriteSheet = ImageIO.read(new File("c:/users/spankarn/dropbox/data/dat055/mainmenu.png"));
+            BufferedImage spriteSheet = ImageIO.read(new File(AwesomeUtil.resourcesPath() +  "mainmenu.png"));
             wham = spriteSheet.getSubimage(0, 0, 128 * 3, 128);
             rocket = spriteSheet.getSubimage(0, 128, 768, 256);
             flame0 = spriteSheet.getSubimage(0, 384, 128, 128);

@@ -1,9 +1,13 @@
 package client.ui;
 
+import client.Main;
+import client.MainMenu;
+
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.*;
+import java.net.URLDecoder;
 import java.util.*;
 
 /** Utility class that contains support function for the awesome components and effects.
@@ -18,13 +22,17 @@ public class AwesomeUtil {
     public static Font getFont() {
         if (font == null) {
             try {
-                font = Font.createFont(Font.TRUETYPE_FONT, new File("c:/users/Spankarn/dropbox/data/dat055/GloriaHallelujah.ttf")).deriveFont(36.0f);
+                font = Font.createFont(Font.TRUETYPE_FONT, new File(resourcesPath() + "GloriaHallelujah.ttf")).deriveFont(36.0f);
             } catch (FontFormatException | IOException e) {
                 e.printStackTrace();
                 font = new Font(Font.SERIF, Font.BOLD, 30);
             }
         }
         return font;
+    }
+
+    public static String resourcesPath() {
+        return Main.class.getProtectionDomain().getCodeSource().getLocation().getPath();
     }
 
     public static void drawBouncingText(Graphics g, Dimension dimension, String str, float fontFactor, Color color) {
