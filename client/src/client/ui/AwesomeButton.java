@@ -3,30 +3,30 @@ package client.ui;
 import javax.swing.*;
 import java.awt.*;
 
+/** A button with text and/or a background. The text is red and floating.
+ *
+ */
 public class AwesomeButton extends JButton implements AwesomeEffect.User {
 
     private AwesomeEffect effect;
     private float fontFactor = 1.0f;
-    private float delta = 0.0f;
-    private Image background;
+    private final Image background;
 
     public AwesomeButton(String text) {
-        super(text);
-        setFont(AwesomeUtil.getFont());
-
-        setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        setContentAreaFilled(false);
+        this(text, null);
     }
 
     public AwesomeButton(String text, Image background) {
         super(text);
         setFont(AwesomeUtil.getFont());
 
-        setBorder(BorderFactory.createEmptyBorder());
+        this.background = background;
         setBorderPainted(false);
         setContentAreaFilled(false);
+        setFocusPainted(false);
+        setOpaque(false);
 
-        this.background = background;
+        setCursor(new Cursor(Cursor.HAND_CURSOR));
     }
 
     public void setFontFactor(float value) {
@@ -34,20 +34,30 @@ public class AwesomeButton extends JButton implements AwesomeEffect.User {
     }
 
     @Override
-    public void paintComponent(Graphics g) {
+    public void paint(Graphics g) {
+        if (!isVisible()) return;
+        String text = getText();
         if (effect != null) {
-            effect.transform((Graphics2D) g);
+            effect.paint((Graphics2D) g, background, text, fontFactor, Color.RED, getSize());
+        } else {
+            if (background != null) g.drawImage(background, 0, 0, getWidth(), getHeight(), null);
+            if (text != null) AwesomeUtil.drawBouncingText(g, getSize(), text, fontFactor, Color.RED);
         }
-
-        if (this.background != null) {
-            g.drawImage(background, 0, 0,
-                    getWidth(), getHeight(), null);
-        }
-
-        AwesomeUtil.drawBouncingText(g, this, getText(), fontFactor);
     }
 
+    @Override
     public void setEffect(AwesomeEffect effect) {
+        AwesomeUtil.register(effect);
         this.effect = effect;
+    }
+
+    @Override
+    public AwesomeEffect getEffect() {
+        return effect;
+    }
+
+    @Override
+    public Component getComponent() {
+        return this;
     }
 }

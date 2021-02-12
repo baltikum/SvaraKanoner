@@ -1,16 +1,19 @@
 package client.ui;
 
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.io.*;
+import java.util.*;
 
+/** Utility class that contains support function for the awesome components and effects.
+ */
 public class AwesomeUtil {
 
     private static Font font;
     private static float timeSinceStart = 0.0f;
     private static long lastDeltaIncrease = 0;
-    private static ArrayList<AwesomeEffect> activeEffects = new ArrayList<>();
+    private static final Set<AwesomeEffect> activeEffects = new HashSet<>();
 
     public static Font getFont() {
         if (font == null) {
@@ -24,36 +27,80 @@ public class AwesomeUtil {
         return font;
     }
 
-    public static void drawBouncingText(Graphics g, Component component, String str, float fontFactor) {
+    public static void drawBouncingText(Graphics g, Dimension dimension, String str, float fontFactor, Color color) {
         if (str.isEmpty()) return;
 
-        int width = component.getWidth();
-        int height = component.getHeight();
         char[] data = new char[str.length()];
         str.getChars(0, str.length(), data, 0);
 
-        g.setFont(getFont());
-        g.setColor(Color.RED);
+        Font font = getFont();
+        g.setFont(font);
 
         FontMetrics metrics = g.getFontMetrics();
         int textWidth = metrics.stringWidth(str);
-        float factor = (float)width / (float)textWidth;
+        float factor = (float)dimension.width / (float)textWidth;
         float fontSize = getFont().getSize() * factor * fontFactor;
 
-        fontSize = Math.min(fontSize, height * fontFactor);
+        fontSize = Math.min(fontSize, dimension.height * fontFactor);
+        g.setColor(color);
         g.setFont(font.deriveFont(fontSize));
         metrics = g.getFontMetrics();
 
-        int ascent = metrics.getAscent();
         int descent = metrics.getDescent();
-
-        int x = (width - metrics.stringWidth(str)) / 2;
-        int baseY = height / 2 + (ascent + descent) / 2 - descent;
+        int x = dimension.width / 2 - metrics.stringWidth(str) / 2;
+        int baseY = dimension.height / 2 + (metrics.getAscent() + descent) / 2 - descent;
         for (int i = 0; i < data.length; i++) {
-            int y = baseY - (int)(Math.sin((float)x + timeSinceStart) * 8.0);
+            int y = baseY - (int)(Math.sin((float)i * .5f + timeSinceStart * 2.0f) * dimension.height * 0.1f);
             g.drawChars(data, i, 1, x, y);
             x += g.getFontMetrics().charWidth(data[i]);
         }
+    }
+
+    public static void wiggleOnHover(AwesomeEffect.User user, float amount) {
+        AwesomeEffect.create()
+                .addRotationKey(amount, 100)
+                .addRotationKey(-amount, 300)
+                .addRotationKey(0.0f, 400)
+                .addRotationKey(0.0f, 600)
+                .repeats(-1).animate(user, AwesomeEffect.FOREGROUND);
+        user.getEffect().pause();
+
+        user.getComponent().addMouseListener(new MouseListener() {
+            @Override public void mouseClicked(MouseEvent e) { }
+            @Override public void mousePressed(MouseEvent e) { }
+            @Override public void mouseReleased(MouseEvent e) { }
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                user.getEffect().play();
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                user.getEffect().pause();
+            }
+        });
+    }
+
+    public static void scaleOnHover(AwesomeEffect.User user, float amount) {
+        AwesomeEffect.create().addScaleKey(amount, amount, 500).animate(user, AwesomeEffect.FOREGROUND);
+        user.getEffect().pause();
+
+        user.getComponent().addMouseListener(new MouseListener() {
+            @Override public void mouseClicked(MouseEvent e) { }
+            @Override public void mousePressed(MouseEvent e) { }
+            @Override public void mouseReleased(MouseEvent e) { }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                user.getEffect().setDirection(AwesomeEffect.FORWARD);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                user.getEffect().setDirection(AwesomeEffect.BACKWARDS);
+            }
+        });
+
     }
 
     public static void increaseDelta() {
@@ -65,16 +112,21 @@ public class AwesomeUtil {
             delta = (int)(currentTime - lastDeltaIncrease);
             timeSinceStart += (float)delta / 1000.0f;
             lastDeltaIncrease = currentTime;
-            System.out.println(delta);
         }
 
-        for (AwesomeEffect effect : activeEffects) {
-            effect.update(delta);
+        for (Iterator<AwesomeEffect> it = activeEffects.iterator(); it.hasNext(); ) {
+            if (it.next().update(delta)) {
+                it.remove();
+            }
         }
     }
 
     public static void register(AwesomeEffect effect) {
         activeEffects.add(effect);
+    }
+
+    public static void unregister(AwesomeEffect effect) {
+        activeEffects.remove(effect);
     }
 
 }

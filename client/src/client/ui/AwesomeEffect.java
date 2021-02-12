@@ -1,212 +1,435 @@
 package client.ui;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 
+/** Used to animate any component that implements the AwesomeEffect.User interface.
+ * Example of moving a component in x and y direction by 1000 pixels during 200ms.
+ *    AwesomeEffect.create().addTranslationKey(1000, 200).animate(user, AwesomeEffect.FOREGROUND);
+ */
 public class AwesomeEffect {
 
     public interface User {
         void setEffect(AwesomeEffect effect);
+        AwesomeEffect getEffect();
+        Component getComponent();
     }
 
-    private static final byte ROTATION = 1;
-    private static final byte TRANSLATION_X = 2;
-    private static final byte TRANSLATION_Y = 4;
-    private static final byte SCALE_X = 8;
-    private static final byte SCALE_Y = 16;
-    private static final byte SPRITES = 32;
+    public static final boolean FORWARD = false;
+    public static final boolean BACKWARDS = true;
+
+    public static final int COMPONENT = 1;
+    public static final int FOREGROUND = 2;
+    public static final int BACKGROUND = 3;
+
+    private static final int ROTATION = 1;
+    private static final int TRANSLATION_X = 2;
+    private static final int TRANSLATION_Y = 4;
+    private static final int SCALE_X = 8;
+    private static final int SCALE_Y = 16;
+    private static final int SPRITES = 32;
 
     public static Builder create() {
         return new Builder();
     }
 
-    private Rectangle sprite;
-    private int[] floatFrameIndices;
-    private FloatTimeline[] floatTimelines;
-    private SpriteTimeline spriteTimeline;
-    private int elapsedTime = 0;
+    private final Key[] keys;
+    private Image sprite;
 
-    private float x, y, scaleX = 1.0f, scaleY = 1.0f, rotation;
+    private float originX, originY;
+    private int x, y;
+    private float scaleX = 1.0f, scaleY = 1.0f, rotation;
 
-    private AwesomeEffect(FloatTimeline[] floatTimelines,
-                          SpriteTimeline spriteTimeline) {
-        if (floatTimelines != null)
-            floatFrameIndices = new int[floatTimelines.length];
-        this.floatTimelines = floatTimelines;
-        this.spriteTimeline = spriteTimeline;
+    private boolean direction;
+    private boolean shouldBounce;
+    private final int durationMillis;
+    private int elapsedMillis;
+    private int repeatsLeft;
+    private final int effects;
+
+
+    private AwesomeEffect(Key[] keys, User user, int effects) {
+        this.keys = keys;
+        this.effects = effects;
+        Component comp = user.getComponent();
+        durationMillis = keys[keys.length - 1].timeStamp;
     }
 
-    public void transform(Graphics2D g) {
+    // Play the animation from the beginning in the forward direction.
+    public void play() {
+        AwesomeUtil.register(this);
+        elapsedMillis = 0;
+        direction = FORWARD;
+    }
+
+    // Pauses the animation where it's.
+    public void pause() {
+        AwesomeUtil.unregister(this);
+    }
+
+    // Resumes the animation from where it's.
+    public void resume() {
+        AwesomeUtil.register(this);
+    }
+
+    // Resumes the animation from where it's in the opposite direction.
+    public void reverse() {
+        AwesomeUtil.register(this);
+        direction = !direction;
+    }
+
+    // Resumes the animation from where it's in the given direction.
+    public void setDirection(boolean dir) {
+        AwesomeUtil.register(this);
+        direction = dir;
+    }
+
+    private void transform(Graphics2D g, Dimension dimension) {
+        float originX = this.originX * dimension.width;
+        float originY = this.originY * dimension.height;
         g.setClip(null);
-        g.scale(scaleX, scaleY);
+        g.translate(x + originX, y + originY);
         g.rotate(rotation);
-        g.translate((int)x, (int)y);
+        g.scale(scaleX, scaleY);
+        g.translate(-originX, -originY);
     }
 
-    public void update(int deltaMillis) {
-        elapsedTime += deltaMillis;
-        if (floatTimelines != null) {
-            int timelineIndex = 0;
-            for (; timelineIndex < floatTimelines.length; timelineIndex++) {
-                FloatTimeline timeline = floatTimelines[timelineIndex];
-                if (timeline == null) break;
-                int frameIndex = floatFrameIndices[timelineIndex];
+    public void paint(Graphics2D g, String text, float textFactor, Color color, Dimension dimension) {
+        if (text == null) return;
+        transform(g, dimension);
+        AwesomeUtil.drawBouncingText(g, dimension, text, textFactor, color);
+    }
 
-                float lastFrameTarget = frameIndex > 0 ? timeline.targetValues[frameIndex - 1] : 0.0f;
-                int lastFrameEndTime = frameIndex > 0 ? timeline.timeStamps[frameIndex - 1] : 0;
+    public void paint(Graphics2D g, Image img, Dimension dimension) {
+        img = sprite != null ? sprite : img;
+        if (img == null) return;
+        transform(g, dimension);
+        g.drawImage(img, 0, 0, dimension.width, dimension.height, null);
+    }
 
-                int duration = timeline.timeStamps[frameIndex] - lastFrameEndTime;
-                int elapsedThisFrame = elapsedTime - lastFrameEndTime;
-                float delta = (float)elapsedThisFrame / (float)duration;
-                float value = lastFrameTarget + (timeline.targetValues[frameIndex] - lastFrameTarget) * delta;
-                switch (timeline.targetField) {
-                    case (TRANSLATION_X) -> x = value;
-                    case (TRANSLATION_Y) -> y = value;
-                    case (SCALE_X) -> scaleX = value;
-                    case (SCALE_Y) -> scaleY = value;
-                    case (ROTATION) -> rotation = value;
+    public void paint(Graphics2D g, Image background, String text, float textFactor, Color color, Dimension dimension) {
+        background = sprite != null ? sprite : background;
+        if (effects == BACKGROUND) {
+            AffineTransform savedTransform = g.getTransform();
+            transform(g, dimension);
+            if (background != null) g.drawImage(background, 0, 0, dimension.width, dimension.height, null);
+            g.setTransform(savedTransform);
+            if (text != null) AwesomeUtil.drawBouncingText(g, dimension, text, textFactor, color);
+        } else if (effects == FOREGROUND) {
+            if (background != null) g.drawImage(background, 0, 0, dimension.width, dimension.height, null);
+            transform(g, dimension);
+            if (text != null) AwesomeUtil.drawBouncingText(g, dimension, text, textFactor, color);
+        } else {
+            transform(g, dimension);
+            if (background != null) g.drawImage(background, 0, 0, dimension.width, dimension.height, null);
+            if (text != null) AwesomeUtil.drawBouncingText(g, dimension, text, textFactor, color);
+        }
+
+    }
+
+    public boolean update(int deltaMillis) {
+        elapsedMillis += direction == FORWARD ? deltaMillis : -deltaMillis;
+        boolean reachedEnd = false;
+        Key key0, key1 = null;
+        if (elapsedMillis < 0 || elapsedMillis > durationMillis) {
+            key0 = direction == FORWARD ? keys[keys.length - 1] : keys[0];
+            if (repeatsLeft == 0) {
+                reachedEnd = true;
+                elapsedMillis = direction == FORWARD ? durationMillis : 0;
+            } else {
+                if (repeatsLeft > 0) --repeatsLeft;
+                if (shouldBounce) {
+                    elapsedMillis = direction == FORWARD ? durationMillis : 0;
+                    direction = !direction;
+                } else {
+                    elapsedMillis = direction == FORWARD ? 0 : durationMillis;
+                }
+            }
+        } else {
+            key0 = keys[0];
+            if (keys.length > 1) {
+                int index = 1;
+                key1 = keys[1];
+                while (elapsedMillis > key1.timeStamp) {
+                    key0 = key1;
+                    key1 = keys[++index];
                 }
             }
         }
-    }
 
-    // =====================================================================
-    // Inner classes below
-    // =====================================================================
-
-    private static class FloatTimeline {
-        public int totalDuration;
-        public byte targetField;
-        public int[] timeStamps;
-        public float[] targetValues; // length = timeStamps.length
-
-        FloatTimeline(byte targetField, float[] targetValues, int[] timeStamps, int totalDuration) {
-            this.targetField = targetField;
-            this.timeStamps = timeStamps;
-            this.targetValues = targetValues;
-            this.totalDuration = totalDuration;
+        if (key1 == null) {
+            x = key0.translationX;
+            y = key0.translationY;
+            scaleX = key0.scaleX;
+            scaleY = key0.scaleY;
+            rotation = key0.rotation;
+        } else {
+            float delta = (float)(elapsedMillis - key0.timeStamp) / (float)(key1.timeStamp - key0.timeStamp);
+            x = key0.translationX + (int)((key1.translationX - key0.translationX) * delta);
+            y = key0.translationY + (int)((key1.translationY - key0.translationY) * delta);
+            scaleX = key0.scaleX + (key1.scaleX - key0.scaleX) * delta;
+            scaleY = key0.scaleY + (key1.scaleY - key0.scaleY) * delta;
+            rotation = key0.rotation + (key1.rotation - key0.rotation) * delta;
         }
+        sprite = key0.sprite;
+
+        return reachedEnd;
     }
 
-    private static class SpriteTimeline {
-        public int[] timeStamps;
-        public int[] targets; // length = timeStamps.length * 4
+    // =====================================================================
+    // Helper classes below
+    // =====================================================================
 
-        SpriteTimeline(int[] targets, int[] timeStamps) {
-            this.timeStamps = timeStamps;
-            this.targets = targets;
+    private static class Key implements Cloneable {
+        private final int timeStamp;
+        private float scaleX = 1.0f, scaleY = 1.0f, rotation;
+        private int translationX, translationY;
+        private Image sprite;
+
+        Key(int timeStamp) {
+            this.timeStamp = timeStamp;
+        }
+
+        @Override
+        public Key clone() {
+            try {
+                return (Key) super.clone();
+            } catch (CloneNotSupportedException e) {
+                e.printStackTrace();
+            }
+            return null;
         }
     }
 
     public static class Builder {
-        private final ArrayList<Integer> floatDurations = new ArrayList<>();
-        private final ArrayList<Float> floatValues = new ArrayList<>();
-        private final ArrayList<Byte> floatTargets = new ArrayList<>();
+        private final ArrayList<Integer> setFieldFlags = new ArrayList<>();
+        private final ArrayList<Key> keys = new ArrayList<>();
+        private boolean shouldBounce = false;
+        private int numRepeats = 0;
+        private float originX = 0.5f, originY = 0.5f;
 
-        private final ArrayList<Integer> spriteDurations = new ArrayList<>();
-        private final ArrayList<Rectangle> spriteTargets = new ArrayList<>();
-        private byte effectedTimelines = 0;
-
-        private Builder addFloat(float value, byte target, int duration) {
-            effectedTimelines |= target;
-            floatValues.add(value);
-            floatTargets.add(target);
-            floatDurations.add(duration);
-            return this;
-        }
-        public Builder animateX(float amount, int duration) {
-            return addFloat(amount, TRANSLATION_X, duration);
+        public Builder() {
+            setKeyFields(TRANSLATION_X | TRANSLATION_Y | SCALE_X | SCALE_Y | ROTATION, 0);
         }
 
-        public Builder animateY(float amount, int duration) {
-            return addFloat(amount, TRANSLATION_Y, duration);
-        }
-
-        public Builder animatePosition(float x, float y, int duration) {
-            addFloat(x, TRANSLATION_X, duration);
-            return addFloat(y, TRANSLATION_Y, duration);
-        }
-
-        public Builder animateScaleX(float amount, int duration) {
-            return addFloat(amount, SCALE_X, duration);
-        }
-
-        public Builder animateScaleY(float amount, int duration) {
-            return addFloat(amount, SCALE_Y, duration);
-        }
-
-        public Builder animateScale(float x, float y, int duration) {
-            addFloat(x, SCALE_X, duration);
-            return addFloat(y, SCALE_Y, duration);
-        }
-
-        public Builder animateRotation(float amount, int duration) {
-            return addFloat(amount, ROTATION, duration);
-        }
-
-        public Builder animateSprite(int x, int y, int width, int height, int duration) {
-            effectedTimelines |= SPRITES;
-            spriteTargets.add(new Rectangle(x, y, width, height));
-            spriteDurations.add(duration);
+        public Builder repeats(int times) {
+            numRepeats = times;
             return this;
         }
 
-        private FloatTimeline createTimelineFor(byte target) {
-            if ((effectedTimelines & target) == 0) return null;
-            int length = 0;
-            for (Byte floatTarget : floatTargets) {
-                if (floatTarget == TRANSLATION_X) ++length;
-            }
-            int timeStamp = 0;
-            int[] durations = new int[length];
-            float[] values = new float[length];
-            int targetIndex = 0;
-            for (int index = 0; index < floatTargets.size(); index++) {
-                if (floatTargets.get(index) == TRANSLATION_X) {
-                    timeStamp += floatDurations.get(index);
-                    values[targetIndex] = floatValues.get(index);
-                    durations[targetIndex] = timeStamp;
-                    ++targetIndex;
+        public Builder bounce(boolean val) {
+            shouldBounce = val;
+            return this;
+        }
+
+        public Builder addTranslationKey(int x, int y, int timeStamp) {
+            Key key = setKeyFields(TRANSLATION_X | TRANSLATION_Y, timeStamp);
+            key.translationX = x;
+            key.translationY = y;
+            return this;
+        }
+
+        public Builder addTranslationXKey(int x, int timeStamp) {
+            Key key = setKeyFields(TRANSLATION_X, timeStamp);
+            key.translationX = x;
+            return this;
+        }
+
+        public Builder addTranslationYKey(int y, int timeStamp) {
+            Key key = setKeyFields(TRANSLATION_Y, timeStamp);
+            key.translationY = y;
+            return this;
+        }
+
+        public Builder addScaleKey(float x, float y, int timeStamp) {
+            Key key = setKeyFields(SCALE_X |SCALE_Y, timeStamp);
+            key.scaleX = x;
+            key.scaleY = y;
+            return this;
+        }
+
+        public Builder addScaleXKey(float x, int timeStamp) {
+            Key key = setKeyFields(SCALE_X, timeStamp);
+            key.scaleX = x;
+            return this;
+        }
+
+        public Builder addScaleYKey(float y, int timeStamp) {
+            Key key = setKeyFields(SCALE_Y, timeStamp);
+            key.scaleY = y;
+            return this;
+        }
+
+        public Builder addRotationKey(float radians, int timeStamp) {
+            Key key = setKeyFields(ROTATION, timeStamp);
+            key.rotation = radians;
+            return this;
+        }
+
+        public Builder addSpriteKey(Image sprite, int timeStamp) {
+            Key key = setKeyFields(SPRITES, timeStamp);
+            key.sprite = sprite;
+            return this;
+        }
+
+        // From where the objects scales and rotates, defaults to centrum (0.5, 0.5).
+        public void setOrigin(float x, float y) {
+            originX = x;
+            originY = y;
+        }
+
+        private Key setKeyFields(int fields, int timeStamp) {
+            Key key = null;
+            int keyIndex = 0;
+            for (; keyIndex < keys.size(); keyIndex++) {
+                Key it = keys.get(keyIndex);
+                if (it.timeStamp >= timeStamp) {
+                    if (it.timeStamp == timeStamp)
+                        key = it;
+                    break;
                 }
             }
-            return new FloatTimeline(target, values, durations, timeStamp);
+            if (key == null) {
+                key = new Key(timeStamp);
+                keys.add(keyIndex, key);
+                setFieldFlags.add(keyIndex, fields);
+            }
+            return key;
         }
 
-        private SpriteTimeline createSpriteTimeline() {
-            if (spriteTargets.isEmpty()) return null;
-            int timeStamp = 0;
-            int[] timeStamps = new int[spriteDurations.size()];
-            int[] targets = new int[timeStamps.length * 4];
-            for (int index = 0; index < timeStamps.length; index++) {
-                timeStamp += spriteDurations.get(index);
-                timeStamps[index] = timeStamp;
-                Rectangle rect = spriteTargets.get(index);
-                targets[index * 4]     = rect.x;
-                targets[index * 4 + 1] = rect.y;
-                targets[index * 4 + 2] = rect.width;
-                targets[index * 4 + 3] = rect.height;
+        public void animate(User user, int what) {
+            if (user.getEffect() != null) {
+                user.setEffect(null);
             }
-            return new SpriteTimeline(targets, timeStamps);
+
+            int transXLastSetIndex = 0;
+            int transYLastSetIndex = 0;
+            int scaleXLastSetIndex = 0;
+            int scaleYLastSetIndex = 0;
+            int rotLastSetIndex = 0;
+
+            Key prevKey = null;
+            Key[] keysCopy = new Key[keys.size()];
+            for (int i = 0; i < keysCopy.length; i++) {
+                Key keyCopy = keys.get(i).clone();
+                if (prevKey != null) {
+                    int setFields = setFieldFlags.get(i);
+
+                    if ((setFields & TRANSLATION_X) != 0) {
+                        if (transXLastSetIndex < (i - 1)) {
+                            int valueStart = keysCopy[transXLastSetIndex].translationX;
+                            int valueDiff = keyCopy.translationX - valueStart;
+                            int timeStart = keysCopy[transXLastSetIndex].timeStamp;
+                            float duration = keyCopy.timeStamp - timeStart;
+                            for (int i1 = transXLastSetIndex + 1; i1 < i; i1++) {
+                                float delta = (float)(keysCopy[i1].timeStamp - timeStart) / duration;
+                                keysCopy[i1].translationX = (int)(valueStart + valueDiff * delta);
+                            }
+                        }
+                        transXLastSetIndex = i;
+                    } else {
+                        keyCopy.translationX = prevKey.translationX;
+                    }
+
+                    if ((setFields & TRANSLATION_Y) != 0) {
+                        if (transYLastSetIndex < (i - 1)) {
+                            int valueStart = keysCopy[transYLastSetIndex].translationY;
+                            int valueDiff = keyCopy.translationY - valueStart;
+                            int timeStart = keysCopy[transYLastSetIndex].timeStamp;
+                            float duration = keyCopy.timeStamp - timeStart;
+                            for (int i1 = transYLastSetIndex + 1; i1 < i; i1++) {
+                                float delta = (float)(keysCopy[i1].timeStamp - timeStart) / duration;
+                                keysCopy[i1].translationY = (int)(valueStart + valueDiff * delta);
+                            }
+                        }
+                        transYLastSetIndex = i;
+                    } else {
+                        keyCopy.translationY = prevKey.translationY;
+                    }
+
+                    if ((setFields & SCALE_X) != 0) {
+                        if (scaleXLastSetIndex < (i - 1)) {
+                            float valueStart = keysCopy[scaleXLastSetIndex].scaleX;
+                            float valueDiff = keyCopy.scaleX - valueStart;
+                            int timeStart = keysCopy[scaleXLastSetIndex].timeStamp;
+                            float duration = keyCopy.timeStamp - timeStart;
+                            for (int i1 = scaleXLastSetIndex + 1; i1 < i; i1++) {
+                                float delta = (float)(keysCopy[i1].timeStamp - timeStart) / duration;
+                                keysCopy[i1].scaleX = valueStart + valueDiff * delta;
+                            }
+                        }
+                        scaleXLastSetIndex = i;
+                    } else {
+                        keyCopy.scaleX = prevKey.scaleX;
+                    }
+
+                    if ((setFields & SCALE_Y) != 0) {
+                        if (scaleYLastSetIndex < (i - 1)) {
+                            float valueStart = keysCopy[scaleYLastSetIndex].scaleY;
+                            float valueDiff = keyCopy.scaleY - valueStart;
+                            int timeStart = keysCopy[scaleYLastSetIndex].timeStamp;
+                            float duration = keyCopy.timeStamp - timeStart;
+                            for (int i1 = scaleYLastSetIndex + 1; i1 < i; i1++) {
+                                float delta = (float)(keysCopy[i1].timeStamp - timeStart) / duration;
+                                keysCopy[i1].scaleY = (int)(valueStart + valueDiff * delta);
+                            }
+                        }
+                        scaleYLastSetIndex = i;
+                    } else {
+                        keyCopy.scaleY = prevKey.scaleY;
+                    }
+
+                    if ((setFields & TRANSLATION_Y) != 0) {
+                        if (transYLastSetIndex < (i - 1)) {
+                            int valueStart = keysCopy[transYLastSetIndex].translationY;
+                            int valueDiff = keyCopy.translationY - valueStart;
+                            int timeStart = keysCopy[transYLastSetIndex].timeStamp;
+                            float duration = keyCopy.timeStamp - timeStart;
+                            for (int i1 = transYLastSetIndex + 1; i1 < i; i1++) {
+                                float delta = (float)(keysCopy[i1].timeStamp - timeStart) / duration;
+                                keysCopy[i1].translationY = (int)(valueStart + valueDiff * delta);
+                            }
+                        }
+                        transYLastSetIndex = i;
+                    } else {
+                        keyCopy.translationY = prevKey.translationY;
+                    }
+
+                    if ((setFields & ROTATION) != 0) {
+                        if (rotLastSetIndex < (i - 1)) {
+                            float valueStart = keysCopy[rotLastSetIndex].rotation;
+                            float valueDiff = keyCopy.rotation - valueStart;
+                            int timeStart = keysCopy[rotLastSetIndex].timeStamp;
+                            float duration = keyCopy.timeStamp - timeStart;
+                            for (int i1 = rotLastSetIndex + 1; i1 < i; i1++) {
+                                float delta = (float)(keysCopy[i1].timeStamp - timeStart) / duration;
+                                keysCopy[i1].rotation = (int)(valueStart + valueDiff * delta);
+                            }
+                        }
+                        rotLastSetIndex = i;
+                    } else {
+                        keyCopy.rotation = prevKey.rotation;
+                    }
+
+                    if ((setFields & SPRITES) == 0)  keyCopy.sprite = prevKey.sprite;
+                }
+                keysCopy[i] = keyCopy;
+                prevKey = keyCopy;
+            }
+
+            AwesomeEffect effect = new AwesomeEffect(keysCopy, user, what);
+            effect.originX = originX;
+            effect.originY = originY;
+            effect.shouldBounce = shouldBounce;
+            effect.repeatsLeft = numRepeats;
+
+            user.setEffect(effect);
+            AwesomeUtil.register(effect);
         }
 
         public void animate(User user) {
-            int numFloatTimelines = 0;
-            int index = 0;
-            if ((effectedTimelines & TRANSLATION_X) != 0) ++numFloatTimelines;
-            if ((effectedTimelines & TRANSLATION_Y) != 0) ++numFloatTimelines;
-            if ((effectedTimelines & SCALE_X) != 0) ++numFloatTimelines;
-            if ((effectedTimelines & SCALE_Y) != 0) ++numFloatTimelines;
-            if ((effectedTimelines & ROTATION) != 0) ++numFloatTimelines;
-            FloatTimeline[] floatTimelines = new FloatTimeline[numFloatTimelines];
-            if ((effectedTimelines & TRANSLATION_X) != 0) floatTimelines[index++] = createTimelineFor(TRANSLATION_X);
-            if ((effectedTimelines & TRANSLATION_Y) != 0) floatTimelines[index++] = createTimelineFor(TRANSLATION_X);
-            if ((effectedTimelines & SCALE_X) != 0) floatTimelines[index++] = createTimelineFor(TRANSLATION_X);
-            if ((effectedTimelines & SCALE_Y) != 0) floatTimelines[index++] = createTimelineFor(TRANSLATION_X);
-            if ((effectedTimelines & ROTATION) != 0) floatTimelines[index] = createTimelineFor(TRANSLATION_X);
-
-            AwesomeEffect effect = new AwesomeEffect(floatTimelines, createSpriteTimeline());
-            user.setEffect(effect);
-            AwesomeUtil.register(effect);
+            animate(user, COMPONENT);
         }
     }
 }

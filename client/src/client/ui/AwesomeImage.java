@@ -1,30 +1,22 @@
 package client.ui;
 
-import javax.swing.*;
 import java.awt.*;
 
-/** Black hovering/floating text.
- *
- */
-public class AwesomeText extends JComponent implements AwesomeEffect.User {
-
-    private static Font font;
-    private String text;
+public class AwesomeImage extends Component implements AwesomeEffect.User {
     private AwesomeEffect effect;
+    public Image image;
 
-    public AwesomeText(String text) {
-        this.text = text;
-        setFont(AwesomeUtil.getFont());
+    public AwesomeImage(Image img) {
+        image = img;
     }
 
     @Override
     public void paint(Graphics g) {
         if (!isVisible()) return;
-        if (text == null) return;
         if (effect != null) {
-            effect.paint((Graphics2D)g, text, 1.0f, Color.BLACK, getSize());
+            effect.paint((Graphics2D) g, image, getSize());
         } else {
-            AwesomeUtil.drawBouncingText(g, getSize(), text, 1.0f, Color.BLACK);
+            g.drawImage(image, 0, 0, getWidth(), getHeight(), null);
         }
     }
 
