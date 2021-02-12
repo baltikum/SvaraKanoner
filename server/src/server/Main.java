@@ -1,6 +1,8 @@
 package server;
 
+
 import common.Message;
+import common.GameSettings;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -11,6 +13,7 @@ import java.net.*;
 public class Main {
 
     public static final int PORT = 12345;
+
 
     public static void main(String[] args) throws IOException {
         System.out.println("Server is running");

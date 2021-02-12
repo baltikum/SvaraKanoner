@@ -1,7 +1,8 @@
 package common;
 
-import java.io.*;
-import java.util.*;
+
+import java.io.Serializable;
+import java.util.Map;
 
 /**
  * Represents all messages between the server and the client and vice versa.
