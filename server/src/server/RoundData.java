@@ -16,6 +16,8 @@ import java.util.ListIterator;
  * Also has functions to get the drawn images and guesses.
  *
  * baltikum 20210210
+ *
+ *
  */
 
 public class RoundData {
