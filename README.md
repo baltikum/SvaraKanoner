@@ -1,2 +1,0 @@
-# SvaraKanoner
-Projekt DAT055
