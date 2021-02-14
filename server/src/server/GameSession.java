@@ -25,6 +25,8 @@ public class GameSession {
         this.sessionRounds = new ArrayList<RoundData>();
         this.points = new ArrayList<Integer>();
         this.nbrPlayers = 1;
+
+        addClient(host);
     }
 
     public void addClient(ClientHandler client ) {

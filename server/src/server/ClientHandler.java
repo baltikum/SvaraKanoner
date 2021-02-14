@@ -19,6 +19,16 @@ public class ClientHandler implements Runnable {
         this.socket = socket;
     }
 
+    public void sendMessage(Message message) {
+        try {
+            objectOutputStream.writeObject(message);
+            objectOutputStream.flush();
+        } catch (Exception e) {
+
+        }
+
+    }
+
     public void run() {
 
         try {
@@ -42,9 +52,10 @@ public class ClientHandler implements Runnable {
                         case CREATE_GAME:
                             GameSettings gameSettings = (GameSettings)message.data.get("gameSettings");
                             System.out.println("Game settings: " + gameSettings);
-                            // create new gameSession -> send OK to client
+
                             Main.createGameSession(this, gameSettings);
-                            // send message OK
+
+                            // send message OK + Game ID
 
 
                             break;

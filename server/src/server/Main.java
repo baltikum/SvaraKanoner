@@ -37,6 +37,8 @@ public class Main {
 
     public static void createGameSession(ClientHandler host, GameSettings settings) {
         gameSessions.add(new GameSession(host, settings));
+        Message message = new Message(Message.Type.CREATE_GAME);
+        host.sendMessage(message);
 
     }
 
