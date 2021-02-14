@@ -56,11 +56,18 @@ public class Network {
 
             }
 
+        } catch(Exception e) {
+            System.out.println("Can't connect to server " + e);
         } finally {
             System.out.println("Lost connection to server");
-            socket.close();
-            objectOutputStream.close();
-            objectInputStream.close();
+            try {
+
+                socket.close();
+                objectOutputStream.close();
+                objectInputStream.close();
+            } catch (Exception e) {
+
+            }
         }
 
 
