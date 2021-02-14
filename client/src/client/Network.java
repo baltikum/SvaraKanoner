@@ -7,14 +7,14 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-public class ClientTest {
+public class Network {
 
     Socket socket;
     ObjectOutputStream objectOutputStream;
     ObjectInputStream objectInputStream;
 
 
-    public ClientTest() throws IOException {
+    public Network() throws IOException {
         try {
             // test...
             socket = new Socket("localhost", 12345);
