@@ -43,26 +43,14 @@ public class GameSettings implements Serializable {
      *
      * Set variable functions. Flipswitch.
      */
-    public void setKeepScore() {
-        if ( keepScore ) {
-            keepScore = false;
-        } else {
-            keepScore = true;
-        }
+    public void toggleKeepScore() {
+        keepScore = !keepScore;
     }
-    public void setChooseWords() {
-        if ( chooseWords ) {
-            chooseWords = false;
-        } else {
-            chooseWords = true;
-        }
+    public void toggleChooseWords() {
+        chooseWords = !chooseWords;
     }
-    public void setShakyHands() {
-        if ( shakyHands ) {
-            shakyHands = false;
-        } else {
-            shakyHands = true;
-        }
+    public void toggleShakyHands() {
+        shakyHands = !shakyHands;
     }
 
     /**
@@ -140,8 +128,8 @@ public class GameSettings implements Serializable {
      * @return
      */
     public boolean getKeepScore(){ return keepScore; }
-    public boolean getChooseWords(){ return keepScore; }
-    public boolean getShakyHands(){ return keepScore; }
+    public boolean getChooseWords(){ return chooseWords; }
+    public boolean getShakyHands(){ return shakyHands; }
     public int getMaxPlayers(){ return maxPlayers; }
     public int getNumRounds(){ return numRounds; }
     public long getPickTimeMilliseconds(){ return pickTimeMilliseconds; }
@@ -155,14 +143,13 @@ public class GameSettings implements Serializable {
      * Saves GameSettings on host.
      *
      * @return true if successful.
-     * @throws IOException
+     *
      */
-    public boolean saveSettings() throws IOException {
-        try {
-            FileOutputStream fileOutStream = new FileOutputStream("server/settings/settings.txt");
-            ObjectOutputStream objOutStream = new ObjectOutputStream(fileOutStream);
+    public boolean saveSettings() {
+        try (
+            FileOutputStream fileOutStream = new FileOutputStream("server/settings/settings.dat");
+            ObjectOutputStream objOutStream = new ObjectOutputStream(fileOutStream); ) {
             objOutStream.writeObject(this);
-            objOutStream.close();
         } catch(IOException ex) {
             return false;
         }
@@ -173,13 +160,14 @@ public class GameSettings implements Serializable {
      *
      * Loads GameSettings from host to game.
      * @return true if successful.
-     * @throws IOException
+     *
      */
-    public boolean loadSettings() throws IOException {
+    public boolean loadSettings() {
         GameSettings loadedSettings;
-        try {
-            FileInputStream fileInStream = new FileInputStream("server/settings/settings.txt");
-            ObjectInputStream objInStream = new ObjectInputStream(fileInStream);
+        try (
+            FileInputStream fileInStream = new FileInputStream("server/settings/settings.dat");
+            ObjectInputStream objInStream = new ObjectInputStream(fileInStream)
+        ){
             loadedSettings = (GameSettings)objInStream.readObject();
         } catch (IOException | ClassNotFoundException ex) {
             return false;
