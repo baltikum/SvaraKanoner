@@ -252,8 +252,8 @@ public class MainMenu extends JPanel {
         AwesomeButton choicesCountIncrease = new AwesomeButton(rightArrow);
         AwesomeButton choicesCountDecrease = new AwesomeButton(leftArrow);
         AwesomeText getChoices = new AwesomeText(gameSettings.getChooseWords() ? "Yes" : "No");
-        choicesCountIncrease.addActionListener(e -> { if (!gameSettings.getChooseWords())  { gameSettings.setChooseWords(); getChoices.setText("Yes"); } } );
-        choicesCountDecrease.addActionListener(e -> { if (gameSettings.getChooseWords()) { gameSettings.setChooseWords(); getChoices.setText("No"); } } );
+        choicesCountIncrease.addActionListener(e -> { if (!gameSettings.getChooseWords())  { gameSettings.toggleChooseWords(); getChoices.setText("Yes"); } } );
+        choicesCountDecrease.addActionListener(e -> { if (gameSettings.getChooseWords()) { gameSettings.toggleChooseWords(); getChoices.setText("No"); } } );
         panel.add(getChoicesLabel);
         panel.add(choicesCountIncrease);
         panel.add(choicesCountDecrease);
