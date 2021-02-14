@@ -55,7 +55,7 @@ public class ClientHandler implements Runnable {
 
                             Main.createGameSession(this, gameSettings);
 
-                            // send message OK + Game ID
+
 
 
                             break;

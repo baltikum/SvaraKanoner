@@ -1,6 +1,7 @@
 package client;
 
 import client.ui.AwesomeUtil;
+import common.Message;
 import common.Phase;
 
 import javax.swing.*;
@@ -16,12 +17,10 @@ public class Game extends JFrame implements ActionListener {
 
     Game() {
 
-        // connect to server
-        try {
-            network = new Network();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        // Start the network
+        network = new Network();
+        network.start();
+
 
 
         setTitle("Ryktet går!");
@@ -39,6 +38,8 @@ public class Game extends JFrame implements ActionListener {
         Timer timer = new Timer(1000 / 100, this);
         timer.setInitialDelay(1000 / 100);
         timer.start();
+
+
     }
 
     @Override
@@ -46,4 +47,9 @@ public class Game extends JFrame implements ActionListener {
         AwesomeUtil.increaseDelta();
         repaint();
     }
+
+    public void sendMessage(Message message) {
+        network.sendMessage(message);
+    }
+
 }

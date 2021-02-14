@@ -12,6 +12,7 @@ public class Message implements Serializable{
 
     public enum Type {
         CREATE_GAME, // MainMenu -> Server
+        CREATE_GAME_OK, // Server -> Client
         JOIN_GAME,   // MainMenu -> Server
         START_GAME,    // JoinPhase (client) -> JoinPhase (server)
         LEAVE_GAME,    // JoinPhase (client) -> JoinPhase (server)
