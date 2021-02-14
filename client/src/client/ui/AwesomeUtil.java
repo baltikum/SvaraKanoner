@@ -111,6 +111,15 @@ public class AwesomeUtil {
 
     }
 
+    public static void shakeHorizontally(AwesomeEffect.User target, int amount) {
+        AwesomeEffect.create()
+                .addTranslationXKey(amount, 50)
+                .addTranslationXKey(-amount, 150)
+                .addTranslationXKey(amount, 250)
+                .addTranslationXKey(-amount, 350)
+                .addTranslationXKey(0, 400).animate(target);
+    }
+
     public static void increaseDelta() {
         int delta = 1000 / 20;
         if (lastDeltaIncrease == 0) {
@@ -129,7 +138,13 @@ public class AwesomeUtil {
         }
     }
 
-    public static void register(AwesomeEffect effect) {
+    public static void register(AwesomeEffect.User user, AwesomeEffect effect) {
+        if (effect == null) return;
+        AwesomeEffect existingEffect = user.getEffect();
+        if (existingEffect != null && existingEffect != effect) {
+            activeEffects.remove(existingEffect);
+            user.setEffect(null);
+        }
         activeEffects.add(effect);
     }
 

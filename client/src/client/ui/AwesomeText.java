@@ -8,13 +8,20 @@ import java.awt.*;
  */
 public class AwesomeText extends JComponent implements AwesomeEffect.User {
 
-    private static Font font;
     private String text;
     private AwesomeEffect effect;
 
     public AwesomeText(String text) {
         this.text = text;
         setFont(AwesomeUtil.getFont());
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 
     @Override
@@ -30,7 +37,7 @@ public class AwesomeText extends JComponent implements AwesomeEffect.User {
 
     @Override
     public void setEffect(AwesomeEffect effect) {
-        AwesomeUtil.register(effect);
+        AwesomeUtil.register(this, effect);
         this.effect = effect;
     }
 

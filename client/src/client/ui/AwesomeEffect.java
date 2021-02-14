@@ -34,6 +34,7 @@ public class AwesomeEffect {
         return new Builder();
     }
 
+    private final User target;
     private final Key[] keys;
     private Image sprite;
 
@@ -50,15 +51,15 @@ public class AwesomeEffect {
 
 
     private AwesomeEffect(Key[] keys, User user, int effects) {
+        target = user;
         this.keys = keys;
         this.effects = effects;
-        Component comp = user.getComponent();
         durationMillis = keys[keys.length - 1].timeStamp;
     }
 
     // Play the animation from the beginning in the forward direction.
     public void play() {
-        AwesomeUtil.register(this);
+        target.setEffect(this);
         elapsedMillis = 0;
         direction = FORWARD;
     }
@@ -70,18 +71,18 @@ public class AwesomeEffect {
 
     // Resumes the animation from where it's.
     public void resume() {
-        AwesomeUtil.register(this);
+        AwesomeUtil.register(target, this);
     }
 
     // Resumes the animation from where it's in the opposite direction.
     public void reverse() {
-        AwesomeUtil.register(this);
+        target.setEffect(this);
         direction = !direction;
     }
 
     // Resumes the animation from where it's in the given direction.
     public void setDirection(boolean dir) {
-        AwesomeUtil.register(this);
+        target.setEffect(this);
         direction = dir;
     }
 
@@ -423,9 +424,7 @@ public class AwesomeEffect {
             effect.originY = originY;
             effect.shouldBounce = shouldBounce;
             effect.repeatsLeft = numRepeats;
-
             user.setEffect(effect);
-            AwesomeUtil.register(effect);
         }
 
         public void animate(User user) {

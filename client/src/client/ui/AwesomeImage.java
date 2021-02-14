@@ -22,7 +22,7 @@ public class AwesomeImage extends Component implements AwesomeEffect.User {
 
     @Override
     public void setEffect(AwesomeEffect effect) {
-        AwesomeUtil.register(effect);
+        AwesomeUtil.register(this, effect);
         this.effect = effect;
     }
 

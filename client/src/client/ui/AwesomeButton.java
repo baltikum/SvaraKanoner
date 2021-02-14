@@ -16,6 +16,10 @@ public class AwesomeButton extends JButton implements AwesomeEffect.User {
         this(text, null);
     }
 
+    public AwesomeButton(Image background) {
+        this(null, background);
+    }
+
     public AwesomeButton(String text, Image background) {
         super(text);
         setFont(AwesomeUtil.getFont());
@@ -47,7 +51,7 @@ public class AwesomeButton extends JButton implements AwesomeEffect.User {
 
     @Override
     public void setEffect(AwesomeEffect effect) {
-        AwesomeUtil.register(effect);
+        AwesomeUtil.register(this, effect);
         this.effect = effect;
     }
 
