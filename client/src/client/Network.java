@@ -1,5 +1,6 @@
 package client;
 
+import common.GameSettings;
 import common.Message;
 
 import java.io.IOException;
@@ -26,13 +27,13 @@ public class Network {
 
             // test messages ---
             System.out.println("Send MSG");
-            Message msg = new Message(Message.Type.CREATE_LOBBY);
-            msg.addParameter("lobbyName", "The best lobby");
+            Message msg = new Message(Message.Type.CREATE_GAME);
+            msg.addParameter("gameSettings", new GameSettings());
             objectOutputStream.writeObject(msg);
             objectOutputStream.flush();
 
             System.out.println("Send MSG");
-            objectOutputStream.writeObject(new Message(Message.Type.JOIN_LOBBY));
+            objectOutputStream.writeObject(new Message(Message.Type.JOIN_GAME));
             objectOutputStream.flush();
             // --------------
 
@@ -40,12 +41,12 @@ public class Network {
             while (true) { // listen to messages from server
                 try {
                     Message message = (Message) objectInputStream.readObject();
-                    System.out.println("Client message Type: " + message.type);
+                    System.out.println("Server message Type: " + message.type);
                     System.out.println("Message Data: " + message.data);
 
 
                     switch (message.type) {
-                        case CREATE_LOBBY -> System.out.println("Lobby name: " + message.data.get("lobbyName"));
+
 
                     }
 

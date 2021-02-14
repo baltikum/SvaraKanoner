@@ -11,8 +11,8 @@ import java.util.Map;
 public class Message implements Serializable{
 
     public enum Type {
-        CREATE_LOBBY, // MainMenu -> Server
-        JOIN_LOBBY,   // MainMenu -> Server
+        CREATE_GAME, // MainMenu -> Server
+        JOIN_GAME,   // MainMenu -> Server
         START_GAME,    // JoinPhase (client) -> JoinPhase (server)
         LEAVE_GAME,    // JoinPhase (client) -> JoinPhase (server)
     }
