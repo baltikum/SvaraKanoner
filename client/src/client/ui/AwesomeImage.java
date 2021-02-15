@@ -13,11 +13,7 @@ public class AwesomeImage extends Component implements AwesomeEffect.User {
     @Override
     public void paint(Graphics g) {
         if (!isVisible()) return;
-        if (effect != null) {
-            effect.paint((Graphics2D) g, image, getSize());
-        } else {
-            g.drawImage(image, 0, 0, getWidth(), getHeight(), null);
-        }
+        AwesomeUtil.drawImage((Graphics2D) g, effect, true, getSize(), image);
     }
 
     @Override

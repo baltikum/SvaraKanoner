@@ -20,18 +20,14 @@ public class MainMenu extends JPanel {
     MainMenu() {
         super(new CardLayout());
 
-        try {
-            BufferedImage spriteSheet = ImageIO.read(new File(AwesomeUtil.resourcesPath() +  "mainmenu.png"));
-            wham = spriteSheet.getSubimage(0, 0, 128 * 3, 128);
-            rocket = spriteSheet.getSubimage(0, 128, 768, 256);
-            flame0 = spriteSheet.getSubimage(0, 384, 128, 128);
-            flame1 = spriteSheet.getSubimage(128, 384, 128, 128);
-            block = spriteSheet.getSubimage(512, 384, 512, 640);
-            leftArrow = spriteSheet.getSubimage(0, 512, 128, 128);
-            rightArrow = spriteSheet.getSubimage(128, 512, 128, 128);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        BufferedImage tileMap = Assets.loadImage("mainmenu.png");
+        wham = Assets.getTile(tileMap, 0, 0, 3, 1, 8);
+        leftArrow = Assets.getTile(tileMap, 0, 4, 1, 1,8);
+        rightArrow = Assets.getTile(tileMap, 1, 4, 1, 1, 8);
+        rocket = Assets.getTile(tileMap, 0, 1, 6, 2, 8);
+        flame0 = Assets.getTile(tileMap, 0, 3, 1, 1, 8);
+        flame1 = Assets.getTile(tileMap, 1, 3, 1, 1, 8);
+        block = Assets.getTile(tileMap, 4, 3, 4, 5, 8);
 
         initMainMenu();
         initJoinGamePanel();
@@ -44,16 +40,12 @@ public class MainMenu extends JPanel {
         panel.setOpaque(true);
         panel.setBackground(new Color(0, 0, 0, 0));
 
-        AwesomeText title = new AwesomeText("Hello!");
-        AwesomeButton joinGameButton = new AwesomeButton("Join Game", wham);
-        AwesomeButton createGameButton = new AwesomeButton("Create Game", wham);
-        AwesomeButton quitButton = new AwesomeButton("Quit", rocket);
+        AwesomeText title = new AwesomeText("Hello!", AwesomeUtil.BIG_TEXT);
+        AwesomeButton joinGameButton = new AwesomeButton("Join Game", wham, AwesomeUtil.MEDIUM_TEXT);
+        AwesomeButton createGameButton = new AwesomeButton("Create Game", wham, AwesomeUtil.MEDIUM_TEXT);
+        AwesomeButton quitButton = new AwesomeButton("Quit", rocket, AwesomeUtil.BIG_TEXT);
         AwesomeImage rocketFlame = new AwesomeImage(flame0);
         rocketFlame.setVisible(false);
-
-        joinGameButton.setFontFactor(.8f);
-        createGameButton.setFontFactor(.8f);
-        quitButton.setFontFactor(.4f);
 
         AwesomeUtil.wiggleOnHover(joinGameButton, (float)Math.PI * .1f);
         AwesomeUtil.scaleOnHover(createGameButton, 1.3f);
@@ -101,11 +93,11 @@ public class MainMenu extends JPanel {
         panel.setOpaque(true);
 
         AwesomeImage bg = new AwesomeImage(block);
-        AwesomeText code = new AwesomeText("Enter code");
-        AwesomeButton accept = new AwesomeButton("Go!");
-        AwesomeButton back = new AwesomeButton("Back");
+        AwesomeText code = new AwesomeText("Enter code", AwesomeUtil.BIG_TEXT);
+        AwesomeButton accept = new AwesomeButton("Go!", AwesomeUtil.BIG_TEXT);
+        AwesomeButton back = new AwesomeButton("Back", AwesomeUtil.BIG_TEXT);
         JTextField input = new JTextField();
-        input.setFont(AwesomeUtil.getFont().deriveFont(64.0f));
+        input.setFont(AwesomeUtil.getFont(AwesomeUtil.BIG_TEXT));
         input.setHorizontalAlignment(SwingConstants.CENTER);
 
         panel.add(back);
@@ -263,8 +255,8 @@ public class MainMenu extends JPanel {
         layout.getConstraints(choicesCountDecrease).setPosition(0.6f, 0.55f).setSize(0.1f, 1.0f);
         layout.getConstraints(getChoices).setPosition(0.75f, 0.55f).setSize(0.2f, 0.5f);
 
-        AwesomeButton create = new AwesomeButton("Create");
-        AwesomeButton back = new AwesomeButton("Back");
+        AwesomeButton create = new AwesomeButton("Create", AwesomeUtil.BIG_TEXT);
+        AwesomeButton back = new AwesomeButton("Back", AwesomeUtil.BIG_TEXT);
         panel.add(create);
         panel.add(back);
         layout.getConstraints(create).setPosition(0.75f, 0.8f).setSize(0.3f, 0.5f);

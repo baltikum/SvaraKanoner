@@ -8,12 +8,17 @@ import java.awt.*;
  */
 public class AwesomeText extends JComponent implements AwesomeEffect.User {
 
+    private int textSize = AwesomeUtil.MEDIUM_TEXT;
     private String text;
     private AwesomeEffect effect;
 
     public AwesomeText(String text) {
         this.text = text;
-        setFont(AwesomeUtil.getFont());
+    }
+
+    public AwesomeText(String text, int textSize) {
+        this.text = text;
+        this.textSize = textSize;
     }
 
     public String getText() {
@@ -27,12 +32,7 @@ public class AwesomeText extends JComponent implements AwesomeEffect.User {
     @Override
     public void paint(Graphics g) {
         if (!isVisible()) return;
-        if (text == null) return;
-        if (effect != null) {
-            effect.paint((Graphics2D)g, text, 1.0f, Color.BLACK, getSize());
-        } else {
-            AwesomeUtil.drawBouncingText(g, getSize(), text, 1.0f, Color.BLACK);
-        }
+        AwesomeUtil.drawBouncingText((Graphics2D) g, effect, false, getSize(), text, textSize, Color.BLACK, AwesomeUtil.CENTER);
     }
 
     @Override

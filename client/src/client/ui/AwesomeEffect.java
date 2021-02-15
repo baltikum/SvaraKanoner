@@ -49,12 +49,23 @@ public class AwesomeEffect {
     private int repeatsLeft;
     private final int effects;
 
-
     private AwesomeEffect(Key[] keys, User user, int effects) {
         target = user;
         this.keys = keys;
         this.effects = effects;
         durationMillis = keys[keys.length - 1].timeStamp;
+    }
+
+    public AwesomeEffect(User user, int x, int y, float scaleX, float scaleY, float degrees) {
+        durationMillis = 0;
+        effects = 0;
+        target = user;
+        keys = null;
+        this.x = x;
+        this.y = y;
+        this.scaleX = scaleX;
+        this.scaleY = scaleY;
+        this.rotation = (float)Math.toRadians(degrees);
     }
 
     // Play the animation from the beginning in the forward direction.
@@ -80,13 +91,25 @@ public class AwesomeEffect {
         direction = !direction;
     }
 
+    public int getEffects() {
+        return effects;
+    }
+
+    public boolean isAnimated() {
+        return keys != null;
+    }
+
+    public Image getSprite() {
+        return sprite;
+    }
+
     // Resumes the animation from where it's in the given direction.
     public void setDirection(boolean dir) {
         target.setEffect(this);
         direction = dir;
     }
 
-    private void transform(Graphics2D g, Dimension dimension) {
+    public void transform(Graphics2D g, Dimension dimension) {
         float originX = this.originX * dimension.width;
         float originY = this.originY * dimension.height;
         g.setClip(null);
@@ -94,39 +117,6 @@ public class AwesomeEffect {
         g.rotate(rotation);
         g.scale(scaleX, scaleY);
         g.translate(-originX, -originY);
-    }
-
-    public void paint(Graphics2D g, String text, float textFactor, Color color, Dimension dimension) {
-        if (text == null) return;
-        transform(g, dimension);
-        AwesomeUtil.drawBouncingText(g, dimension, text, textFactor, color);
-    }
-
-    public void paint(Graphics2D g, Image img, Dimension dimension) {
-        img = sprite != null ? sprite : img;
-        if (img == null) return;
-        transform(g, dimension);
-        g.drawImage(img, 0, 0, dimension.width, dimension.height, null);
-    }
-
-    public void paint(Graphics2D g, Image background, String text, float textFactor, Color color, Dimension dimension) {
-        background = sprite != null ? sprite : background;
-        if (effects == BACKGROUND) {
-            AffineTransform savedTransform = g.getTransform();
-            transform(g, dimension);
-            if (background != null) g.drawImage(background, 0, 0, dimension.width, dimension.height, null);
-            g.setTransform(savedTransform);
-            if (text != null) AwesomeUtil.drawBouncingText(g, dimension, text, textFactor, color);
-        } else if (effects == FOREGROUND) {
-            if (background != null) g.drawImage(background, 0, 0, dimension.width, dimension.height, null);
-            transform(g, dimension);
-            if (text != null) AwesomeUtil.drawBouncingText(g, dimension, text, textFactor, color);
-        } else {
-            transform(g, dimension);
-            if (background != null) g.drawImage(background, 0, 0, dimension.width, dimension.height, null);
-            if (text != null) AwesomeUtil.drawBouncingText(g, dimension, text, textFactor, color);
-        }
-
     }
 
     public boolean update(int deltaMillis) {
@@ -262,9 +252,9 @@ public class AwesomeEffect {
             return this;
         }
 
-        public Builder addRotationKey(float radians, int timeStamp) {
+        public Builder addRotationKey(float degrees, int timeStamp) {
             Key key = setKeyFields(ROTATION, timeStamp);
-            key.rotation = radians;
+            key.rotation = (float)Math.toRadians(degrees);
             return this;
         }
 
@@ -286,8 +276,10 @@ public class AwesomeEffect {
             for (; keyIndex < keys.size(); keyIndex++) {
                 Key it = keys.get(keyIndex);
                 if (it.timeStamp >= timeStamp) {
-                    if (it.timeStamp == timeStamp)
+                    if (it.timeStamp == timeStamp) {
                         key = it;
+                        setFieldFlags.set(keyIndex, setFieldFlags.get(keyIndex) | fields);
+                    }
                     break;
                 }
             }

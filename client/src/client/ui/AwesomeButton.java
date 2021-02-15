@@ -8,23 +8,23 @@ import java.awt.*;
  */
 public class AwesomeButton extends JButton implements AwesomeEffect.User {
 
+    private int textSize;
     private AwesomeEffect effect;
-    private float fontFactor = 1.0f;
     private final Image background;
 
-    public AwesomeButton(String text) {
-        this(text, null);
+    public AwesomeButton(String text, int textSize) {
+        this(text, null, textSize);
     }
 
     public AwesomeButton(Image background) {
-        this(null, background);
+        this(null, background, AwesomeUtil.MEDIUM_TEXT);
     }
 
-    public AwesomeButton(String text, Image background) {
+    public AwesomeButton(String text, Image background, int textSize) {
         super(text);
-        setFont(AwesomeUtil.getFont());
 
         this.background = background;
+        this.textSize = textSize;
         setBorderPainted(false);
         setContentAreaFilled(false);
         setFocusPainted(false);
@@ -33,20 +33,10 @@ public class AwesomeButton extends JButton implements AwesomeEffect.User {
         setCursor(new Cursor(Cursor.HAND_CURSOR));
     }
 
-    public void setFontFactor(float value) {
-        fontFactor = value;
-    }
-
     @Override
     public void paint(Graphics g) {
         if (!isVisible()) return;
-        String text = getText();
-        if (effect != null) {
-            effect.paint((Graphics2D) g, background, text, fontFactor, Color.RED, getSize());
-        } else {
-            if (background != null) g.drawImage(background, 0, 0, getWidth(), getHeight(), null);
-            if (text != null) AwesomeUtil.drawBouncingText(g, getSize(), text, fontFactor, Color.RED);
-        }
+        AwesomeUtil.drawTextAndBackground((Graphics2D) g, effect, getSize(), getText(), textSize, Color.RED, background, AwesomeUtil.CENTER);
     }
 
     @Override

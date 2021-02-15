@@ -7,22 +7,31 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
-public class Game extends JFrame implements ActionListener {
+public class Game extends JFrame implements ActionListener, ComponentListener {
+    public static Game game;
+
+    public final Random random = new Random();
     private Phase currentPhase;
 
     private Network network;
 
-    Game() {
+    private String gameCode = "---";
+    private List<Player> players = new ArrayList<>();
 
+    Game() {
         // connect to server
-        try {
+        /* try {
             network = new Network();
         } catch (IOException e) {
             e.printStackTrace();
-        }
-
+        } */
+        addComponentListener(this);
 
         setTitle("Ryktet går!");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -39,6 +48,9 @@ public class Game extends JFrame implements ActionListener {
         Timer timer = new Timer(1000 / 100, this);
         timer.setInitialDelay(1000 / 100);
         timer.start();
+
+        game = this;
+        setCurrentPhase(new JoinPhase());
     }
 
     @Override
@@ -46,4 +58,36 @@ public class Game extends JFrame implements ActionListener {
         AwesomeUtil.increaseDelta();
         repaint();
     }
+
+    public void setCurrentPhase(Phase phase) {
+        currentPhase = phase;
+    }
+
+    public String getGameCode() {
+        return gameCode;
+    }
+
+    public List<Player> getPlayers() {
+        return players;
+    }
+
+    public Player getPlayer(int id) {
+        for (Player player : players) {
+            if (player.getId() == id)
+                return player;
+        }
+        return null;
+    }
+
+    @Override
+    public void componentResized(ComponentEvent e) {
+        AwesomeUtil.updateFonts(Math.min(getWidth(), getHeight()));
+    }
+
+    @Override
+    public void componentMoved(ComponentEvent e) { }
+    @Override
+    public void componentShown(ComponentEvent e) { }
+    @Override
+    public void componentHidden(ComponentEvent e) { }
 }
