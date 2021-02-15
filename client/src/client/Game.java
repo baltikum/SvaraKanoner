@@ -50,7 +50,6 @@ public class Game extends JFrame implements ActionListener, ComponentListener {
         timer.start();
 
         game = this;
-        setCurrentPhase(new JoinPhase());
     }
 
     @Override
