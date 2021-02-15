@@ -8,16 +8,26 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-public class Network {
+public class Network extends Thread {
 
     Socket socket;
     ObjectOutputStream objectOutputStream;
     ObjectInputStream objectInputStream;
 
 
-    public Network() throws IOException {
+
+    public void sendMessage(Message message) {
         try {
-            // test...
+            objectOutputStream.writeObject(message);
+            objectOutputStream.flush();
+        } catch (Exception e) {
+
+        }
+    }
+
+
+    public void run() {
+        try {
             socket = new Socket("localhost", 12345);
             System.out.println("Connected to server");
 
@@ -29,13 +39,9 @@ public class Network {
             System.out.println("Send MSG");
             Message msg = new Message(Message.Type.CREATE_GAME);
             msg.addParameter("gameSettings", new GameSettings());
-            objectOutputStream.writeObject(msg);
-            objectOutputStream.flush();
+            sendMessage(msg);
 
-            System.out.println("Send MSG");
-            objectOutputStream.writeObject(new Message(Message.Type.JOIN_GAME));
-            objectOutputStream.flush();
-            // --------------
+
 
             objectInputStream = new ObjectInputStream(socket.getInputStream());
             while (true) { // listen to messages from server
@@ -46,7 +52,9 @@ public class Network {
 
 
                     switch (message.type) {
-
+                        case CREATE_GAME_OK:
+                            System.out.println("Create game ok!");
+                            break;
 
                     }
 
@@ -70,10 +78,6 @@ public class Network {
 
             }
         }
-
-
-
-
     }
 
 }

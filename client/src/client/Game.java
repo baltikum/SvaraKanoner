@@ -1,6 +1,7 @@
 package client;
 
 import client.ui.AwesomeUtil;
+import common.Message;
 import common.Phase;
 
 import javax.swing.*;
@@ -25,13 +26,11 @@ public class Game extends JFrame implements ActionListener, ComponentListener {
     private List<Player> players = new ArrayList<>();
 
     Game() {
-        // connect to server
-        /* try {
-            network = new Network();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } */
         addComponentListener(this);
+        
+        // Start the network
+        network = new Network();
+        network.start();
 
         setTitle("Ryktet går!");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -89,4 +88,8 @@ public class Game extends JFrame implements ActionListener, ComponentListener {
     public void componentShown(ComponentEvent e) { }
     @Override
     public void componentHidden(ComponentEvent e) { }
+
+    public void sendMessage(Message message) {
+        network.sendMessage(message);
+    }
 }
