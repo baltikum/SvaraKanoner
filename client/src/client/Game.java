@@ -27,7 +27,7 @@ public class Game extends JFrame implements ActionListener, ComponentListener {
 
     Game() {
         addComponentListener(this);
-        
+
         // Start the network
         network = new Network();
         network.start();
