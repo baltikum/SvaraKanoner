@@ -4,6 +4,7 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class PercentLayout implements LayoutManager {
+    private int width, height, xOffset, yOffset;
 
     public static class Constraints {
         Component component;
@@ -52,15 +53,25 @@ public class PercentLayout implements LayoutManager {
         this.ratio = ratio;
     }
 
-    public Constraints getConstraints(Component comp) {
-        for (Constraints constraints : children) {
-            if (constraints.component == comp) {
-                return constraints;
+    public void setConstraintsRatioByWidth(Component comp, float x, float y, float width, float ratio) {
+        Constraints constraints = null;
+        for (Constraints it : children) {
+            if (it.component == comp) {
+                constraints = it;
+                break;
             }
         }
-        Constraints constraints = new Constraints(comp);
-        children.add(constraints);
-        return constraints;
+        if (constraints == null) {
+            constraints = new Constraints(comp);
+            children.add(constraints);
+        }
+        constraints.setPosition(x, y);
+        constraints.setSize(width, ratio);
+        Dimension size = constraints.getSize(this.width);
+        comp.setBounds(
+                xOffset + constraints.getX(this.width) - size.width / 2,
+                yOffset + constraints.getY(this.height) - size.height / 2,
+                size.width, size.height);
     }
 
     @Override
@@ -126,11 +137,11 @@ public class PercentLayout implements LayoutManager {
         Insets insets = parent.getInsets();
         int parentWidth = parent.getWidth() - (insets.left + insets.right);
         int parentHeight = parent.getHeight() - (insets.top + insets.bottom);
-        int xOffset = insets.left;
-        int yOffset = insets.top;
+        xOffset = insets.left;
+        yOffset = insets.top;
 
-        int width = (int)(parentHeight / ratio);
-        int height = (int)(parentWidth * ratio);
+        width = (int)(parentHeight / ratio);
+        height = (int)(parentWidth * ratio);
         if (parentWidth > width) {
             height = parentHeight;
             xOffset += (parentWidth - width) / 2;

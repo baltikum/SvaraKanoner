@@ -136,12 +136,15 @@ public class AwesomeUtil {
             @Override public void mouseReleased(MouseEvent e) { }
             @Override
             public void mouseEntered(MouseEvent e) {
+                AwesomeEffect effect = user.getEffect();
+                effect.setRepeatsLeft(-1);
                 user.getEffect().play();
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                user.getEffect().pause();
+                AwesomeEffect effect = user.getEffect();
+                effect.setRepeatsLeft(0);
             }
         });
     }

@@ -1,8 +1,9 @@
 package client.ui;
 
+import javax.swing.*;
 import java.awt.*;
 
-public class AwesomeImage extends Component implements AwesomeEffect.User {
+public class AwesomeImage extends JComponent implements AwesomeEffect.User {
     private AwesomeEffect effect;
     public Image image;
 
@@ -11,7 +12,7 @@ public class AwesomeImage extends Component implements AwesomeEffect.User {
     }
 
     @Override
-    public void paint(Graphics g) {
+    public void paintComponent(Graphics g) {
         if (!isVisible()) return;
         AwesomeUtil.drawImage((Graphics2D) g, effect, true, getSize(), image);
     }

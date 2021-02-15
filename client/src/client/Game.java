@@ -14,38 +14,41 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class Game extends JFrame implements ActionListener, ComponentListener {
+public class Game implements ActionListener, ComponentListener {
     public static Game game;
 
     public final Random random = new Random();
+    private final JFrame frame;
     private Phase currentPhase;
 
     private Network network;
 
     private String gameCode = "---";
-    private List<Player> players = new ArrayList<>();
+    private final List<Player> players = new ArrayList<>();
 
     Game() {
-        addComponentListener(this);
-
         // Start the network
         network = new Network();
         network.start();
 
-        setTitle("Ryktet går!");
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        // Initiate the window
+        frame = new JFrame("Ryktet går!");
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.addComponentListener(this);
 
-        setContentPane(new MainMenu());
-        setBackground(new Color(0xe67e22));
+        // Start with
+        frame.setContentPane(new MainMenu());
+        frame.setBackground(new Color(0xe67e22));
 
-        setPreferredSize(new Dimension(1000, 1000));
-        pack();
+        frame.setPreferredSize(new Dimension(1000, 1000));
+        frame.setMinimumSize(new Dimension(500, 500));
+        frame.pack();
 
-        setLocationRelativeTo(null);
-        setVisible(true);
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
 
-        Timer timer = new Timer(1000 / 100, this);
-        timer.setInitialDelay(1000 / 100);
+        Timer timer = new Timer(1000 / 30, this);
+        timer.setInitialDelay(1000 / 30);
         timer.start();
 
         game = this;
@@ -54,11 +57,16 @@ public class Game extends JFrame implements ActionListener, ComponentListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         AwesomeUtil.increaseDelta();
-        repaint();
+        frame.repaint();
     }
 
     public void setCurrentPhase(Phase phase) {
         currentPhase = phase;
+    }
+
+    public void setContentPanel(JPanel panel) {
+        frame.setContentPane(panel);
+        frame.pack();
     }
 
     public String getGameCode() {
@@ -79,17 +87,14 @@ public class Game extends JFrame implements ActionListener, ComponentListener {
 
     @Override
     public void componentResized(ComponentEvent e) {
-        AwesomeUtil.updateFonts(Math.min(getWidth(), getHeight()));
+        AwesomeUtil.updateFonts(Math.min(frame.getWidth(), frame.getHeight()));
     }
-
-    @Override
-    public void componentMoved(ComponentEvent e) { }
-    @Override
-    public void componentShown(ComponentEvent e) { }
-    @Override
-    public void componentHidden(ComponentEvent e) { }
 
     public void sendMessage(Message message) {
         network.sendMessage(message);
     }
+
+    @Override public void componentMoved(ComponentEvent e) { }
+    @Override public void componentShown(ComponentEvent e) { }
+    @Override public void componentHidden(ComponentEvent e) { }
 }

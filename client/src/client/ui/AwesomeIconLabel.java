@@ -19,7 +19,8 @@ public class AwesomeIconLabel extends JComponent implements AwesomeEffect.User {
     }
 
     @Override
-    public void paint(Graphics g) {
+    public void paintComponent(Graphics g) {
+        g.fillRect(0, 0, getWidth(), getHeight());
         Dimension iconDim = getSize();
         Dimension textDim = getSize();
         iconDim.width = getHeight();

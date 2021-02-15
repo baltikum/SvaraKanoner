@@ -91,6 +91,10 @@ public class AwesomeEffect {
         direction = !direction;
     }
 
+    public void setRepeatsLeft(int repeats) {
+        repeatsLeft = repeats;
+    }
+
     public int getEffects() {
         return effects;
     }

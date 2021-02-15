@@ -56,11 +56,11 @@ public class JoinPhase extends Phase {
 
         AwesomeText gameCode = new AwesomeText(Game.game.getGameCode(), AwesomeUtil.BIG_TEXT);
         panel.add(gameCode);
-        layout.getConstraints(gameCode).setPosition(0.5f, .167f * 2).setSize(.5f, 0.25f);
+        layout.setConstraintsRatioByWidth(gameCode, 0.5f, .167f * 2, .5f, 0.25f);
 
         AwesomeButton ready = new AwesomeButton("Ready!", AwesomeUtil.MEDIUM_TEXT);
         panel.add(ready);
-        layout.getConstraints(ready).setPosition(.75f, .167f * 5).setSize(.3f, 0.25f);
+        layout.setConstraintsRatioByWidth(ready, .75f, .167f * 5, .3f, 0.25f);
 
         ready.addActionListener(e -> {
             isReady = !isReady;
@@ -69,16 +69,14 @@ public class JoinPhase extends Phase {
 
         AwesomeButton leave = new AwesomeButton("Leave", AwesomeUtil.MEDIUM_TEXT);
         panel.add(leave);
-        layout.getConstraints(leave).setPosition(.25f, .167f * 5).setSize(.3f, 0.25f);
+        layout.setConstraintsRatioByWidth(leave, .25f, .167f * 5, .3f, 0.25f);
         leave.addActionListener(e -> {
             Game.game.setCurrentPhase(null);
-            Game.game.setContentPane(new MainMenu());
-            Game.game.pack();
+            Game.game.setContentPanel(new MainMenu());
         });
 
 
-        Game.game.setContentPane(panel);
-        Game.game.pack();
+        Game.game.setContentPanel(panel);
 
         addPlayer(new Player(0, "Jesper", playerIcons[0]));
         addPlayer(new Player(1, "Mattias", playerIcons[2]));
@@ -97,10 +95,9 @@ public class JoinPhase extends Phase {
         AwesomeIconLabel playerLabel = new AwesomeIconLabel(player.getAvatar(), player.getName());
         playerLabel.setRotation(positionData[positionIndex * POSITION_DATA_COMPONENTS + 2]);
         panel.add(playerLabel);
-        ((PercentLayout)panel.getLayout()).getConstraints(playerLabel).setPosition(
+        ((PercentLayout)panel.getLayout()).setConstraintsRatioByWidth(playerLabel,
                 positionData[positionIndex * POSITION_DATA_COMPONENTS],
-                positionData[positionIndex * POSITION_DATA_COMPONENTS + 1]
-        ).setSize(0.2f, 0.3f);
+                positionData[positionIndex * POSITION_DATA_COMPONENTS + 1],0.2f, 0.3f);
 
         AwesomeEffect.create()
                 .addScaleKey(0.0f, 0.0f, 0)
@@ -108,8 +105,6 @@ public class JoinPhase extends Phase {
                 .addScaleKey(1.0f , 1.0f, 1000)
                 .addRotationKey(positionData[positionIndex * POSITION_DATA_COMPONENTS + 2], 0)
                 .animate(playerLabel, AwesomeEffect.COMPONENT);
-
-        Game.game.pack();
     }
 
     @Override

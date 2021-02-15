@@ -30,8 +30,7 @@ public class AwesomeText extends JComponent implements AwesomeEffect.User {
     }
 
     @Override
-    public void paint(Graphics g) {
-        if (!isVisible()) return;
+    public void paintComponent(Graphics g) {
         AwesomeUtil.drawBouncingText((Graphics2D) g, effect, false, getSize(), text, textSize, Color.BLACK, AwesomeUtil.CENTER);
     }
 

@@ -34,8 +34,7 @@ public class AwesomeButton extends JButton implements AwesomeEffect.User {
     }
 
     @Override
-    public void paint(Graphics g) {
-        if (!isVisible()) return;
+    public void paintComponent(Graphics g) {
         AwesomeUtil.drawTextAndBackground((Graphics2D) g, effect, getSize(), getText(), textSize, Color.RED, background, AwesomeUtil.CENTER);
     }
 

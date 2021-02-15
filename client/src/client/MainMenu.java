@@ -2,11 +2,9 @@ package client;
 
 import client.ui.*;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.*;
 import common.GameSettings;
 
 public class MainMenu extends JPanel {
@@ -19,6 +17,8 @@ public class MainMenu extends JPanel {
 
     MainMenu() {
         super(new CardLayout());
+        setBackground(new Color(0xe67e22));
+
 
         BufferedImage tileMap = Assets.loadImage("mainmenu.png");
         wham = Assets.getTile(tileMap, 0, 0, 3, 1, 8);
@@ -37,8 +37,7 @@ public class MainMenu extends JPanel {
     private void initMainMenu() {
         PercentLayout layout = new PercentLayout(1.0f);
         JPanel panel = new JPanel(layout);
-        panel.setOpaque(true);
-        panel.setBackground(new Color(0, 0, 0, 0));
+        panel.setBackground(new Color(0xe67e22));
 
         AwesomeText title = new AwesomeText("Hello!", AwesomeUtil.BIG_TEXT);
         AwesomeButton joinGameButton = new AwesomeButton("Join Game", wham, AwesomeUtil.MEDIUM_TEXT);
@@ -47,7 +46,7 @@ public class MainMenu extends JPanel {
         AwesomeImage rocketFlame = new AwesomeImage(flame0);
         rocketFlame.setVisible(false);
 
-        AwesomeUtil.wiggleOnHover(joinGameButton, (float)Math.PI * .1f);
+        AwesomeUtil.wiggleOnHover(joinGameButton, 10.0f);
         AwesomeUtil.scaleOnHover(createGameButton, 1.3f);
 
         joinGameButton.addActionListener(e -> ((CardLayout)getLayout()).next(this) );
@@ -77,11 +76,11 @@ public class MainMenu extends JPanel {
         panel.add(quitButton);
         panel.add(rocketFlame);
 
-        layout.getConstraints(title).setPosition(0.5f, 0.15f).setSize(.5f, .2f);
-        layout.getConstraints(joinGameButton).setPosition(0.25f, 0.4f).setSize(.4f, .5f);
-        layout.getConstraints(createGameButton).setPosition(0.75f, 0.4f).setSize(.4f, .5f);
-        layout.getConstraints(quitButton).setPosition(0.5f, 0.7f).setSize(.6f, .5f);
-        layout.getConstraints(rocketFlame).setPosition(0.28f, 0.7f).setSize(.1f, 1.0f);
+        layout.setConstraintsRatioByWidth(title, 0.5f, 0.15f, .5f, .2f);
+        layout.setConstraintsRatioByWidth(joinGameButton, 0.25f, 0.4f, .4f, .5f);
+        layout.setConstraintsRatioByWidth(createGameButton, 0.75f, 0.4f, .4f, .5f);
+        layout.setConstraintsRatioByWidth(quitButton, 0.5f, 0.7f, .6f, .5f);
+        layout.setConstraintsRatioByWidth(rocketFlame, 0.28f, 0.7f, .1f, 1.0f);
 
         add(panel);
     }
@@ -89,8 +88,7 @@ public class MainMenu extends JPanel {
     private void initJoinGamePanel() {
         PercentLayout layout = new PercentLayout(1.0f);
         JPanel panel = new JPanel(layout);
-        panel.setBackground(new Color(0, 0, 0, 0));
-        panel.setOpaque(true);
+        panel.setBackground(new Color(0xe67e22));
 
         AwesomeImage bg = new AwesomeImage(block);
         AwesomeText code = new AwesomeText("Enter code", AwesomeUtil.BIG_TEXT);
@@ -106,14 +104,14 @@ public class MainMenu extends JPanel {
         panel.add(code);
         panel.add(bg);
 
-        layout.getConstraints(back).setPosition(0.3f, 0.8f).setSize(0.3f, 0.5f);
-        layout.getConstraints(accept).setPosition(0.7f, 0.8f).setSize(0.3f, 0.5f);
-        layout.getConstraints(code).setPosition(0.5f, 0.3f).setSize(0.8f, 0.2f);
-        layout.getConstraints(input).setPosition(0.5f, 0.5f).setSize(0.8f, 0.2f);
-        layout.getConstraints(bg).setPosition(0.5f, 0.5f).setSize(1.0f, 1.0f);
+        layout.setConstraintsRatioByWidth(back, 0.3f, 0.8f, 0.3f, 0.5f);
+        layout.setConstraintsRatioByWidth(accept, 0.7f, 0.8f, 0.3f, 0.5f);
+        layout.setConstraintsRatioByWidth(code, 0.5f, 0.3f, 0.8f, 0.2f);
+        layout.setConstraintsRatioByWidth(input, 0.5f, 0.5f, 0.8f, 0.2f);
+        layout.setConstraintsRatioByWidth(bg, 0.5f, 0.5f, 1.0f, 1.0f);
 
-        AwesomeUtil.wiggleOnHover(back, (float)Math.PI * .1f);
-        AwesomeUtil.wiggleOnHover(accept, (float)Math.PI * .1f);
+        AwesomeUtil.wiggleOnHover(back, 10.0f);
+        AwesomeUtil.wiggleOnHover(accept, 10.0f);
 
         back.addActionListener(e -> {
             ((CardLayout)getLayout()).previous(this);
@@ -125,8 +123,7 @@ public class MainMenu extends JPanel {
     public void initCreateGamePanel() {
         PercentLayout layout = new PercentLayout(1.0f);
         JPanel panel = new JPanel(layout);
-        panel.setBackground(new Color(0, 0, 0, 0));
-        panel.setOpaque(true);
+        panel.setBackground(new Color(0xe67e22));
 
         AwesomeText maxPlayersLabel = new AwesomeText("MAX PLAYERS:");
         AwesomeButton increaseMaxPlayers = new AwesomeButton(rightArrow);
@@ -150,10 +147,10 @@ public class MainMenu extends JPanel {
         panel.add(increaseMaxPlayers);
         panel.add(decreaseMaxPlayers);
         panel.add(maxPlayers);
-        layout.getConstraints(maxPlayersLabel).setPosition(0.3f, 0.15f).setSize(0.4f, 0.25f);
-        layout.getConstraints(increaseMaxPlayers).setPosition(0.9f, 0.15f).setSize(0.1f, 1.0f);
-        layout.getConstraints(decreaseMaxPlayers).setPosition(0.6f, 0.15f).setSize(0.1f, 1.0f);
-        layout.getConstraints(maxPlayers).setPosition(0.75f, 0.15f).setSize(0.2f, 0.5f);
+        layout.setConstraintsRatioByWidth(maxPlayersLabel, 0.3f, 0.15f, 0.4f, 0.25f);
+        layout.setConstraintsRatioByWidth(increaseMaxPlayers, 0.9f, 0.15f, 0.1f, 1.0f);
+        layout.setConstraintsRatioByWidth(decreaseMaxPlayers, 0.6f, 0.15f, 0.1f, 1.0f);
+        layout.setConstraintsRatioByWidth(maxPlayers, 0.75f, 0.15f, 0.2f, 0.5f);
 
         AwesomeText numRoundsLabel = new AwesomeText("ROUNDS:");
         AwesomeButton increase = new AwesomeButton(rightArrow);
@@ -177,10 +174,10 @@ public class MainMenu extends JPanel {
         panel.add(increase);
         panel.add(decrease);
         panel.add(numRounds);
-        layout.getConstraints(numRoundsLabel).setPosition(0.3f, 0.25f).setSize(0.4f, 0.25f);
-        layout.getConstraints(decrease).setPosition(0.6f, 0.25f).setSize(0.1f, 1.0f);
-        layout.getConstraints(increase).setPosition(0.9f, 0.25f).setSize(0.1f, 1.0f);
-        layout.getConstraints(numRounds).setPosition(0.75f, 0.25f).setSize(0.2f, 0.5f);
+        layout.setConstraintsRatioByWidth(numRoundsLabel, 0.3f, 0.25f, 0.4f, 0.25f);
+        layout.setConstraintsRatioByWidth(decrease, 0.6f, 0.25f, 0.1f, 1.0f);
+        layout.setConstraintsRatioByWidth(increase, 0.9f, 0.25f, 0.1f, 1.0f);
+        layout.setConstraintsRatioByWidth(numRounds, 0.75f, 0.25f, 0.2f, 0.5f);
 
         AwesomeText drawTimeLabel = new AwesomeText("DRAW TIME:");
         AwesomeButton drawTimeIncrease = new AwesomeButton(rightArrow);
@@ -206,10 +203,10 @@ public class MainMenu extends JPanel {
         panel.add(drawTimeIncrease);
         panel.add(drawTimeDecrease);
         panel.add(drawTime);
-        layout.getConstraints(drawTimeLabel).setPosition(0.3f, 0.35f).setSize(0.4f, 0.25f);
-        layout.getConstraints(drawTimeDecrease).setPosition(0.6f, 0.35f).setSize(0.1f, 1.0f);
-        layout.getConstraints(drawTimeIncrease).setPosition(0.9f, 0.35f).setSize(0.1f, 1.0f);
-        layout.getConstraints(drawTime).setPosition(0.75f, 0.35f).setSize(0.2f, 0.5f);
+        layout.setConstraintsRatioByWidth(drawTimeLabel, 0.3f, 0.35f, 0.4f, 0.25f);
+        layout.setConstraintsRatioByWidth(drawTimeDecrease, 0.6f, 0.35f, 0.1f, 1.0f);
+        layout.setConstraintsRatioByWidth(drawTimeIncrease, 0.9f, 0.35f, 0.1f, 1.0f);
+        layout.setConstraintsRatioByWidth(drawTime, 0.75f, 0.35f, 0.2f, 0.5f);
 
         AwesomeText guessTimeLabel = new AwesomeText("GUESS TIME:");
         AwesomeButton guessTimeIncrease = new AwesomeButton(rightArrow);
@@ -235,10 +232,10 @@ public class MainMenu extends JPanel {
         panel.add(guessTimeIncrease);
         panel.add(guessTimeDecrease);
         panel.add(guessTime);
-        layout.getConstraints(guessTimeLabel).setPosition(0.3f, 0.45f).setSize(0.4f, 0.25f);
-        layout.getConstraints(guessTimeDecrease).setPosition(0.6f, 0.45f).setSize(0.1f, 1.0f);
-        layout.getConstraints(guessTimeIncrease).setPosition(0.9f, 0.45f).setSize(0.1f, 1.0f);
-        layout.getConstraints(guessTime).setPosition(0.75f, 0.45f).setSize(0.2f, 0.5f);
+        layout.setConstraintsRatioByWidth(guessTimeLabel, 0.3f, 0.45f, 0.4f, 0.25f);
+        layout.setConstraintsRatioByWidth(guessTimeDecrease, 0.6f, 0.45f, 0.1f, 1.0f);
+        layout.setConstraintsRatioByWidth(guessTimeIncrease, 0.9f, 0.45f, 0.1f, 1.0f);
+        layout.setConstraintsRatioByWidth(guessTime, 0.75f, 0.45f, 0.2f, 0.5f);
 
         AwesomeText getChoicesLabel = new AwesomeText("CHOICES ENABLED:");
         AwesomeButton choicesCountIncrease = new AwesomeButton(rightArrow);
@@ -250,21 +247,21 @@ public class MainMenu extends JPanel {
         panel.add(choicesCountIncrease);
         panel.add(choicesCountDecrease);
         panel.add(getChoices);
-        layout.getConstraints(getChoicesLabel).setPosition(0.3f, 0.55f).setSize(0.4f, 0.25f);
-        layout.getConstraints(choicesCountIncrease).setPosition(0.9f, 0.55f).setSize(0.1f, 1.0f);
-        layout.getConstraints(choicesCountDecrease).setPosition(0.6f, 0.55f).setSize(0.1f, 1.0f);
-        layout.getConstraints(getChoices).setPosition(0.75f, 0.55f).setSize(0.2f, 0.5f);
+        layout.setConstraintsRatioByWidth(getChoicesLabel, 0.3f, 0.55f, 0.4f, 0.25f);
+        layout.setConstraintsRatioByWidth(choicesCountIncrease, 0.9f, 0.55f, 0.1f, 1.0f);
+        layout.setConstraintsRatioByWidth(choicesCountDecrease, 0.6f, 0.55f, 0.1f, 1.0f);
+        layout.setConstraintsRatioByWidth(getChoices, 0.75f, 0.55f, 0.2f, 0.5f);
 
         AwesomeButton create = new AwesomeButton("Create", AwesomeUtil.BIG_TEXT);
         AwesomeButton back = new AwesomeButton("Back", AwesomeUtil.BIG_TEXT);
         panel.add(create);
         panel.add(back);
-        layout.getConstraints(create).setPosition(0.75f, 0.8f).setSize(0.3f, 0.5f);
-        layout.getConstraints(back).setPosition(0.25f, 0.8f).setSize(0.3f, 0.5f);
+        layout.setConstraintsRatioByWidth(create, 0.75f, 0.8f, 0.3f, 0.5f);
+        layout.setConstraintsRatioByWidth(back, 0.25f, 0.8f, 0.3f, 0.5f);
         create.addActionListener(e -> System.out.println("You created a server! (almost)"));
         back.addActionListener(e -> ((CardLayout)getLayout()).first(this));
-        AwesomeUtil.wiggleOnHover(create, 0.1f);
-        AwesomeUtil.wiggleOnHover(back, 0.1f);
+        AwesomeUtil.wiggleOnHover(create, 10.0f);
+        AwesomeUtil.wiggleOnHover(back, 10.0f);
 
         add(panel);
     }
