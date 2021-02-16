@@ -10,7 +10,7 @@ public class AwesomeButton extends JButton implements AwesomeEffect.User {
 
     private int textSize;
     private AwesomeEffect effect;
-    private final Image background;
+    private Image background;
 
     public AwesomeButton(String text, int textSize) {
         this(text, null, textSize);
@@ -31,6 +31,14 @@ public class AwesomeButton extends JButton implements AwesomeEffect.User {
         setOpaque(false);
 
         setCursor(new Cursor(Cursor.HAND_CURSOR));
+    }
+
+    public void setTextSize(int size) {
+        textSize = size;
+    }
+
+    public void setBackground(Image img) {
+        background = img;
     }
 
     @Override
