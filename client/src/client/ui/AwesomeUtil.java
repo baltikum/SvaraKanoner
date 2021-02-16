@@ -26,7 +26,7 @@ public class AwesomeUtil {
     private static long lastDeltaIncrease = 0;
     private static final Set<AwesomeEffect> activeEffects = new HashSet<>();
 
-    private static void loadFont() {
+    public static Font loadFont() {
         if (font == null) {
             try {
                 font = Font.createFont(Font.TRUETYPE_FONT, new File(resourcesPath() + "GloriaHallelujah.ttf"));
@@ -35,6 +35,7 @@ public class AwesomeUtil {
                 font = new Font(Font.SERIF, Font.BOLD, 30);
             }
         }
+        return font;
     }
 
     public static Font getFont(int textSize) {

@@ -19,7 +19,6 @@ public class MainMenu extends JPanel {
         super(new CardLayout());
         setBackground(new Color(0xe67e22));
 
-
         BufferedImage tileMap = Assets.loadImage("mainmenu.png");
         wham = Assets.getTile(tileMap, 0, 0, 3, 1, 8);
         leftArrow = Assets.getTile(tileMap, 0, 4, 1, 1,8);
@@ -95,7 +94,7 @@ public class MainMenu extends JPanel {
         AwesomeButton accept = new AwesomeButton("Go!", AwesomeUtil.BIG_TEXT);
         AwesomeButton back = new AwesomeButton("Back", AwesomeUtil.BIG_TEXT);
         JTextField input = new JTextField();
-        input.setFont(AwesomeUtil.getFont(AwesomeUtil.BIG_TEXT));
+        input.setFont(AwesomeUtil.loadFont().deriveFont(32.0f));
         input.setHorizontalAlignment(SwingConstants.CENTER);
 
         panel.add(back);

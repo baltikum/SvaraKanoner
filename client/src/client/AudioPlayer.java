@@ -6,13 +6,11 @@ import java.io.IOException;
 
 public class AudioPlayer {
 
-    private boolean isMusicMuted = false;
-    private boolean isEffectsMuted = false;
     private Clip audioClip;
 
     public AudioPlayer() {
         File audioFile = Assets.getResourceFile("bensound-funnysong.wav");
-
+        Settings settings = Game.game.getSettings();
         try {
             AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
             AudioFormat format = audioStream.getFormat();
@@ -20,8 +18,14 @@ public class AudioPlayer {
 
             audioClip = (Clip) AudioSystem.getLine(info);
             audioClip.open(audioStream);
-            audioClip.start();
-            audioClip.loop(Clip.LOOP_CONTINUOUSLY);
+
+            if (!settings.muteMusic)
+                audioClip.loop(Clip.LOOP_CONTINUOUSLY);
+
+            FloatControl gainControl = (FloatControl) audioClip.getControl(FloatControl.Type.MASTER_GAIN);
+            float range = gainControl.getMaximum() - gainControl.getMinimum();
+            float gain = (range * settings.musicVolume) + gainControl.getMinimum();
+            gainControl.setValue(gain);
 
         } catch (UnsupportedAudioFileException ex) {
             System.out.println("The specified audio file is not supported.");
@@ -37,33 +41,33 @@ public class AudioPlayer {
     }
 
     public void muteMusic() {
-        isMusicMuted = true;
+        Game.game.getSettings().muteMusic = true;
         if (audioClip != null) {
             audioClip.stop();
         }
     }
 
     public void unmuteMusic() {
-        isMusicMuted = false;
+        Game.game.getSettings().muteMusic = false;
         if (audioClip != null) {
-            audioClip.start();
+            audioClip.loop(Clip.LOOP_CONTINUOUSLY);
         }
     }
 
     public void muteEffects() {
-        isEffectsMuted = true;
+        Game.game.getSettings().muteEffects = true;
     }
 
     public void unmuteEffects() {
-        isEffectsMuted = false;
+        Game.game.getSettings().muteEffects = false;
     }
 
     public boolean isMusicMuted() {
-        return isMusicMuted;
+        return Game.game.getSettings().muteMusic;
     }
 
     public boolean isEffectsMuted() {
-        return isEffectsMuted;
+        return Game.game.getSettings().muteEffects;
     }
 
 }
