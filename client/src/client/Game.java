@@ -72,21 +72,28 @@ public class Game implements ActionListener, ComponentListener {
 
         // Icons
         BufferedImage icons = Assets.loadImage("ui-icons.png");
-        Image muteIcon = Assets.getTile(icons, 0, 0, 1, 1, 4);
-        Image unmuteIcon = Assets.getTile(icons, 1, 0, 1, 1, 4);
+        Image muteMusicIcon = Assets.getTile(icons, 0, 0, 1, 1, 4);
+        Image unmuteMusicIcon = Assets.getTile(icons, 1, 0, 1, 1, 4);
+        Image muteEffectsIcon = Assets.getTile(icons, 2, 1, 1, 1, 4);
+        Image unmuteEffectsIcon = Assets.getTile(icons, 3, 1, 1, 1, 4);
 
         // Mute settings
         JLabel copyRight = new JLabel("Music: www.bensound.com");
-        AwesomeButton mute = new AwesomeButton(muteIcon);
-        mute.setPreferredSize(new Dimension(32, 32));
-        panel.add(mute);
+        AwesomeButton muteMusic = new AwesomeButton(muteMusicIcon);
+        AwesomeButton muteEffects = new AwesomeButton(muteEffectsIcon);
+        muteMusic.setPreferredSize(new Dimension(32, 32));
+        muteEffects.setPreferredSize(new Dimension(32, 32));
+        panel.add(muteMusic);
+        panel.add(muteEffects);
         panel.add(copyRight);
         layout.putConstraint(SpringLayout.NORTH, copyRight, 5, SpringLayout.NORTH, panel);
         layout.putConstraint(SpringLayout.EAST, copyRight, -10, SpringLayout.EAST, panel);
-        layout.putConstraint(SpringLayout.NORTH, mute, 5, SpringLayout.SOUTH, copyRight);
-        layout.putConstraint(SpringLayout.EAST, mute, -10, SpringLayout.EAST, panel);
+        layout.putConstraint(SpringLayout.NORTH, muteMusic, 5, SpringLayout.SOUTH, copyRight);
+        layout.putConstraint(SpringLayout.EAST, muteMusic, -10, SpringLayout.EAST, panel);
+        layout.putConstraint(SpringLayout.NORTH, muteEffects, 5, SpringLayout.SOUTH, muteMusic);
+        layout.putConstraint(SpringLayout.EAST, muteEffects, -10, SpringLayout.EAST, panel);
 
-        AwesomeEffect.create()
+        AwesomeEffect.Builder effect = AwesomeEffect.create()
                 .addRotationKey(20.0f, 400)
                 .addRotationKey(-20.0f, 1200)
                 .addRotationKey(0.0f, 1600)
@@ -95,11 +102,17 @@ public class Game implements ActionListener, ComponentListener {
                 .addRotationKey(0.0f, 3200)
                 .addTranslationYKey(4, 800)
                 .addTranslationYKey(-4, 2400)
-                .addTranslationYKey(0, 3200).repeats(-1).animate(mute, AwesomeEffect.COMPONENT);
+                .addTranslationYKey(0, 3200).repeats(-1);
+        effect.animate(muteMusic, AwesomeEffect.COMPONENT);
+        effect.animate(muteEffects, AwesomeEffect.COMPONENT);
 
-        mute.addActionListener(e -> {
-            mute.setBackground(audioPlayer.isMuted() ? muteIcon : unmuteIcon);
-            if (audioPlayer.isMuted()) audioPlayer.unmute(); else audioPlayer.mute();
+        muteMusic.addActionListener(e -> {
+            muteMusic.setBackground(audioPlayer.isMusicMuted() ? muteMusicIcon : unmuteMusicIcon);
+            if (audioPlayer.isMusicMuted()) audioPlayer.unmuteMusic(); else audioPlayer.muteMusic();
+        });
+        muteEffects.addActionListener(e -> {
+            muteEffects.setBackground(audioPlayer.isEffectsMuted() ? muteEffectsIcon : unmuteEffectsIcon);
+            if (audioPlayer.isEffectsMuted()) audioPlayer.unmuteEffects(); else audioPlayer.muteEffects();
         });
 
         // Error label
@@ -112,6 +125,7 @@ public class Game implements ActionListener, ComponentListener {
         layout.putConstraint(SpringLayout.EAST, errorMsg, -10, SpringLayout.EAST, panel);
         layout.putConstraint(SpringLayout.SOUTH, errorMsg, -100, SpringLayout.SOUTH, panel);
 
+        // Chat
         chat = new Chat(icons);
         panel.add(chat);
         layout.putConstraint(SpringLayout.EAST, chat, -10, SpringLayout.EAST, panel);
@@ -171,17 +185,18 @@ public class Game implements ActionListener, ComponentListener {
         }
     }
 
+    public void sendMessage(Message message) {
+        network.sendMessage(message);
+    }
+
     @Override
     public void componentResized(ComponentEvent e) {
         Container container = frame.getContentPane();
-        AwesomeUtil.updateFonts(Math.min(container.getWidth(), container.getHeight()));
+        Dimension size = container.getSize();
+        AwesomeUtil.updateFonts(Math.min(size.width, size.height));
         for (Component comp : container.getComponents()) {
-            comp.setBounds(0, 0, container.getWidth(), container.getHeight());
+            comp.setSize(size.width, size.height);
         }
-    }
-
-    public void sendMessage(Message message) {
-        network.sendMessage(message);
     }
 
     @Override public void componentMoved(ComponentEvent e) { }

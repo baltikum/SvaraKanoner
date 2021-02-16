@@ -6,7 +6,8 @@ import java.io.IOException;
 
 public class AudioPlayer {
 
-    private boolean isMuted = false;
+    private boolean isMusicMuted = false;
+    private boolean isEffectsMuted = false;
     private Clip audioClip;
 
     public AudioPlayer() {
@@ -35,18 +36,34 @@ public class AudioPlayer {
 
     }
 
-    public void mute() {
-        isMuted = true;
-        audioClip.stop();
+    public void muteMusic() {
+        isMusicMuted = true;
+        if (audioClip != null) {
+            audioClip.stop();
+        }
     }
 
-    public void unmute() {
-        isMuted = false;
-        audioClip.start();
+    public void unmuteMusic() {
+        isMusicMuted = false;
+        if (audioClip != null) {
+            audioClip.start();
+        }
     }
 
-    public boolean isMuted() {
-        return isMuted;
+    public void muteEffects() {
+        isEffectsMuted = true;
+    }
+
+    public void unmuteEffects() {
+        isEffectsMuted = false;
+    }
+
+    public boolean isMusicMuted() {
+        return isMusicMuted;
+    }
+
+    public boolean isEffectsMuted() {
+        return isEffectsMuted;
     }
 
 }
