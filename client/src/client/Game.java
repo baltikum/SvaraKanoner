@@ -24,8 +24,7 @@ public class Game implements ActionListener, ComponentListener {
     private final JFrame frame;
     private Phase currentPhase;
     private Chat chat;
-
-    private boolean isMuted = false;
+    private AudioPlayer audioPlayer = new AudioPlayer();
 
     private Network network;
     private JLabel errorMsg;
@@ -77,23 +76,30 @@ public class Game implements ActionListener, ComponentListener {
         Image unmuteIcon = Assets.getTile(icons, 1, 0, 1, 1, 4);
 
         // Mute settings
+        JLabel copyRight = new JLabel("Music: www.bensound.com");
         AwesomeButton mute = new AwesomeButton(muteIcon);
         mute.setPreferredSize(new Dimension(32, 32));
         panel.add(mute);
-        layout.putConstraint(SpringLayout.NORTH, mute, 10, SpringLayout.NORTH, panel);
+        panel.add(copyRight);
+        layout.putConstraint(SpringLayout.NORTH, copyRight, 5, SpringLayout.NORTH, panel);
+        layout.putConstraint(SpringLayout.EAST, copyRight, -10, SpringLayout.EAST, panel);
+        layout.putConstraint(SpringLayout.NORTH, mute, 5, SpringLayout.SOUTH, copyRight);
         layout.putConstraint(SpringLayout.EAST, mute, -10, SpringLayout.EAST, panel);
 
         AwesomeEffect.create()
                 .addRotationKey(20.0f, 400)
                 .addRotationKey(-20.0f, 1200)
                 .addRotationKey(0.0f, 1600)
-                .addTranslationYKey(4, 400)
-                .addTranslationYKey(-4, 1200)
-                .addTranslationYKey(0, 1600).repeats(-1).animate(mute, AwesomeEffect.COMPONENT);
+                .addRotationKey(20.0f, 2000)
+                .addRotationKey(-20.0f, 2800)
+                .addRotationKey(0.0f, 3200)
+                .addTranslationYKey(4, 800)
+                .addTranslationYKey(-4, 2400)
+                .addTranslationYKey(0, 3200).repeats(-1).animate(mute, AwesomeEffect.COMPONENT);
 
         mute.addActionListener(e -> {
-            mute.setBackground(isMuted ? muteIcon : unmuteIcon);
-            isMuted = !isMuted;
+            mute.setBackground(audioPlayer.isMuted() ? muteIcon : unmuteIcon);
+            if (audioPlayer.isMuted()) audioPlayer.unmute(); else audioPlayer.mute();
         });
 
         // Error label

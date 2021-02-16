@@ -80,7 +80,7 @@ public class AwesomeUtil {
         }
         int baseY = dimension.height / 2 + (metrics.getAscent() + descent) / 2 - descent;
         for (int i = 0; i < data.length; i++) {
-            int y = baseY - (int)(Math.sin((float)i * .5f + timeSinceStart * 2.0f) * dimension.height * 0.1f);
+            int y = baseY - (int)(Math.sin((float)i * .5f + timeSinceStart * 2.0f) * dimension.height * 0.05f);
             g.drawChars(data, i, 1, x, y);
             x += g.getFontMetrics().charWidth(data[i]);
         }

@@ -11,6 +11,10 @@ import java.io.IOException;
 public class Assets {
     private static BufferedImage errorImage = null;
 
+    public static File getResourceFile(String name) {
+        return new File(AwesomeUtil.resourcesPath() + name);
+    }
+
     public static BufferedImage getErrorImage() {
         if (errorImage == null) {
             errorImage = new BufferedImage(128, 128, BufferedImage.TYPE_4BYTE_ABGR);

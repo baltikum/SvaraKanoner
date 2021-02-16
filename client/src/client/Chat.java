@@ -16,7 +16,8 @@ public class Chat extends JPanel {
     private boolean isOpen = false;
     private JButton closeChat;
     private JTextField inputField;
-    private JTextPane messageData;
+    private JTextArea messageData;
+    private JScrollPane messageScrollPane;
 
     public Chat(BufferedImage icons) {
         super(new BorderLayout());
@@ -35,9 +36,16 @@ public class Chat extends JPanel {
         buttonsPanel.setOpaque(false);
         inputPanel.setOpaque(false);
 
-        messageData = new JTextPane();
+        messageData = new JTextArea();
         messageData.setOpaque(false);
         messageData.setFont(messageData.getFont().deriveFont(20.0f));
+        messageData.setLineWrap(true);
+        messageScrollPane = new JScrollPane(messageData);
+        messageScrollPane.setOpaque(false);
+        messageScrollPane.getViewport().setOpaque(false);
+        messageScrollPane.setBorder(null);
+        messageScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+        messageScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
         inputField = new JTextField();
         closeChat = new AwesomeButton(closeIcon);
@@ -58,7 +66,7 @@ public class Chat extends JPanel {
         inputPanel.add(sendChat);
 
         add(inputPanel, BorderLayout.PAGE_END);
-        add(messageData, BorderLayout.CENTER);
+        add(messageScrollPane, BorderLayout.CENTER);
         add(buttonsPanel, BorderLayout.LINE_END);
 
         closeChat.setVisible(false);
@@ -96,11 +104,11 @@ public class Chat extends JPanel {
     }
 
     public void scrollUp() {
-        open();
+        messageScrollPane.getVerticalScrollBar().setValue(messageScrollPane.getVerticalScrollBar().getValue() - 30);
     }
 
     public void scrollDown() {
-        open();
+        messageScrollPane.getVerticalScrollBar().setValue(messageScrollPane.getVerticalScrollBar().getValue() + 30);
     }
 
     public void send() {
@@ -108,14 +116,7 @@ public class Chat extends JPanel {
 
         String msg = inputField.getText();
         if (!msg.isEmpty()) {
-            StyleContext sc = StyleContext.getDefaultStyleContext();
-            AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, Color.CYAN);
-
-            int len = messageData.getDocument().getLength();
-            messageData.setCaretPosition(len);
-            messageData.setCharacterAttributes(aset, false);
-            messageData.replaceSelection(msg + "\n");
-
+            messageData.append(msg + "\n");
             inputField.setText("");
         }
     }
