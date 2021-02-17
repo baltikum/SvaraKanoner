@@ -13,7 +13,6 @@ public class PickWordPhase extends Phase {
     private ArrayList<String> words;
     private int pickedWordIndex[];
     private int numberOfPicks;
-    private Timer timeLeft;
     GameSettings settings;
 
     public PickWordPhase(ArrayList<ClientHandler> clients, RoundData round, GameSettings settings) {
@@ -28,13 +27,24 @@ public class PickWordPhase extends Phase {
 
     }
 
+    /**
+     * Use to increment variable
+     */
     private void incrementNumberOfPicks(){
         this.numberOfPicks++;
     }
 
+    /**
+     * Generates words for the players to pick.
+     * @return ArrayList<String>
+     */
     public ArrayList<String> generateGuessingWords() {
         return AllWords.getWords(clients.size()*settings.getNumberOfWords());
     }
+
+
+
+
 
 
     @Override
