@@ -156,6 +156,17 @@ public class GameSettings implements Serializable {
         return true;
     }
 
+    public boolean saveSettingsIni() {
+        try (
+                FileOutputStream fileOutStream = new FileOutputStream("server/settings/snopp.ini");
+                ObjectOutputStream objOutStream = new ObjectOutputStream(fileOutStream); ) {
+                objOutStream.writeUTF("Skakiga händer: " + this.shakyHands );
+                return true;
+        } catch(IOException ex) {
+            return false;
+        }
+    }
+
     /**
      *
      * Loads GameSettings from host to game.

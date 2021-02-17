@@ -23,7 +23,7 @@ public class AllWords {
     public AllWords(){
 
         this.allWords = new ArrayList<String>();
-        this.file = new File("server/words/englishWords.txt");
+        this.file = new File("server/words/en.txt");
         this.random = new Random();
 
         try (
