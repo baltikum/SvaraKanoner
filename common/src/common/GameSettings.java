@@ -1,5 +1,7 @@
 package common;
 
+import com.sun.tools.javac.Main;
+
 import java.io.*;
 
 /**
@@ -10,19 +12,18 @@ import java.io.*;
 
 public class GameSettings implements Serializable {
 
-    private long pickTimeMilliseconds;
-    private long drawTimeMilliseconds;
-    private long guessTimeMilliseconds;
-    private long revealTimeMilliseconds;
-    private long courtTimeMilliseconds;
-    private boolean keepScore;
-    private boolean chooseWords;
-    private boolean shakyHands;
-    private int maxPlayers;
-    private int numRounds;
+    public long pickTimeMilliseconds;
+    public long drawTimeMilliseconds;
+    public long guessTimeMilliseconds;
+    public long revealTimeMilliseconds;
+    public long courtTimeMilliseconds;
+    public boolean keepScore;
+    public boolean chooseWords;
+    public boolean shakyHands;
+    public int maxPlayers;
+    public int numRounds;
 
     /**
-     *
      * Constructor GameSettings.
      * Default settings.
      */
@@ -40,7 +41,6 @@ public class GameSettings implements Serializable {
     }
 
     /**
-     *
      * Set variable functions. Flipswitch.
      */
     public void toggleKeepScore() {
@@ -54,7 +54,6 @@ public class GameSettings implements Serializable {
     }
 
     /**
-     *
      * Set variable functions.
      * Returns true if value is set.
      * @param max,rounds,seconds.
@@ -123,7 +122,6 @@ public class GameSettings implements Serializable {
     }
 
     /**
-     *
      * Get variable functions.
      * @return
      */
@@ -139,56 +137,39 @@ public class GameSettings implements Serializable {
     public long getCourtTimeMilliseconds(){ return courtTimeMilliseconds; }
 
     /**
-     *
      * Saves GameSettings on host.
      *
      * @return true if successful.
      *
      */
-    public boolean saveSettings() {
-        try (
-            FileOutputStream fileOutStream = new FileOutputStream("server/settings/settings.dat");
-            ObjectOutputStream objOutStream = new ObjectOutputStream(fileOutStream); ) {
-            objOutStream.writeObject(this);
-        } catch(IOException ex) {
-            return false;
-        }
-        return true;
-    }
-
     public boolean saveSettingsIni() {
-        try (
-                FileOutputStream fileOutStream = new FileOutputStream("server/settings/snopp.ini");
-                ObjectOutputStream objOutStream = new ObjectOutputStream(fileOutStream); ) {
-                objOutStream.writeUTF("Skakiga händer: " + this.shakyHands );
-                return true;
-        } catch(IOException ex) {
+        try {
+            IniStream.write(this, new File("server/settings/settings.ini"));
+            return true;
+        } catch (IOException ex) {
             return false;
         }
     }
 
     /**
-     *
      * Loads GameSettings from host to game.
      * @return true if successful.
      *
      */
-    public boolean loadSettings() {
-        GameSettings loadedSettings;
-        try (
-            FileInputStream fileInStream = new FileInputStream("server/settings/settings.dat");
-            ObjectInputStream objInStream = new ObjectInputStream(fileInStream)
-        ){
-            loadedSettings = (GameSettings)objInStream.readObject();
-        } catch (IOException | ClassNotFoundException ex) {
+    public boolean loadSettingsIni() {
+        GameSettings loadedSettings = new GameSettings();
+        try {
+            IniStream.read(loadedSettings, new File("server/settings/settings.ini"));
+        } catch (IOException ex) {
+            ex.printStackTrace();
             return false;
         }
 
-        this.pickTimeMilliseconds = loadedSettings.getPickTimeMilliseconds();
-        this.drawTimeMilliseconds = loadedSettings.getDrawTimeMilliseconds();
-        this.guessTimeMilliseconds = loadedSettings.getGuessTimeMilliseconds();
-        this.revealTimeMilliseconds = loadedSettings.getRevealTimeMilliseconds();
-        this.courtTimeMilliseconds = loadedSettings.getCourtTimeMilliseconds();
+        this.pickTimeMilliseconds = checkValidity(loadedSettings.getPickTimeMilliseconds());
+        this.drawTimeMilliseconds = checkValidity(loadedSettings.getDrawTimeMilliseconds());
+        this.guessTimeMilliseconds = checkValidity(loadedSettings.getGuessTimeMilliseconds());
+        this.revealTimeMilliseconds = checkValidity(loadedSettings.getRevealTimeMilliseconds());
+        this.courtTimeMilliseconds = checkValidity(loadedSettings.getCourtTimeMilliseconds());
         this.keepScore = loadedSettings.getKeepScore();
         this.chooseWords = loadedSettings.getChooseWords();
         this.shakyHands = loadedSettings.getShakyHands();
@@ -198,7 +179,16 @@ public class GameSettings implements Serializable {
     }
 
     /**
-     *
+     * Controls validity of time values before loading them.
+     * @param time
+     * @return
+     */
+    private long checkValidity(long time ) {
+        return Math.max(0, Math.min(300000, time));
+    }
+
+
+    /**
      * Displays the settings of this game.
      * @return String
      */
