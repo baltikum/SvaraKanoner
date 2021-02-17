@@ -22,6 +22,7 @@ public class GameSettings implements Serializable {
     public boolean shakyHands;
     public int maxPlayers;
     public int numRounds;
+    public int numberOfWordsToPickFrom;
 
     /**
      * Constructor GameSettings.
@@ -38,6 +39,7 @@ public class GameSettings implements Serializable {
         this.shakyHands = false;
         this.maxPlayers = 4;
         this.numRounds = 5;
+        this.numberOfWordsToPickFrom = 4;
     }
 
     /**
@@ -120,6 +122,13 @@ public class GameSettings implements Serializable {
             return false;
         }
     }
+    public boolean setNumberOfWords(int amount ) {
+        if ( amount >= 1 && amount < 60 ) {
+            this.numberOfWordsToPickFrom = amount;
+            return true;
+        }
+        return false;
+    }
 
     /**
      * Get variable functions.
@@ -130,11 +139,13 @@ public class GameSettings implements Serializable {
     public boolean getShakyHands(){ return shakyHands; }
     public int getMaxPlayers(){ return maxPlayers; }
     public int getNumRounds(){ return numRounds; }
+    public int getNumberOfWords() { return numberOfWordsToPickFrom; }
     public long getPickTimeMilliseconds(){ return pickTimeMilliseconds; }
     public long getDrawTimeMilliseconds(){ return drawTimeMilliseconds; }
     public long getGuessTimeMilliseconds(){ return guessTimeMilliseconds; }
     public long getRevealTimeMilliseconds(){ return revealTimeMilliseconds; }
     public long getCourtTimeMilliseconds(){ return courtTimeMilliseconds; }
+
 
     /**
      * Saves GameSettings on host.
@@ -165,26 +176,35 @@ public class GameSettings implements Serializable {
             return false;
         }
 
-        this.pickTimeMilliseconds = checkValidity(loadedSettings.getPickTimeMilliseconds());
-        this.drawTimeMilliseconds = checkValidity(loadedSettings.getDrawTimeMilliseconds());
-        this.guessTimeMilliseconds = checkValidity(loadedSettings.getGuessTimeMilliseconds());
-        this.revealTimeMilliseconds = checkValidity(loadedSettings.getRevealTimeMilliseconds());
-        this.courtTimeMilliseconds = checkValidity(loadedSettings.getCourtTimeMilliseconds());
+        this.pickTimeMilliseconds = checkLongValue(loadedSettings.getPickTimeMilliseconds());
+        this.drawTimeMilliseconds = checkLongValue(loadedSettings.getDrawTimeMilliseconds());
+        this.guessTimeMilliseconds = checkLongValue(loadedSettings.getGuessTimeMilliseconds());
+        this.revealTimeMilliseconds = checkLongValue(loadedSettings.getRevealTimeMilliseconds());
+        this.courtTimeMilliseconds = checkLongValue(loadedSettings.getCourtTimeMilliseconds());
         this.keepScore = loadedSettings.getKeepScore();
         this.chooseWords = loadedSettings.getChooseWords();
         this.shakyHands = loadedSettings.getShakyHands();
-        this.maxPlayers = loadedSettings.getMaxPlayers();
-        this.numRounds = loadedSettings.getNumRounds();
+        this.maxPlayers = checkIntValue(loadedSettings.getMaxPlayers());
+        this.numRounds = checkIntValue(loadedSettings.getNumRounds());
+        this.numberOfWordsToPickFrom = checkIntValue(loadedSettings.getNumberOfWords());
         return true;
     }
 
     /**
      * Controls validity of time values before loading them.
      * @param time
-     * @return
+     * @return corrected value if needed
      */
-    private long checkValidity(long time ) {
-        return Math.max(0, Math.min(300000, time));
+    private long checkLongValue(long time ) {
+        return Math.max(0L, Math.min(300000L, time));
+    }
+    /**
+     * Controls validity of integer values before loading them.
+     * @param value
+     * @return corrected value if needed.
+     */
+    private int checkIntValue(int value ) {
+        return Math.max(0, Math.min(300000, value));
     }
 
 

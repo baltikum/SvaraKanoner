@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 
-public class GameSession {
+public class GameSession implements Runnable {
 
     private ClientHandler host;
     private ArrayList<ClientHandler> clients;
@@ -28,6 +28,26 @@ public class GameSession {
 
         addClient(host);
     }
+
+    @Override
+    public void run() {
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
 
     public void addClient(ClientHandler client ) {
         clients.add(client);
