@@ -7,6 +7,7 @@ import common.GameSettings;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executors;
 
 
@@ -29,41 +30,35 @@ public class Main {
 
     public static void createGameSession(Message msg) {
         ClientHandler host = (ClientHandler) msg.player;
+        host.setName((String) msg.data.getOrDefault("requestPlayerName", ""));
+        host.setAvatarId((int) msg.data.getOrDefault("requestAvatarId", 0));
         GameSession gameSession = new GameSession(host, (GameSettings) msg.data.get("settings"));
         gameSessions.add(gameSession);
 
         // Respond
-        Message message = new Message(Message.Type.CREATE_GAME_RESPONSE);
-        message.data.put("id", host.getId());
-        message.data.put("name", host.getName());
-        message.data.put("code", gameSession.getCode());
+        Message message = new Message(Message.Type.RESPONSE);
+        message.addParameter("playerId", host.getId());
+        message.addParameter("playerName", host.getName());
+        message.addParameter("sessionId", gameSession.sessionID);
         host.sendMessage(message);
     }
 
     public static void joinGame(Message msg) {
-        String gameCode = (String) msg.data.get("code");
+        String gameCode = (String) msg.data.getOrDefault("sessionId", "");
         ClientHandler joiner = (ClientHandler) msg.player;
-        String errorMsg = null;
-        if (joiner.getGameSession() != null) {
-            errorMsg = "You are already in a game session. "; // Can this happen?
-        } else {
-            GameSession joinedSession = null;
-            for (GameSession session : gameSessions) {
-                if (session.getCode().equals(gameCode)) {
-                    joinedSession = session;
-                    break;
-                }
-            }
-            if (joinedSession == null) {
-                errorMsg = "Invalid invite code. ";
-            } else {
-                joinedSession.receiveMessage(msg);
+        GameSession joinedSession = null;
+        for (GameSession session : gameSessions) {
+            if (session.sessionID.equals(gameCode)) {
+                joinedSession = session;
+                break;
             }
         }
-        if (errorMsg != null) {
-            Message errorResponse = new Message(Message.Type.JOIN_GAME_RESPONSE);
-            errorResponse.error = errorMsg;
+        if (joinedSession == null) {
+            Message errorResponse = new Message(Message.Type.RESPONSE);
+            errorResponse.error = "Invalid session id. ";
             joiner.sendMessage(errorResponse);
+        } else {
+            joinedSession.receiveMessage(msg);
         }
     }
 }

@@ -19,15 +19,13 @@ public class GameSession {
         this.sessionID = generateSessionID();
         this.host = host;
         this.gameSettings = settings;
-        this.currentPhase = new JoinPhase();
         this.connectedClients = new ArrayList<>();
         this.sessionRounds = new ArrayList<>();
         this.points = new ArrayList<>();
 
-        // TODO: Generate code.
-
-        setPhase(new JoinPhase());
-        this.connectedClients.add(host);
+        JoinPhase joinPhase = new JoinPhase(this);
+        setPhase(joinPhase);
+        joinPhase.addClient(host);
     }
 
     public void receiveMessage(Message msg) {
@@ -40,8 +38,13 @@ public class GameSession {
         }
     }
 
-    public void addClient(ClientHandler client) {
-        connectedClients.add(client);
+    public void sendMessageToAll(Message msg) {
+        for (ClientHandler handle : connectedClients)
+            handle.sendMessage(msg);
+    }
+
+    public List<ClientHandler> getConnectedPlayers() {
+        return connectedClients;
     }
 
     /**
@@ -57,10 +60,6 @@ public class GameSession {
     }
 
     public void setPhase(Phase newPhase ) { currentPhase = newPhase; }
-
-    public String getSessionID() {
-        return sessionID;
-    }
 
 }
 

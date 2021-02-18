@@ -11,16 +11,23 @@ import java.util.Map;
 public class Message implements Serializable {
 
     public enum Type {
+        // Both way messages
         RESPONSE,
+
+        // Server to client messages
+        PLAYER_CONNECTED,      // JoinPhase -> JoinPhase
+        PLAYER_DISCONNECTED,   // JoinPhase -> JoinPhase
+        PLAYER_READY_STATUS_CHANGED,   // JoinPhase -> JoinPhase
+
+        // Client to server messages
         CREATE_GAME,           // MainMenu -> Server
         JOIN_GAME,             // MainMenu -> Server
-        START_GAME,            // JoinPhase (client) -> JoinPhase (server)
-        LEAVE_GAME,            // JoinPhase (client) -> JoinPhase (server)
+        DISCONNECT,            // JoinPhase -> JoinPhase
+        TOGGLE_READY_STATUS,   // JoinPhase -> JoinPhase
     }
 
     public transient Player player;
 
-    public int playerId;
     public Type type;
     public Map<String, Serializable> data = new HashMap<>();
     public String error = null;
@@ -36,10 +43,16 @@ public class Message implements Serializable {
 
     @Override
     public String toString() {
-        return "Message{" +
-                "playerId=" + playerId +
-                ", type=" + type +
-                ", data=" + data +
-                '}';
+        if (error != null) {
+            return "Message{" +
+                    ", type=" + type +
+                    ", errorMsg=" + error +
+                    '}';
+        } else {
+            return "Message{" +
+                    ", type=" + type +
+                    ", data=" + data +
+                    '}';
+        }
     }
 }

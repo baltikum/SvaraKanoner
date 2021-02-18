@@ -289,13 +289,13 @@ public class MainMenu extends Phase {
         joinGameClicked = true;
         Player thisPlayer = Game.game.getThisPlayer();
         Message msg = new Message(Message.Type.JOIN_GAME);
-        msg.data.put("code", code);
+        msg.data.put("sessionId", code);
         msg.data.put("requestedName", thisPlayer.getName());
         msg.data.put("requestedAvatarId", thisPlayer.getAvatarId());
         Game.game.sendMessage(msg, new MessageResponseListener() {
             @Override
             public void onSuccess(Message msg) {
-                Game.game.setGameCode((String) msg.data.get("code"));
+                Game.game.setGameCode((String) msg.data.get("sessionId"));
 
                 Player thisPlayer = Game.game.getThisPlayer();
                 thisPlayer.setAvatarId((int) msg.data.get("playerAvatarId"));
@@ -304,6 +304,12 @@ public class MainMenu extends Phase {
 
                 JoinPhase joinPhase = new JoinPhase();
                 Game.game.setCurrentPhase(joinPhase);
+                int[] existingPlayerIds = (int[]) msg.data.get("existingPlayerIds");
+                String[] existingPlayerNames = (String[]) msg.data.get("existingPlayerNames");
+                int[] existingPlayerAvatarIds = (int[]) msg.data.get("existingPlayerAvatarIds");
+                for (int i = 0; i < existingPlayerIds.length; i++) {
+                    joinPhase.addPlayer(new Player(existingPlayerIds[i], existingPlayerNames[i], existingPlayerAvatarIds[i]));
+                }
             }
 
             @Override
@@ -318,13 +324,14 @@ public class MainMenu extends Phase {
         Player playerInfo = Game.game.getThisPlayer();
         Message msg =  new Message(Message.Type.CREATE_GAME);
         msg.data.put("settings", gameSettings);
-        msg.data.put("playerName", playerInfo.getName());
-        msg.data.put("avatarId", playerInfo.getAvatarId());
+        msg.data.put("requestedName", playerInfo.getName());
+        msg.data.put("requestedAvatarId", playerInfo.getAvatarId());
         Game.game.sendMessage(msg, new MessageResponseListener() {
             @Override
             public void onSuccess(Message msg) {
-                Game.game.setGameCode((String) msg.data.get("code"));
-                Game.game.getThisPlayer().setId((int) msg.data.get("id"));
+                Game.game.setGameCode((String) msg.data.get("sessionId"));
+                Game.game.getThisPlayer().setId((int) msg.data.get("playerId"));
+                Game.game.getThisPlayer().setName((String) msg.data.get("playerName"));
                 JoinPhase joinPhase = new JoinPhase();
                 Game.game.setCurrentPhase(joinPhase);
             }

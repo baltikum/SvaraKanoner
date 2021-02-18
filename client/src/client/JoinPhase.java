@@ -18,7 +18,7 @@ public class JoinPhase extends Phase {
     private final float[] positionData;
     private final ArrayList<Integer> freePositions;
     private final JPanel panel;
-    private boolean isReady = false;
+    private final Map<Integer, AwesomeIconLabel> playerIdToLabel = new HashMap<>();
 
     public JoinPhase() {
         Random random = Game.game.random;
@@ -63,14 +63,14 @@ public class JoinPhase extends Phase {
         layout.setConstraintsRatioByWidth(ready, .75f, .167f * 5, .3f, 0.25f);
 
         ready.addActionListener(e -> {
-            isReady = !isReady;
-            ready.setText(isReady ? "Not ready!" : "Ready!");
+            Game.game.sendMessage(new Message(Message.Type.TOGGLE_READY_STATUS));
         });
 
         AwesomeButton leave = new AwesomeButton("Leave", AwesomeUtil.MEDIUM_TEXT);
         panel.add(leave);
         layout.setConstraintsRatioByWidth(leave, .25f, .167f * 5, .3f, 0.25f);
         leave.addActionListener(e -> {
+            Game.game.sendMessage(new Message(Message.Type.DISCONNECT));
             Game.game.setCurrentPhase(new MainMenu());
         });
 
@@ -90,6 +90,7 @@ public class JoinPhase extends Phase {
         ((PercentLayout)panel.getLayout()).setConstraintsRatioByWidth(playerLabel,
                 positionData[positionIndex * POSITION_DATA_COMPONENTS],
                 positionData[positionIndex * POSITION_DATA_COMPONENTS + 1],0.2f, 0.3f);
+        playerIdToLabel.put(player.getId(), playerLabel);
 
         AwesomeEffect.create()
                 .addScaleKey(0.0f, 0.0f, 0)
@@ -101,7 +102,27 @@ public class JoinPhase extends Phase {
 
     @Override
     public void message(Message msg) {
-
+        switch (msg.type) {
+            case PLAYER_CONNECTED -> {
+                Player player = new Player(
+                        (int) msg.data.get("playerId"),
+                        (String) msg.data.get("playerName"),
+                        (int) msg.data.get("playerAvatarId")
+                );
+                addPlayer(player);
+            }
+            case PLAYER_DISCONNECTED -> {
+                int playerId = (int) msg.data.getOrDefault("playerId", -1);
+                AwesomeIconLabel label = playerIdToLabel.get(playerId);
+                if (label != null) panel.remove(label);
+            }
+            case PLAYER_READY_STATUS_CHANGED -> {
+                int playerId = (int) msg.data.getOrDefault("playerId", -1);
+                boolean status = (boolean) msg.data.getOrDefault("status", false);
+                AwesomeIconLabel label = playerIdToLabel.get(playerId);
+                if (label != null) label.setTextColor(status ? Color.GREEN : Color.BLACK);
+            }
+        }
     }
 
 }
