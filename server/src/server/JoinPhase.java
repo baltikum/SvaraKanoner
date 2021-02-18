@@ -5,6 +5,8 @@ import common.Phase;
 
 public class JoinPhase extends Phase {
 
+
+
     public JoinPhase(){
 
     }

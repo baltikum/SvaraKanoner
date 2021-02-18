@@ -1,15 +1,11 @@
 package server;
 
-import common.GameSettings;
-import common.Message;
-import common.Phase;
-
-import java.io.IOException;
-import java.net.Socket;
-import java.util.ArrayList;
+import common.*;
+import java.util.*;
 
 public class GameSession {
 
+    public String sessionID;
     private ClientHandler host;
     private ArrayList<ClientHandler> connectedClients;
     private ClientHandler[] activeClients;
@@ -17,9 +13,10 @@ public class GameSession {
     private ArrayList<Integer> points;
     private GameSettings gameSettings;
     private Phase currentPhase;
-    private String code = "ABC123";
+    private Timer timeLeft;
 
     public GameSession(ClientHandler host, GameSettings settings ) {
+        this.sessionID = generateSessionID();
         this.host = host;
         this.gameSettings = settings;
         this.currentPhase = new JoinPhase();
@@ -47,10 +44,22 @@ public class GameSession {
         connectedClients.add(client);
     }
 
+    /**
+     * Generates a sessionID
+     * @return String
+     */
+    private String generateSessionID(){
+        StringBuilder sessionIdBuilder = new StringBuilder(6);
+        Random random = new Random();
+        for (int i = 0; i < 3; i++) { sessionIdBuilder.append((char) ('A' + random.nextInt(26))); }
+        for (int i = 0; i < 3; i++) { sessionIdBuilder.append((char) ('0' + random.nextInt(10))); }
+        return sessionIdBuilder.toString();
+    }
+
     public void setPhase(Phase newPhase ) { currentPhase = newPhase; }
 
-    public String getCode() {
-        return code;
+    public String getSessionID() {
+        return sessionID;
     }
 
 }

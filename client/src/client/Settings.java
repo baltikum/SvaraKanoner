@@ -7,7 +7,7 @@ public class Settings {
     public int windowWidth = 800;
     public int windowHeight = 800;
 
-    public boolean muteMusic = false;
+    public boolean muteMusic = true;
     public boolean muteEffects = false;
     public float musicVolume = 0.8f;
     public float effectsVolume = 0.8f;

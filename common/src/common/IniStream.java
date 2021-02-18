@@ -33,6 +33,7 @@ public class IniStream {
                     if (field == null) throw new IOException("Illegal entry no field '" + nameValue[0] + "'.");
 
                     Class<?> type = field.getType();
+
                     if (type.isPrimitive()) {
                         if (type.isAssignableFrom(boolean.class))
                             field.set(obj, Boolean.valueOf(value));
@@ -51,6 +52,7 @@ public class IniStream {
                         else
                             throw new IllegalArgumentException("Unknown primitive type. ");
                     } else if (type.isAssignableFrom(String.class)) {
+                        System.out.println("string");
                         field.set(obj, value);
                     } else {
                         throw new IllegalArgumentException("Unknown type for field '" + field.getName() + "'. ");

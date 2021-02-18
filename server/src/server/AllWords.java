@@ -11,9 +11,9 @@ import java.util.Random;
  */
 
 public class AllWords {
-    File file;
-    Random random;
-    ArrayList<String> allWords;
+    private static File file;
+    private static Random random;
+    private static ArrayList<String> allWords;
 
     /**
      *
@@ -23,7 +23,7 @@ public class AllWords {
     public AllWords(){
 
         this.allWords = new ArrayList<String>();
-        this.file = new File("server/words/englishWords.txt");
+        this.file = new File("server/words/en.txt");
         this.random = new Random();
 
         try (
@@ -48,7 +48,7 @@ public class AllWords {
      * @param amount
      * @return gameWords
      */
-    public ArrayList<String> getWords(int amount ) {
+    public static ArrayList<String> getWords(int amount) {
         ArrayList<String> gameWords = new ArrayList<String>(amount);
         int total = allWords.size();
         int index;
