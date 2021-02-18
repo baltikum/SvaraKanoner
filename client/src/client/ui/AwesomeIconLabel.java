@@ -7,25 +7,26 @@ public class AwesomeIconLabel extends JComponent implements AwesomeEffect.User {
     private Image img;
     private String text;
     private AwesomeEffect effect;
-    private float radians = 0.0f;
+    private Color textColor = Color.BLACK;
 
     public AwesomeIconLabel(Image img, String text) {
         this.img = img;
         this.text = text;
+
+        setOpaque(false);
     }
 
-    public void setRotation(float degrees) {
-        radians = (float)Math.toRadians(degrees);
+    public void setTextColor(Color color) {
+        textColor = color;
     }
 
     @Override
     public void paintComponent(Graphics g) {
-        g.fillRect(0, 0, getWidth(), getHeight());
         Dimension iconDim = getSize();
         Dimension textDim = getSize();
         iconDim.width = getHeight();
         textDim.width -= getHeight();
-        AwesomeUtil.drawTextAndIcon((Graphics2D) g, effect, textDim, text, AwesomeUtil.MEDIUM_TEXT, Color.BLACK, img, iconDim, AwesomeUtil.LEFT);
+        AwesomeUtil.drawTextAndIcon((Graphics2D) g, effect, textDim, text, AwesomeUtil.MEDIUM_TEXT, textColor, img, iconDim, AwesomeUtil.LEFT);
     }
 
     @Override

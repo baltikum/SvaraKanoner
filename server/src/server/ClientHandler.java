@@ -1,21 +1,21 @@
 package server;
 
-import common.GameSettings;
 import common.Message;
+import common.Player;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-public class ClientHandler implements Runnable {
+public class ClientHandler extends Player implements Runnable {
 
-    private String name;
-    private Socket socket;
-    private ObjectInputStream objectInputStream;
+    private final Socket socket;
     private ObjectOutputStream objectOutputStream;
+    private GameSession gameSession;
 
     public ClientHandler(Socket socket) {
+        super(-1, "", -1);
         this.socket = socket;
     }
 
@@ -32,61 +32,43 @@ public class ClientHandler implements Runnable {
     public void run() {
 
         try {
-            objectInputStream = new ObjectInputStream(socket.getInputStream());
+            ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
             objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-
-            // test msg
-            System.out.println("Send MSG");
-            objectOutputStream.writeObject(new Message(Message.Type.JOIN_GAME));
-            objectOutputStream.flush();
-
 
             while (true) { // listen to messages loop
                 try {
                     Message message = (Message) objectInputStream.readObject();
+                    message.player = this;
                     synchronized (System.out) {
-                        System.out.println("Received message Type: " + message.type);
-
+                        System.out.println("Received message: " + message.toString());
                     }
-                    switch (message.type) {
-                        case CREATE_GAME:
-                            GameSettings gameSettings = (GameSettings)message.data.get("gameSettings");
-                            System.out.println("Game settings: " + gameSettings);
-
-                            Main.createGameSession(this, gameSettings);
-
-
-
-
-                            break;
-
-
-
-
-
-                    }
-
+                    if (message.type == Message.Type.CREATE_GAME)
+                        Main.createGameSession(message);
+                    else if (message.type == Message.Type.JOIN_GAME)
+                        Main.joinGame(message);
+                    else if (gameSession != null)
+                        gameSession.receiveMessage(message);
                 } catch (Exception e) {
                     break;
                 }
-
-
             }
 
         } catch (IOException e) {
             e.printStackTrace();
         } finally { // Client left / disconnected
-            Main.clients.remove(this); // volentile / synchronized ???
-            synchronized (System.out) {
-                System.out.println("Client left. Clients: " + Main.clients);
-            }
             try {
                 socket.close();
             } catch (IOException e) {
 
             }
         }
+    }
 
+    public void setGameSession(GameSession session) {
+        gameSession = session;
+    }
 
+    public GameSession getGameSession() {
+        return gameSession;
     }
 }

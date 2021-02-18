@@ -3,9 +3,7 @@ package client;
 import client.ui.AwesomeButton;
 import client.ui.AwesomeEffect;
 import client.ui.AwesomeUtil;
-import common.IniStream;
-import common.Message;
-import common.Phase;
+import common.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,7 +14,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 
 public class Game implements ActionListener, ComponentListener, WindowListener {
     public static Game game;
@@ -33,6 +30,7 @@ public class Game implements ActionListener, ComponentListener, WindowListener {
     private JLabel errorMsg;
 
     private String gameCode = "---";
+    private final Player thisPlayer = new Player(-1, "Bengt", 0);
     private final List<Player> players = new ArrayList<>();
 
     Game() {
@@ -65,7 +63,7 @@ public class Game implements ActionListener, ComponentListener, WindowListener {
         initTopLayer();
 
         // Start with
-        setContentPanel(new MainMenu());
+        setCurrentPhase(new MainMenu());
 
         // Move and show window
         if (settings.windowPositionX < 0 || settings.windowPositionY < 0)
@@ -145,7 +143,6 @@ public class Game implements ActionListener, ComponentListener, WindowListener {
         parent.add(chat, JLayeredPane.POPUP_LAYER);
         layout.putConstraint(SpringLayout.EAST, chat, -10, SpringLayout.EAST, parent);
         layout.putConstraint(SpringLayout.SOUTH, chat, -10, SpringLayout.SOUTH, parent);
-
     }
 
     @Override
@@ -173,7 +170,12 @@ public class Game implements ActionListener, ComponentListener, WindowListener {
         layout.putConstraint(SpringLayout.NORTH, panel, 0, SpringLayout.NORTH, layeredPane);
         layout.putConstraint(SpringLayout.SOUTH, panel, 0, SpringLayout.SOUTH, layeredPane);
 
-        frame.pack();
+        frame.dispatchEvent(new ComponentEvent(frame, ComponentEvent.COMPONENT_RESIZED));
+        frame.doLayout();
+    }
+
+    public void setGameCode(String code) {
+        gameCode = code;
     }
 
     public String getGameCode() {
@@ -182,6 +184,10 @@ public class Game implements ActionListener, ComponentListener, WindowListener {
 
     public List<Player> getPlayers() {
         return players;
+    }
+
+    public Player getThisPlayer() {
+        return thisPlayer;
     }
 
     public Player getPlayer(int id) {
@@ -213,6 +219,19 @@ public class Game implements ActionListener, ComponentListener, WindowListener {
 
     public void sendMessage(Message message) {
         network.sendMessage(message);
+    }
+
+    public void sendMessage(Message message, MessageResponseListener responseListener) {
+        network.sendMessage(message, responseListener);
+    }
+
+    public void receiveMessage(Message msg) {
+        switch (msg.type) {
+            // TODO: Add chat messages here.
+            default -> {
+                if (currentPhase != null) currentPhase.message(msg);
+            }
+        }
     }
 
     @Override

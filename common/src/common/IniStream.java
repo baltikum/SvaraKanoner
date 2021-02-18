@@ -92,11 +92,11 @@ public class IniStream {
                     else if (type.isAssignableFrom(double.class))
                         writeDecimal(out, field.getName(), (double) field.get(obj));
                     else
-                        throw new IllegalArgumentException("Unknown primitive type. ");
+                        throw new IOException("Unknown primitive type. ");
                 } else if (type.isAssignableFrom(String.class)) {
                     writeString(out, field.getName(), (String)field.get(obj));
                 } else {
-                    throw new IllegalArgumentException("Unknown type for field '" + field.getName() + "'. ");
+                    throw new IOException("Unknown type for field '" + field.getName() + "'. ");
                 }
             }
         } catch (IllegalAccessException e) {

@@ -40,6 +40,8 @@ public class Chat extends JPanel {
         messageData.setOpaque(false);
         messageData.setFont(messageData.getFont().deriveFont(20.0f));
         messageData.setLineWrap(true);
+        messageData.setEditable(false);
+        messageData.setFocusable(false);
         messageScrollPane = new JScrollPane(messageData);
         messageScrollPane.setOpaque(false);
         messageScrollPane.getViewport().setOpaque(false);

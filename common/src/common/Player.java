@@ -1,27 +1,37 @@
-package client;
-
-import java.awt.*;
+package common;
 
 public class Player {
-    private final int id;
+    private int id;
     private String name;
-    private Image avatar;
+    private int avatarId;
 
-    public Player(int id, String name, Image avatar) {
+    public Player(int id, String name, int avatarId) {
         this.id = id;
         this.name = name;
-        this.avatar = avatar;
+        this.avatarId = avatarId;
     }
 
     public int getId() {
         return id;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
     }
 
-    public Image getAvatar() {
-        return avatar;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getAvatarId() {
+        return avatarId;
+    }
+
+    public void setAvatarId(int id) {
+        avatarId = id;
     }
 }

@@ -3,21 +3,24 @@ package client;
 import client.ui.*;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import common.GameSettings;
 
-public class MainMenu extends JPanel {
+import common.*;
+
+public class MainMenu extends Phase {
 
     private boolean hasPlayedQuitAnimation = false;
-    private Image wham, leftArrow, rightArrow;
-    private Image rocket, flame0, flame1, block;
+    private final Image wham, leftArrow, rightArrow;
+    private final Image rocket, flame0, flame1, block;
 
-    private GameSettings gameSettings = new GameSettings();
+    private final GameSettings gameSettings = new GameSettings();
 
     MainMenu() {
-        super(new CardLayout());
-        setBackground(new Color(0xe67e22));
+        JPanel root = new JPanel(new CardLayout());
+        root.setBackground(new Color(0xe67e22));
 
         BufferedImage tileMap = Assets.loadImage("mainmenu.png");
         wham = Assets.getTile(tileMap, 0, 0, 3, 1, 8);
@@ -28,15 +31,18 @@ public class MainMenu extends JPanel {
         flame1 = Assets.getTile(tileMap, 1, 3, 1, 1, 8);
         block = Assets.getTile(tileMap, 4, 3, 4, 5, 8);
 
-        initMainMenu();
-        initJoinGamePanel();
-        initCreateGamePanel();
+        initMainMenu(root);
+        initJoinGamePanel(root);
+        initCreateGamePanel(root);
+
+        Game.game.setContentPanel(root);
     }
 
-    private void initMainMenu() {
+    private void initMainMenu(JPanel root) {
         PercentLayout layout = new PercentLayout(1.0f);
         JPanel panel = new JPanel(layout);
         panel.setBackground(new Color(0xe67e22));
+        root.add(panel);
 
         AwesomeText title = new AwesomeText("Hello!", AwesomeUtil.BIG_TEXT);
         AwesomeButton joinGameButton = new AwesomeButton("Join Game", wham, AwesomeUtil.MEDIUM_TEXT);
@@ -48,14 +54,14 @@ public class MainMenu extends JPanel {
         AwesomeUtil.wiggleOnHover(joinGameButton, 10.0f);
         AwesomeUtil.scaleOnHover(createGameButton, 1.3f);
 
-        joinGameButton.addActionListener(e -> ((CardLayout)getLayout()).next(this) );
-        createGameButton.addActionListener(e -> ((CardLayout)getLayout()).last(this) );
+        joinGameButton.addActionListener(e -> ((CardLayout)root.getLayout()).next(root) );
+        createGameButton.addActionListener(e -> ((CardLayout)root.getLayout()).last(root) );
 
         quitButton.addActionListener(e -> {
             if (!hasPlayedQuitAnimation) {
                 AwesomeEffect.Builder builder = AwesomeEffect.create();
-                builder .addTranslationXKey(getWidth(), 1000)
-                        .addTranslationXKey(-getWidth(), 1001)
+                builder .addTranslationXKey(root.getWidth(), 1000)
+                        .addTranslationXKey(-root.getWidth(), 1001)
                         .addTranslationXKey(0, 2000).animate(quitButton);
                 for (int i = 0; i < 10; i++) {
                     builder.addSpriteKey(flame0, i * 200);
@@ -80,49 +86,63 @@ public class MainMenu extends JPanel {
         layout.setConstraintsRatioByWidth(createGameButton, 0.75f, 0.4f, .4f, .5f);
         layout.setConstraintsRatioByWidth(quitButton, 0.5f, 0.7f, .6f, .5f);
         layout.setConstraintsRatioByWidth(rocketFlame, 0.28f, 0.7f, .1f, 1.0f);
-
-        add(panel);
     }
 
-    private void initJoinGamePanel() {
+    void initJoinGamePanel(JPanel root) {
         PercentLayout layout = new PercentLayout(1.0f);
         JPanel panel = new JPanel(layout);
         panel.setBackground(new Color(0xe67e22));
+        root.add(panel);
 
         AwesomeImage bg = new AwesomeImage(block);
-        AwesomeText code = new AwesomeText("Enter code", AwesomeUtil.BIG_TEXT);
+        AwesomeText codeLabel = new AwesomeText("Enter code", AwesomeUtil.BIG_TEXT);
+        AwesomeText nameLabel = new AwesomeText("Enter name", AwesomeUtil.BIG_TEXT);
         AwesomeButton accept = new AwesomeButton("Go!", AwesomeUtil.BIG_TEXT);
         AwesomeButton back = new AwesomeButton("Back", AwesomeUtil.BIG_TEXT);
-        JTextField input = new JTextField();
-        input.setFont(AwesomeUtil.loadFont().deriveFont(32.0f));
-        input.setHorizontalAlignment(SwingConstants.CENTER);
+        JTextField codeInput = new JTextField();
+        JTextField nameInput = new JTextField();
+        codeInput.setFont(AwesomeUtil.loadFont().deriveFont(32.0f));
+        codeInput.setHorizontalAlignment(SwingConstants.CENTER);
+        nameInput.setFont(AwesomeUtil.loadFont().deriveFont(32.0f));
+        nameInput.setHorizontalAlignment(SwingConstants.CENTER);
 
+        panel.add(codeLabel);
+        panel.add(nameLabel);
+        panel.add(codeInput);
+        panel.add(nameInput);
         panel.add(back);
         panel.add(accept);
-        panel.add(input);
-        panel.add(code);
         panel.add(bg);
 
+        layout.setConstraintsRatioByWidth(codeLabel, 0.5f, 0.15f, 0.7f, 0.2f);
+        layout.setConstraintsRatioByWidth(codeInput, 0.5f, 0.3f, 0.7f, 0.2f);
+        layout.setConstraintsRatioByWidth(nameLabel, 0.5f, 0.45f, 0.7f, 0.2f);
+        layout.setConstraintsRatioByWidth(nameInput, 0.5f, 0.6f, 0.7f, 0.2f);
         layout.setConstraintsRatioByWidth(back, 0.3f, 0.8f, 0.3f, 0.5f);
         layout.setConstraintsRatioByWidth(accept, 0.7f, 0.8f, 0.3f, 0.5f);
-        layout.setConstraintsRatioByWidth(code, 0.5f, 0.3f, 0.8f, 0.2f);
-        layout.setConstraintsRatioByWidth(input, 0.5f, 0.5f, 0.8f, 0.2f);
         layout.setConstraintsRatioByWidth(bg, 0.5f, 0.5f, 1.0f, 1.0f);
 
         AwesomeUtil.wiggleOnHover(back, 10.0f);
         AwesomeUtil.wiggleOnHover(accept, 10.0f);
 
-        back.addActionListener(e -> {
-            ((CardLayout)getLayout()).previous(this);
-        });
+        back.addActionListener(e -> ((CardLayout)root.getLayout()).previous(root) );
+        accept.addActionListener(e -> joinGame(codeInput.getText()));
 
-        add(panel);
+        nameInput.getDocument().addDocumentListener(new DocumentListener() {
+            @Override public void insertUpdate(DocumentEvent e) { }
+            @Override public void removeUpdate(DocumentEvent e) { }
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                Game.game.getThisPlayer().setName(nameInput.getText());
+            }
+        });
     }
 
-    public void initCreateGamePanel() {
+    private void initCreateGamePanel(JPanel root) {
         PercentLayout layout = new PercentLayout(1.0f);
         JPanel panel = new JPanel(layout);
         panel.setBackground(new Color(0xe67e22));
+        root.add(panel);
 
         AwesomeText maxPlayersLabel = new AwesomeText("MAX PLAYERS:");
         AwesomeButton increaseMaxPlayers = new AwesomeButton(rightArrow);
@@ -257,11 +277,67 @@ public class MainMenu extends JPanel {
         panel.add(back);
         layout.setConstraintsRatioByWidth(create, 0.75f, 0.8f, 0.3f, 0.5f);
         layout.setConstraintsRatioByWidth(back, 0.25f, 0.8f, 0.3f, 0.5f);
-        create.addActionListener(e -> System.out.println("You created a server! (almost)"));
-        back.addActionListener(e -> ((CardLayout)getLayout()).first(this));
+        create.addActionListener(e -> createGame() );
+        back.addActionListener(e -> ((CardLayout)root.getLayout()).first(root));
         AwesomeUtil.wiggleOnHover(create, 10.0f);
         AwesomeUtil.wiggleOnHover(back, 10.0f);
+    }
 
-        add(panel);
+    private boolean joinGameClicked = false;
+    private void joinGame(String code) {
+        if (joinGameClicked) return;
+        joinGameClicked = true;
+        Player thisPlayer = Game.game.getThisPlayer();
+        Message msg = new Message(Message.Type.JOIN_GAME);
+        msg.data.put("code", code);
+        msg.data.put("requestedName", thisPlayer.getName());
+        msg.data.put("requestedAvatarId", thisPlayer.getAvatarId());
+        Game.game.sendMessage(msg, new MessageResponseListener() {
+            @Override
+            public void onSuccess(Message msg) {
+                Game.game.setGameCode((String) msg.data.get("code"));
+
+                Player thisPlayer = Game.game.getThisPlayer();
+                thisPlayer.setAvatarId((int) msg.data.get("playerAvatarId"));
+                thisPlayer.setName((String) msg.data.get("playerName"));
+                thisPlayer.setId((int) msg.data.get("playerId"));
+
+                JoinPhase joinPhase = new JoinPhase();
+                Game.game.setCurrentPhase(joinPhase);
+            }
+
+            @Override
+            public void onError(String errorMsg) {
+                joinGameClicked = false;
+                Game.game.setErrorMsg(msg.error);
+            }
+        });
+    }
+
+    private void createGame() {
+        Player playerInfo = Game.game.getThisPlayer();
+        Message msg =  new Message(Message.Type.CREATE_GAME);
+        msg.data.put("settings", gameSettings);
+        msg.data.put("playerName", playerInfo.getName());
+        msg.data.put("avatarId", playerInfo.getAvatarId());
+        Game.game.sendMessage(msg, new MessageResponseListener() {
+            @Override
+            public void onSuccess(Message msg) {
+                Game.game.setGameCode((String) msg.data.get("code"));
+                Game.game.getThisPlayer().setId((int) msg.data.get("id"));
+                JoinPhase joinPhase = new JoinPhase();
+                Game.game.setCurrentPhase(joinPhase);
+            }
+
+            @Override
+            public void onError(String errorMsg) {
+
+            }
+        });
+    }
+
+    @Override
+    public void message(Message msg) {
+
     }
 }

@@ -14,10 +14,10 @@ public class JoinPhase extends Phase {
     private static final int POSITION_DATA_COMPONENTS = 3;
 
 
-    private Image[] playerIcons;
-    private float[] positionData;
-    private ArrayList<Integer> freePositions;
-    private JPanel panel;
+    private final Image[] playerIcons;
+    private final float[] positionData;
+    private final ArrayList<Integer> freePositions;
+    private final JPanel panel;
     private boolean isReady = false;
 
     public JoinPhase() {
@@ -71,18 +71,11 @@ public class JoinPhase extends Phase {
         panel.add(leave);
         layout.setConstraintsRatioByWidth(leave, .25f, .167f * 5, .3f, 0.25f);
         leave.addActionListener(e -> {
-            Game.game.setCurrentPhase(null);
-            Game.game.setContentPanel(new MainMenu());
+            Game.game.setCurrentPhase(new MainMenu());
         });
 
-
         Game.game.setContentPanel(panel);
-
-        addPlayer(new Player(0, "Jesper", playerIcons[0]));
-        addPlayer(new Player(1, "Mattias", playerIcons[2]));
-        addPlayer(new Player(2, "Lukas", playerIcons[4]));
-        addPlayer(new Player(3, "Johnny", playerIcons[6]));
-
+        addPlayer(Game.game.getThisPlayer());
     }
 
     public void addPlayer(Player player) {
@@ -92,8 +85,7 @@ public class JoinPhase extends Phase {
         int positionIndex = players.size() < 8 ?
                 freePositions.remove(Game.game.random.nextInt(8 - players.size())) :
                 freePositions.remove(Game.game.random.nextInt(freePositions.size()));
-        AwesomeIconLabel playerLabel = new AwesomeIconLabel(player.getAvatar(), player.getName());
-        playerLabel.setRotation(positionData[positionIndex * POSITION_DATA_COMPONENTS + 2]);
+        AwesomeIconLabel playerLabel = new AwesomeIconLabel(playerIcons[player.getAvatarId()], player.getName());
         panel.add(playerLabel);
         ((PercentLayout)panel.getLayout()).setConstraintsRatioByWidth(playerLabel,
                 positionData[positionIndex * POSITION_DATA_COMPONENTS],
