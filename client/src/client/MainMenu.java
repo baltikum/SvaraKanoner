@@ -44,12 +44,17 @@ public class MainMenu extends Phase {
         panel.setBackground(new Color(0xe67e22));
         root.add(panel);
 
-        AwesomeText title = new AwesomeText("Hello!", AwesomeUtil.BIG_TEXT);
-        AwesomeButton joinGameButton = new AwesomeButton("Join Game", wham, AwesomeUtil.MEDIUM_TEXT);
-        AwesomeButton createGameButton = new AwesomeButton("Create Game", wham, AwesomeUtil.MEDIUM_TEXT);
-        AwesomeButton quitButton = new AwesomeButton("Quit", rocket, AwesomeUtil.BIG_TEXT);
+        AwesomeText title = new AwesomeText("Hello!");
+        AwesomeButton joinGameButton = new AwesomeButton("Join Game", wham);
+        AwesomeButton createGameButton = new AwesomeButton("Create Game", wham);
+        AwesomeButton quitButton = new AwesomeButton("Quit", rocket);
         AwesomeImage rocketFlame = new AwesomeImage(flame0);
         rocketFlame.setVisible(false);
+
+        AwesomeUtil.dynamicFont(title, 1.0f);
+        AwesomeUtil.dynamicFont(joinGameButton, .2f);
+        AwesomeUtil.dynamicFont(createGameButton, .2f);
+        AwesomeUtil.dynamicFont(quitButton, .3f);
 
         AwesomeUtil.wiggleOnHover(joinGameButton, 10.0f);
         AwesomeUtil.scaleOnHover(createGameButton, 1.3f);
@@ -95,15 +100,15 @@ public class MainMenu extends Phase {
         root.add(panel);
 
         AwesomeImage bg = new AwesomeImage(block);
-        AwesomeText codeLabel = new AwesomeText("Enter code", AwesomeUtil.BIG_TEXT);
-        AwesomeText nameLabel = new AwesomeText("Enter name", AwesomeUtil.BIG_TEXT);
-        AwesomeButton accept = new AwesomeButton("Go!", AwesomeUtil.BIG_TEXT);
-        AwesomeButton back = new AwesomeButton("Back", AwesomeUtil.BIG_TEXT);
+        AwesomeText codeLabel = new AwesomeText("Enter code");
+        AwesomeText nameLabel = new AwesomeText("Enter name");
+        AwesomeButton accept = new AwesomeButton("Go!");
+        AwesomeButton back = new AwesomeButton("Back");
         JTextField codeInput = new JTextField();
         JTextField nameInput = new JTextField();
-        codeInput.setFont(AwesomeUtil.loadFont().deriveFont(32.0f));
+        codeInput.setFont(Assets.getFont().deriveFont(32.0f));
         codeInput.setHorizontalAlignment(SwingConstants.CENTER);
-        nameInput.setFont(AwesomeUtil.loadFont().deriveFont(32.0f));
+        nameInput.setFont(Assets.getFont().deriveFont(32.0f));
         nameInput.setHorizontalAlignment(SwingConstants.CENTER);
 
         panel.add(codeLabel);
@@ -271,8 +276,8 @@ public class MainMenu extends Phase {
         layout.setConstraintsRatioByWidth(choicesCountDecrease, 0.6f, 0.55f, 0.1f, 1.0f);
         layout.setConstraintsRatioByWidth(getChoices, 0.75f, 0.55f, 0.2f, 0.5f);
 
-        AwesomeButton create = new AwesomeButton("Create", AwesomeUtil.BIG_TEXT);
-        AwesomeButton back = new AwesomeButton("Back", AwesomeUtil.BIG_TEXT);
+        AwesomeButton create = new AwesomeButton("Create");
+        AwesomeButton back = new AwesomeButton("Back");
         panel.add(create);
         panel.add(back);
         layout.setConstraintsRatioByWidth(create, 0.75f, 0.8f, 0.3f, 0.5f);

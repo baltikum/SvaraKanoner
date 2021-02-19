@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class Game implements ActionListener, ComponentListener, WindowListener {
+public class Game implements ActionListener, WindowListener {
     public static Game game;
 
     public final Random random = new Random();
@@ -37,7 +37,7 @@ public class Game implements ActionListener, ComponentListener, WindowListener {
         game = this;
 
         try {
-            IniStream.read(settings, new File(AwesomeUtil.resourcesPath() + "settings.ini"));
+            IniStream.read(settings, new File(Assets.getResourcesPath() + "settings.ini"));
             settings.validate();
         } catch (IOException e) {
             System.out.println(e.getMessage());
@@ -52,7 +52,6 @@ public class Game implements ActionListener, ComponentListener, WindowListener {
         // Initiate the window
         frame = new JFrame("Ryktet går!");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.addComponentListener(this);
         frame.addWindowListener(this);
         frame.setBackground(new Color(0xe67e22));
         frame.setPreferredSize(new Dimension(settings.windowWidth, settings.windowHeight));
@@ -235,27 +234,15 @@ public class Game implements ActionListener, ComponentListener, WindowListener {
     }
 
     @Override
-    public void componentResized(ComponentEvent e) {
-        Container container = frame.getContentPane();
-        Dimension size = container.getSize();
-        AwesomeUtil.updateFonts(Math.min(size.width, size.height));
-    }
-
-
-    @Override
     public void windowClosing(WindowEvent e) {
         settings.windowPositionX = frame.getX();
         settings.windowPositionY = frame.getY();
         settings.windowWidth = frame.getWidth();
         settings.windowHeight = frame.getHeight();
         try {
-            IniStream.write(settings, new File(AwesomeUtil.resourcesPath() + "settings.ini"));
+            IniStream.write(settings, new File(Assets.getResourcesPath() + "settings.ini"));
         } catch (IOException ignored) {}
     }
-
-    @Override public void componentMoved(ComponentEvent e) { }
-    @Override public void componentShown(ComponentEvent e) { }
-    @Override public void componentHidden(ComponentEvent e) { }
 
     @Override public void windowOpened(WindowEvent e) { }
     @Override public void windowClosed(WindowEvent e) { }

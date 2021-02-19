@@ -1,5 +1,7 @@
 package client.ui;
 
+import client.Assets;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -8,21 +10,21 @@ import java.awt.*;
  */
 public class AwesomeText extends JComponent implements AwesomeEffect.User {
 
-    private int textSize = AwesomeUtil.MEDIUM_TEXT;
     private String text;
     private AwesomeEffect effect;
+    private Color textColor;
 
     public AwesomeText(String text) {
         this.text = text;
-    }
-
-    public AwesomeText(String text, int textSize) {
-        this.text = text;
-        this.textSize = textSize;
+        setFont(Assets.getFont());
     }
 
     public String getText() {
         return text;
+    }
+
+    public void setTextColor(Color color) {
+        textColor = color;
     }
 
     public void setText(String text) {
@@ -31,7 +33,7 @@ public class AwesomeText extends JComponent implements AwesomeEffect.User {
 
     @Override
     public void paintComponent(Graphics g) {
-        AwesomeUtil.drawBouncingText((Graphics2D) g, effect, false, getSize(), text, textSize, Color.BLACK, AwesomeUtil.CENTER);
+        AwesomeUtil.drawBouncingText((Graphics2D) g, effect, false, getSize(), text, getFont(), textColor, AwesomeUtil.CENTER);
     }
 
     @Override

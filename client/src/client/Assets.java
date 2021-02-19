@@ -1,7 +1,5 @@
 package client;
 
-import client.ui.AwesomeUtil;
-
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -9,10 +7,28 @@ import java.io.File;
 import java.io.IOException;
 
 public class Assets {
+
+    private static Font font;
     private static BufferedImage errorImage = null;
 
+    public static String getResourcesPath() {
+        return Main.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+    }
+
     public static File getResourceFile(String name) {
-        return new File(AwesomeUtil.resourcesPath() + name);
+        return new File(getResourcesPath() + name);
+    }
+
+    public static Font getFont() {
+        if (font == null) {
+            try {
+                font = Font.createFont(Font.TRUETYPE_FONT, new File(getResourcesPath() + "GloriaHallelujah.ttf")).deriveFont(30.0f);
+            } catch (FontFormatException | IOException e) {
+                e.printStackTrace();
+                font = new Font(Font.SERIF, Font.BOLD, 30);
+            }
+        }
+        return font;
     }
 
     public static BufferedImage getErrorImage() {
@@ -26,7 +42,7 @@ public class Assets {
     }
 
     public static BufferedImage loadImage(String name) {
-        String path = AwesomeUtil.resourcesPath() +  name;
+        String path = getResourcesPath() +  name;
         try {
             return ImageIO.read(new File(path));
         } catch (IOException e) {
@@ -40,7 +56,6 @@ public class Assets {
         int height = map.getHeight();
         return map.getSubimage((width * tileX) / numTiles, (height * tileY) / numTiles, (width * tilesX) / numTiles, (height * tilesY) / numTiles);
     }
-
 
     public static Image[] getTiles(BufferedImage map, int startTileX, int startTileY, int tilesX, int tilesY, int gridSize, int advanceTilesX, int advanceTilesY, int count) {
         Image[] result = new Image[count];

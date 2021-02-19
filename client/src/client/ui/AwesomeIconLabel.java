@@ -1,5 +1,7 @@
 package client.ui;
 
+import client.Assets;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -14,6 +16,7 @@ public class AwesomeIconLabel extends JComponent implements AwesomeEffect.User {
         this.text = text;
 
         setOpaque(false);
+        setFont(Assets.getFont());
     }
 
     public void setTextColor(Color color) {
@@ -26,7 +29,7 @@ public class AwesomeIconLabel extends JComponent implements AwesomeEffect.User {
         Dimension textDim = getSize();
         iconDim.width = getHeight();
         textDim.width -= getHeight();
-        AwesomeUtil.drawTextAndIcon((Graphics2D) g, effect, textDim, text, AwesomeUtil.MEDIUM_TEXT, textColor, img, iconDim, AwesomeUtil.LEFT);
+        AwesomeUtil.drawTextAndIcon((Graphics2D) g, effect, textDim, text, getFont(), textColor, img, iconDim, AwesomeUtil.LEFT);
     }
 
     @Override

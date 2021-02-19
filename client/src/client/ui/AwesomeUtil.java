@@ -1,78 +1,45 @@
 package client.ui;
 
-import client.Main;
 import java.awt.*;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.AffineTransform;
-import java.io.*;
 import java.util.*;
 
 /** Utility class that contains support function for the awesome components and effects.
  */
 public class AwesomeUtil {
 
-    public static final int SMALL_TEXT  = 0;
-    public static final int MEDIUM_TEXT = 1;
-    public static final int BIG_TEXT    = 2;
-
     public static final int LEFT = 1;
     public static final int CENTER = 2;
 
-
-    private static Font font;
-    private static final Font[] sizedFonts = new Font[3];
     private static float timeSinceStart = 0.0f;
     private static long lastDeltaIncrease = 0;
     private static final Set<AwesomeEffect> activeEffects = new HashSet<>();
 
-    public static Font loadFont() {
-        if (font == null) {
-            try {
-                font = Font.createFont(Font.TRUETYPE_FONT, new File(resourcesPath() + "GloriaHallelujah.ttf"));
-            } catch (FontFormatException | IOException e) {
-                e.printStackTrace();
-                font = new Font(Font.SERIF, Font.BOLD, 30);
-            }
-        }
-        return font;
+    public static void dynamicFont(Component component, float factor) {
+        component.addComponentListener(new DynamicFont(factor));
+        component.dispatchEvent(new ComponentEvent(component, ComponentEvent.COMPONENT_RESIZED));
     }
 
-    public static Font getFont(int textSize) {
-        if (font == null) {
-            loadFont();
-            updateFonts(500);
-        }
-        return sizedFonts[textSize];
-    }
-
-    public static void updateFonts(int screenWidth) {
-        if (font == null) loadFont();
-        sizedFonts[SMALL_TEXT]  = font.deriveFont(screenWidth * .02f);
-        sizedFonts[MEDIUM_TEXT] = font.deriveFont(screenWidth * .05f);
-        sizedFonts[BIG_TEXT]    = font.deriveFont(screenWidth * .1f);
-    }
-
-    public static String resourcesPath() {
-        return Main.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-    }
-
-    public static boolean drawBouncingText(Graphics2D g, AwesomeEffect effect, boolean shouldTransform, Dimension dimension, String str, int textSize, Color color, int alignment) {
+    public static boolean drawBouncingText(Graphics2D g, AwesomeEffect effect, boolean shouldTransform, Dimension dimension, String str, Font font, Color color, int alignment) {
         g.setClip(null);
         if (str.isEmpty()) return false;
-
-        char[] data = new char[str.length()];
-        str.getChars(0, str.length(), data, 0);
-
-        g.setColor(color);
-        g.setFont(sizedFonts[textSize]);
-        FontMetrics metrics = g.getFontMetrics();
 
         boolean isTransformed = false;
         if (effect != null && shouldTransform) {
             effect.transform(g, dimension);
             isTransformed = true;
         }
+
+        char[] data = new char[str.length()];
+        str.getChars(0, str.length(), data, 0);
+
+        g.setColor(color);
+        g.setFont(font);
+        FontMetrics metrics = g.getFontMetrics();
 
         int descent = metrics.getDescent();
         int x = 0;
@@ -101,10 +68,10 @@ public class AwesomeUtil {
         return isTransformed;
     }
 
-    public static void drawTextAndBackground(Graphics2D g, AwesomeEffect effect, Dimension dim, String text, int textSize, Color color, Image background, int textAlignment) {
+    public static void drawTextAndBackground(Graphics2D g, AwesomeEffect effect, Dimension dim, String text, Font font, Color color, Image background, int textAlignment) {
         if (effect == null) {
             drawImage(g, null, false, dim, background);
-            drawBouncingText(g, null, false, dim, text, textSize, color, textAlignment);
+            drawBouncingText(g, null, false, dim, text, font, color, textAlignment);
         } else {
             int effects = effect.getEffects();
             AffineTransform savedState = effects == AwesomeEffect.BACKGROUND ? g.getTransform() : null;
@@ -112,14 +79,14 @@ public class AwesomeUtil {
             if (isTransformed && effects == AwesomeEffect.FOREGROUND) {
                 g.setTransform(savedState);
             }
-            drawBouncingText(g, effect, !isTransformed && effects != AwesomeEffect.BACKGROUND, dim, text, textSize, color, textAlignment);
+            drawBouncingText(g, effect, !isTransformed && effects != AwesomeEffect.BACKGROUND, dim, text, font, color, textAlignment);
         }
     }
 
-    public static void drawTextAndIcon(Graphics2D g, AwesomeEffect effect, Dimension textDim, String text, int textSize, Color color, Image icon, Dimension iconDim, int textAlignment) {
+    public static void drawTextAndIcon(Graphics2D g, AwesomeEffect effect, Dimension textDim, String text, Font font, Color color, Image icon, Dimension iconDim, int textAlignment) {
         boolean isTransformed = drawImage(g, effect, true, iconDim, icon);
         g.translate(iconDim.width, 0);
-        drawBouncingText(g, effect, !isTransformed, textDim, text, textSize, color, textAlignment);
+        drawBouncingText(g, effect, !isTransformed, textDim, text, font, color, textAlignment);
     }
 
     public static void wiggleOnHover(AwesomeEffect.User user, float amount) {
@@ -213,6 +180,26 @@ public class AwesomeUtil {
 
     public static void unregister(AwesomeEffect effect) {
         activeEffects.remove(effect);
+    }
+
+
+    private static class DynamicFont implements ComponentListener {
+        private final float factor;
+
+        public DynamicFont(float factor) {
+            this.factor = factor;
+        }
+
+        @Override
+        public void componentResized(ComponentEvent e) {
+            Component target = e.getComponent();
+            Font font = target.getFont();
+            target.setFont(font.deriveFont(target.getHeight() * factor));
+        }
+
+        @Override public void componentMoved(ComponentEvent e) {}
+        @Override public void componentShown(ComponentEvent e) {}
+        @Override public void componentHidden(ComponentEvent e) {}
     }
 
 }

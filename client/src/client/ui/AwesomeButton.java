@@ -1,5 +1,7 @@
 package client.ui;
 
+import client.Assets;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -8,33 +10,28 @@ import java.awt.*;
  */
 public class AwesomeButton extends JButton implements AwesomeEffect.User {
 
-    private int textSize;
     private AwesomeEffect effect;
     private Image background;
 
-    public AwesomeButton(String text, int textSize) {
-        this(text, null, textSize);
+    public AwesomeButton(String text) {
+        this(text, null);
     }
 
     public AwesomeButton(Image background) {
-        this(null, background, AwesomeUtil.MEDIUM_TEXT);
+        this(null, background);
     }
 
-    public AwesomeButton(String text, Image background, int textSize) {
+    public AwesomeButton(String text, Image background) {
         super(text);
 
         this.background = background;
-        this.textSize = textSize;
         setBorderPainted(false);
         setContentAreaFilled(false);
         setFocusPainted(false);
         setOpaque(false);
 
         setCursor(new Cursor(Cursor.HAND_CURSOR));
-    }
-
-    public void setTextSize(int size) {
-        textSize = size;
+        setFont(Assets.getFont());
     }
 
     public void setBackground(Image img) {
@@ -43,7 +40,7 @@ public class AwesomeButton extends JButton implements AwesomeEffect.User {
 
     @Override
     public void paintComponent(Graphics g) {
-        AwesomeUtil.drawTextAndBackground((Graphics2D) g, effect, getSize(), getText(), textSize, Color.RED, background, AwesomeUtil.CENTER);
+        AwesomeUtil.drawTextAndBackground((Graphics2D) g, effect, getSize(), getText(), getFont(), Color.RED, background, AwesomeUtil.CENTER);
     }
 
     @Override

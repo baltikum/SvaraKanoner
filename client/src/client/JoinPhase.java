@@ -54,25 +54,28 @@ public class JoinPhase extends Phase {
         panel.setOpaque(true);
         panel.setBackground(new Color(0, 0, 0, 0));
 
-        AwesomeText gameCode = new AwesomeText(Game.game.getGameCode(), AwesomeUtil.BIG_TEXT);
+        AwesomeText gameCode = new AwesomeText(Game.game.getGameCode());
         panel.add(gameCode);
-        layout.setConstraintsRatioByWidth(gameCode, 0.5f, .167f * 2, .5f, 0.25f);
+        layout.setConstraintsRatioByWidth(gameCode, 0.5f, .167f * 2, .35f, 0.25f);
+        AwesomeUtil.dynamicFont(gameCode, 1.0f);
 
-        AwesomeButton ready = new AwesomeButton("Ready!", AwesomeUtil.MEDIUM_TEXT);
+        AwesomeButton ready = new AwesomeButton("Ready!");
         panel.add(ready);
         layout.setConstraintsRatioByWidth(ready, .75f, .167f * 5, .3f, 0.25f);
 
         ready.addActionListener(e -> {
             Game.game.sendMessage(new Message(Message.Type.TOGGLE_READY_STATUS));
         });
+        AwesomeUtil.dynamicFont(ready, 1.0f);
 
-        AwesomeButton leave = new AwesomeButton("Leave", AwesomeUtil.MEDIUM_TEXT);
+        AwesomeButton leave = new AwesomeButton("Leave");
         panel.add(leave);
         layout.setConstraintsRatioByWidth(leave, .25f, .167f * 5, .3f, 0.25f);
         leave.addActionListener(e -> {
             Game.game.sendMessage(new Message(Message.Type.DISCONNECT));
             Game.game.setCurrentPhase(new MainMenu());
         });
+        AwesomeUtil.dynamicFont(leave, 1.0f);
 
         Game.game.setContentPanel(panel);
         addPlayer(Game.game.getThisPlayer());
@@ -91,6 +94,7 @@ public class JoinPhase extends Phase {
                 positionData[positionIndex * POSITION_DATA_COMPONENTS],
                 positionData[positionIndex * POSITION_DATA_COMPONENTS + 1],0.2f, 0.3f);
         playerIdToLabel.put(player.getId(), playerLabel);
+        AwesomeUtil.dynamicFont(playerLabel, .5f);
 
         AwesomeEffect.create()
                 .addScaleKey(0.0f, 0.0f, 0)
