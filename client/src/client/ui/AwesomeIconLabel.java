@@ -5,12 +5,24 @@ import client.Assets;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Similar to swings JLabel, but using bouncing text and can only display the icon on the left side.
+ * Can be used with AwesomeEffect.
+ *
+ * @author Jesper Jansson
+ * @version 11/02/21
+ */
 public class AwesomeIconLabel extends JComponent implements AwesomeEffect.User {
     private Image img;
     private String text;
     private AwesomeEffect effect;
     private Color textColor = Color.BLACK;
 
+    /**
+     * Creates a component with the given icon and text.
+     * @param img The icon to render of the left side of the text.
+     * @param text The text to render.
+     */
     public AwesomeIconLabel(Image img, String text) {
         this.img = img;
         this.text = text;
@@ -19,6 +31,10 @@ public class AwesomeIconLabel extends JComponent implements AwesomeEffect.User {
         setFont(Assets.getFont());
     }
 
+    /**
+     * Sets the color of the text.
+     * @param color The color......
+     */
     public void setTextColor(Color color) {
         textColor = color;
     }

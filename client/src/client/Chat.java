@@ -3,15 +3,17 @@ package client;
 import client.ui.AwesomeButton;
 
 import javax.swing.*;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyleContext;
 import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.image.BufferedImage;
 
+/**
+ * A panel for the chat input and displaying.
+ *
+ * @author Jesper Jansson
+ * @version 19/02/21
+ */
 public class Chat extends JPanel {
     private boolean isOpen = false;
     private JButton closeChat;
@@ -19,6 +21,10 @@ public class Chat extends JPanel {
     private JTextArea messageData;
     private JScrollPane messageScrollPane;
 
+    /**
+     * Initiates the panel.
+     * @param icons The image to get the appropriate icons from.
+     */
     public Chat(BufferedImage icons) {
         super(new BorderLayout());
         setPreferredSize(new Dimension(400, 32 * 3));
@@ -87,6 +93,9 @@ public class Chat extends JPanel {
         sendChat.addActionListener(e -> send());
     }
 
+    /**
+     * Makes the chat small.
+     */
     public void close() {
         if (!isOpen) return;
         isOpen = false;
@@ -96,6 +105,9 @@ public class Chat extends JPanel {
         closeChat.setVisible(false);
     }
 
+    /**
+     * Makes the chat big.
+     */
     public void open() {
         if (isOpen) return;
         isOpen = true;
@@ -105,14 +117,23 @@ public class Chat extends JPanel {
         setPreferredSize(size);
     }
 
+    /**
+     * Scroll up a little bit.
+     */
     public void scrollUp() {
         messageScrollPane.getVerticalScrollBar().setValue(messageScrollPane.getVerticalScrollBar().getValue() - 30);
     }
 
+    /**
+     * Scroll down a little bit.
+     */
     public void scrollDown() {
         messageScrollPane.getVerticalScrollBar().setValue(messageScrollPane.getVerticalScrollBar().getValue() + 30);
     }
 
+    /**
+     * TODO: Implement this server vice.
+     */
     public void send() {
         open();
 

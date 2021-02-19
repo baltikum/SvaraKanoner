@@ -2,7 +2,6 @@ package client;
 
 import client.ui.*;
 
-import javax.print.Doc;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -12,10 +11,14 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.Locale;
 
 import common.*;
 
+/**
+ * Represents the main menu ui and logic. This is the first phase the game starts in.
+ *
+ * Can send a CREATE_GAME or JOIN_GAME message to the server and enters join phase on successfull response.
+ */
 public class MainMenu extends Phase {
 
     private boolean hasPlayedQuitAnimation = false;
@@ -24,6 +27,9 @@ public class MainMenu extends Phase {
 
     private final GameSettings gameSettings = new GameSettings();
 
+    /**
+     * Initiates a MainMenu phase and sets up the ui.
+     */
     MainMenu() {
         JPanel root = new JPanel(new CardLayout());
         root.setBackground(new Color(0xe67e22));
@@ -44,6 +50,11 @@ public class MainMenu extends Phase {
         Game.game.setContentPanel(root);
     }
 
+
+    /**
+     * Add a panel as a card to root with the main menu buttons.
+     * @param root The panel to add the card to.
+     */
     private void initMainMenu(JPanel root) {
         PercentLayout layout = new PercentLayout(1.0f);
         JPanel panel = new JPanel(layout);
@@ -99,7 +110,11 @@ public class MainMenu extends Phase {
         layout.setConstraintsRatioByWidth(rocketFlame, 0.28f, 0.7f, .1f, 1.0f);
     }
 
-    void initJoinGamePanel(JPanel root) {
+    /**
+     * Add a panel as a card to root with the join game inputs.
+     * @param root
+     */
+    private void initJoinGamePanel(JPanel root) {
         PercentLayout layout = new PercentLayout(1.0f);
         JPanel panel = new JPanel(layout);
         panel.setBackground(new Color(0xe67e22));
@@ -174,6 +189,10 @@ public class MainMenu extends Phase {
         });
     }
 
+    /**
+     * Add a panel as a card to root with the create game inputs.
+     * @param root
+     */
     private void initCreateGamePanel(JPanel root) {
         PercentLayout layout = new PercentLayout(1.0f);
         JPanel panel = new JPanel(layout);
@@ -319,6 +338,7 @@ public class MainMenu extends Phase {
         AwesomeUtil.wiggleOnHover(back, 10.0f);
     }
 
+
     private boolean joinGameClicked = false;
     private void joinGame(String code) {
         if (joinGameClicked) return;
@@ -381,6 +401,6 @@ public class MainMenu extends Phase {
 
     @Override
     public void message(Message msg) {
-
+        // Doesn't expect any messages
     }
 }

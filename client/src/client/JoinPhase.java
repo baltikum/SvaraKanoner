@@ -9,10 +9,16 @@ import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
 
+/**
+ * Represent the clients join phase, where the other players can be seen to appear and the game starts
+ * when all are ready.
+ *
+ * Can send a TOGGLE_PLAYER_READY or LEAVE message.
+ * Gets a message from the server when all are ready to goto the next phase PickWord or DrawPhase.
+ */
 public class JoinPhase extends Phase {
     private static final int NUM_POSITIONS = 16;
     private static final int POSITION_DATA_COMPONENTS = 3;
-
 
     private final Image[] playerIcons;
     private final float[] positionData;
@@ -20,6 +26,9 @@ public class JoinPhase extends Phase {
     private final JPanel panel;
     private final Map<Integer, AwesomeIconLabel> playerIdToLabel = new HashMap<>();
 
+    /**
+     * Initiates the join phase ui.
+     */
     public JoinPhase() {
         Random random = Game.game.random;
         freePositions = new ArrayList<>(16);

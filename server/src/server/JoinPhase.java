@@ -7,6 +7,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Represents the server side of the join phase waiting for players to join.
+ * Will send a message to all players to goto the next phase when all players are ready.
+ *
+ * @author Jesper Jansson
+ * @version 19/02/21
+ */
 public class JoinPhase extends Phase {
 
     private final GameSession session;
@@ -18,6 +25,10 @@ public class JoinPhase extends Phase {
         this.session = session;
     }
 
+    /**
+     * Tells all existing clients that a player has joined and adds this client to the session.
+     * @param client The client to join the session.
+     */
     public void addClient(ClientHandler client) {
         // Resolve potential conflicts
         client.setName(resolvePlayerName(client.getName()));
@@ -44,6 +55,10 @@ public class JoinPhase extends Phase {
         client.setGameSession(session);
     }
 
+    /**
+     * Tells all remaining clients that a player has disconnected, and removes the client from the session.
+     * @param client The client to disconnect.
+     */
     public void disconnectClient(ClientHandler client) {
         if (session.getConnectedPlayers().remove(client)) {
             takenAvatarIds &= ~(0x1 << client.getAvatarId()); // Avatar is no longer taken.
@@ -56,6 +71,10 @@ public class JoinPhase extends Phase {
         }
     }
 
+    /**
+     * Listens for JOIN_GAME, DISCONNECT or TOGGLE_READY_STATUS messages.
+     * @param msg The message.
+     */
     @Override
     public void message(Message msg) {
         switch (msg.type) {
@@ -110,7 +129,13 @@ public class JoinPhase extends Phase {
         }
     }
 
+
     private static final String[] defaultNames = { "Johnny Deep", "Icewallowcum", "Tiny cox", "Moe Lester", "Ben Dover" };
+    /**
+     * Checks that the given name is valid and not taken.
+     * @param requestedName
+     * @return
+     */
     private String resolvePlayerName(String requestedName) {
         requestedName = requestedName.trim();
         if (requestedName.isEmpty()) {
@@ -127,6 +152,11 @@ public class JoinPhase extends Phase {
         return givenName;
     }
 
+    /**
+     *
+     * @param name The name to check if is taken.
+     * @return true if someone already has the name, else false.
+     */
     private boolean doesNameExist(String name) {
         List<ClientHandler> connectedClients = session.getConnectedPlayers();
         for (ClientHandler c : connectedClients) {

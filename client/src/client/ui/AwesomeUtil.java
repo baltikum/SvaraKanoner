@@ -8,7 +8,12 @@ import java.awt.event.MouseListener;
 import java.awt.geom.AffineTransform;
 import java.util.*;
 
-/** Utility class that contains support function for the awesome components and effects.
+/**
+ * A static utility class that contains support function for the awesome components and effects.
+ * And some other things.
+ *
+ * @author Jesper Jansson
+ * @version 19/02/21
  */
 public class AwesomeUtil {
 
@@ -19,17 +24,33 @@ public class AwesomeUtil {
     private static long lastDeltaIncrease = 0;
     private static final Set<AwesomeEffect> activeEffects = new HashSet<>();
 
+    /**
+     * Changes the font size of the component to be component.getHeight() * factor upon resize.
+     * @param component The components whose font that should be altered.
+     * @param factor The fraction of the components height the font size should be.
+     */
     public static void dynamicFont(Component component, float factor) {
         component.addComponentListener(new DynamicFont(factor));
         component.dispatchEvent(new ComponentEvent(component, ComponentEvent.COMPONENT_RESIZED));
     }
 
-    public static boolean drawBouncingText(Graphics2D g, AwesomeEffect effect, boolean shouldTransform, Dimension dimension, String str, Font font, Color color, int alignment) {
+    /**
+     * Draws an animated bouncing text in the given graphics context.
+     * @param g The graphics context to render in.
+     * @param effect The effect to apply, or null.
+     * @param dimension The dimension of the area to render to.
+     * @param str The text to be rendered.
+     * @param font The font to render with.
+     * @param color The color of the text to be rendered.
+     * @param alignment The alignment of the text LEFT or CENTER.
+     * @return true if the effect was used and the area transformed.
+     */
+    public static boolean drawBouncingText(Graphics2D g, AwesomeEffect effect, Dimension dimension, String str, Font font, Color color, int alignment) {
         g.setClip(null);
         if (str.isEmpty()) return false;
 
         boolean isTransformed = false;
-        if (effect != null && shouldTransform) {
+        if (effect != null) {
             effect.transform(g, dimension);
             isTransformed = true;
         }
@@ -56,10 +77,18 @@ public class AwesomeUtil {
         return isTransformed;
     }
 
-    public static boolean drawImage(Graphics2D g, AwesomeEffect effect, boolean shouldTransform, Dimension dim, Image img) {
+    /**
+     * Draws a image scaled to fit dim and transformed by the effect if given.
+     * @param g The graphics context to render in.
+     * @param effect The effect to apply, or null.
+     * @param dim The dimension of the area to render to.
+     * @param img The image to be rendered, if effect has a sprite for the given key that is used instead.
+     * @return true if the effect was used and the area transformed.
+     */
+    public static boolean drawImage(Graphics2D g, AwesomeEffect effect, Dimension dim, Image img) {
         if (img == null) return false;
         boolean isTransformed = false;
-        if (effect != null && shouldTransform) {
+        if (effect != null) {
             effect.transform(g, dim);
             isTransformed = true;
         }
@@ -68,27 +97,55 @@ public class AwesomeUtil {
         return isTransformed;
     }
 
+    /**
+     * Draws an animated bouncing text in the foreground and an image in the background.
+     * @param g The graphics context to render in.
+     * @param effect The effect to apply, or null.
+     * @param dim The dimension of the area to render to.
+     * @param text The text to be rendered, effect by FOREGROUND or COMPONENT,
+     * @param font The font to render with.
+     * @param color The color of the text to be rendered.
+     * @param background The background image to render, effect by BACKGROUND or COMPONENT,
+     * @param textAlignment The alignment of the text LEFT or CENTER
+     */
     public static void drawTextAndBackground(Graphics2D g, AwesomeEffect effect, Dimension dim, String text, Font font, Color color, Image background, int textAlignment) {
         if (effect == null) {
-            drawImage(g, null, false, dim, background);
-            drawBouncingText(g, null, false, dim, text, font, color, textAlignment);
+            drawImage(g, null, dim, background);
+            drawBouncingText(g, null, dim, text, font, color, textAlignment);
         } else {
-            int effects = effect.getEffects();
-            AffineTransform savedState = effects == AwesomeEffect.BACKGROUND ? g.getTransform() : null;
-            boolean isTransformed = drawImage(g, effect, effects != AwesomeEffect.FOREGROUND, dim, background);
-            if (isTransformed && effects == AwesomeEffect.FOREGROUND) {
+            int layer = effect.getEffectedLayer();
+            AffineTransform savedState = layer == AwesomeEffect.BACKGROUND ? g.getTransform() : null;
+            boolean isTransformed = drawImage(g, layer != AwesomeEffect.FOREGROUND ? effect : null, dim, background);
+            if (isTransformed && layer == AwesomeEffect.FOREGROUND) {
                 g.setTransform(savedState);
             }
-            drawBouncingText(g, effect, !isTransformed && effects != AwesomeEffect.BACKGROUND, dim, text, font, color, textAlignment);
+            drawBouncingText(g, !isTransformed && layer != AwesomeEffect.BACKGROUND ? effect : null, dim, text, font, color, textAlignment);
         }
     }
 
+    /**
+     * Draws an image to the left and to the right of that animated bouncing text.
+     * @param g The graphics context to render in.
+     * @param effect The effect to apply, or null. The effect layer of the effect doesn't matter.
+     * @param textDim The dimension of the area text area.
+     * @param text The text to be rendered.
+     * @param font The font to render with.
+     * @param color The color of the text to be rendered.
+     * @param icon The icon image to render.
+     * @param iconDim The size of the icon.
+     * @param textAlignment The alignment of the text LEFT or CENTER.
+     */
     public static void drawTextAndIcon(Graphics2D g, AwesomeEffect effect, Dimension textDim, String text, Font font, Color color, Image icon, Dimension iconDim, int textAlignment) {
-        boolean isTransformed = drawImage(g, effect, true, iconDim, icon);
+        boolean isTransformed = drawImage(g, effect, iconDim, icon);
         g.translate(iconDim.width, 0);
-        drawBouncingText(g, effect, !isTransformed, textDim, text, font, color, textAlignment);
+        drawBouncingText(g, isTransformed ? null : effect, textDim, text, font, color, textAlignment);
     }
 
+    /**
+     * Animates the users foregrounds rotation by amount whilst the user is hovering of the component.
+     * @param user The component to animate.
+     * @param amount The amount of degrees to wiggle by.
+     */
     public static void wiggleOnHover(AwesomeEffect.User user, float amount) {
         AwesomeEffect.create()
                 .addRotationKey(amount, 100)
@@ -117,6 +174,11 @@ public class AwesomeUtil {
         });
     }
 
+    /**
+     * Scales the components foreground by an amount whilst the mouse is on the component and goes back to 1.0 on exit.
+     * @param user The component whose foreground to animate.
+     * @param amount The factor to scale by.
+     */
     public static void scaleOnHover(AwesomeEffect.User user, float amount) {
         AwesomeEffect.create().addScaleKey(amount, amount, 500).animate(user, AwesomeEffect.FOREGROUND);
         user.getEffect().pause();
@@ -139,6 +201,11 @@ public class AwesomeUtil {
 
     }
 
+    /**
+     * Quickly shakes the component horizontally. Useful to indicate if something is wrong.
+     * @param target The component to shake.
+     * @param amount The number of pixels to shake by.
+     */
     public static void shakeHorizontally(AwesomeEffect.User target, int amount) {
         AwesomeEffect.create()
                 .addTranslationXKey(amount, 50)
@@ -148,6 +215,9 @@ public class AwesomeUtil {
                 .addTranslationXKey(0, 400).animate(target);
     }
 
+    /**
+     * Calculates the elapsed time since this was last called and updates all active effects.
+     */
     public static void increaseDelta() {
         int delta = 1000 / 20;
         if (lastDeltaIncrease == 0) {
@@ -166,6 +236,11 @@ public class AwesomeUtil {
         }
     }
 
+    /**
+     * Should not be called directly use User.setEffect instead. or play, resume on the effect.
+     * @param user The components to animate.
+     * @param effect The effect to apply to the component.
+     */
     public static void register(AwesomeEffect.User user, AwesomeEffect effect) {
         if (effect == null) return;
         AwesomeEffect existingEffect = user.getEffect();
@@ -178,11 +253,18 @@ public class AwesomeUtil {
         }
     }
 
+    /**
+     * Should not be called directly use AwesomeEffect.pause
+     * @param effect
+     */
     public static void unregister(AwesomeEffect effect) {
         activeEffects.remove(effect);
     }
 
 
+    /**
+     * Used by dynamicFont.
+     */
     private static class DynamicFont implements ComponentListener {
         private final float factor;
 

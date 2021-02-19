@@ -4,6 +4,12 @@ import java.io.*;
 import java.lang.reflect.Field;
 import java.util.Locale;
 
+/**
+ * A static utility class for saving down class fields in the ini format.
+ * Only supports primitive fields and strings as field types.
+ * @author Jesper Jansson
+ * @version 19/02/21
+ */
 public class IniStream {
 
     /** Read ini file entries into an object.
