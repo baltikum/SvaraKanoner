@@ -2,11 +2,17 @@ package client;
 
 import client.ui.*;
 
+import javax.print.Doc;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.Locale;
 
 import common.*;
 
@@ -111,6 +117,13 @@ public class MainMenu extends Phase {
         nameInput.setFont(Assets.getFont().deriveFont(32.0f));
         nameInput.setHorizontalAlignment(SwingConstants.CENTER);
 
+        AwesomeUtil.dynamicFont(codeLabel, .8f);
+        AwesomeUtil.dynamicFont(nameLabel, .8f);
+        AwesomeUtil.dynamicFont(accept, .8f);
+        AwesomeUtil.dynamicFont(back, .8f);
+        AwesomeUtil.dynamicFont(codeInput, .6f);
+        AwesomeUtil.dynamicFont(nameInput, .6f);
+
         panel.add(codeLabel);
         panel.add(nameLabel);
         panel.add(codeInput);
@@ -133,6 +146,24 @@ public class MainMenu extends Phase {
         back.addActionListener(e -> ((CardLayout)root.getLayout()).previous(root) );
         accept.addActionListener(e -> joinGame(codeInput.getText()));
 
+        // Allow uppercase only
+        AbstractDocument document = (AbstractDocument) codeInput.getDocument();
+        final int maxCharacters = 6;
+        document.setDocumentFilter(new DocumentFilter() {
+            public void replace(FilterBypass fb, int offs, int length,
+                                String str, AttributeSet a) throws BadLocationException {
+                if ((fb.getDocument().getLength() + str.length() - length) <= maxCharacters) {
+                    super.replace(fb, offs, length, str.toUpperCase(), a);
+                }
+            }
+
+            public void insertString(FilterBypass fb, int offs, String str,
+                                     AttributeSet a) throws BadLocationException {
+                if ((fb.getDocument().getLength() + str.length()) <= maxCharacters) {
+                    super.insertString(fb, offs, str.toUpperCase(), a);
+                }
+            }
+        });
         nameInput.getDocument().addDocumentListener(new DocumentListener() {
             @Override public void insertUpdate(DocumentEvent e) { }
             @Override public void removeUpdate(DocumentEvent e) { }
