@@ -3,10 +3,20 @@ package client.ui;
 import java.awt.*;
 import java.util.ArrayList;
 
+/**
+ * A layout that keeps it's aspect ratio and places it components centers at a given x, y and the size to a percentage
+ * of the containers size.
+ * All components have to be set using setConstraintsRatioByWidth if they want to be effected by this layout.
+ * @author Jesper Jansson
+ * @version 19/02/21
+ */
 public class PercentLayout implements LayoutManager {
     private int width, height, xOffset, yOffset;
 
-    public static class Constraints {
+    /**
+     * Internal class to keep tack of the components induvidual constraints.
+     */
+    private static class Constraints {
         Component component;
         float x, y, width, ratio;
 
@@ -14,26 +24,39 @@ public class PercentLayout implements LayoutManager {
             this.component = component;
         }
 
-        public Constraints setPosition(float x, float y) {
+        public void setPosition(float x, float y) {
             this.x = x;
             this.y = y;
-            return this;
         }
 
-        public Constraints setSize(float width, float ratio) {
+        public void setSize(float width, float ratio) {
             this.width = width;
             this.ratio = ratio;
-            return this;
         }
 
+        /**
+         * Calculates the x location of the center of the component.
+         * @param parentWidth The height of the container holding the component.
+         * @return The center x location.
+         */
         private int getX(int parentWidth) {
             return (int)(parentWidth * x);
         }
 
+        /**
+         * Calculates the y location of the center of the component.
+         * @param parentHeight The height of the container holding the component.
+         * @return The center y location.
+         */
         private int getY(int parentHeight) {
             return (int)(parentHeight * y);
         }
 
+        /**
+         * Calculates the size of the component given the containers width.
+         * @param containerWidth The width of the container holding the component.
+         * @return The dimensions of the component.
+         */
         private Dimension getSize(int containerWidth) {
             Dimension result = new Dimension();
             float width = this.width * containerWidth;
@@ -43,16 +66,28 @@ public class PercentLayout implements LayoutManager {
         }
     }
 
-    private ArrayList<Constraints> children = new ArrayList<>();
+    private final ArrayList<Constraints> children = new ArrayList<>();
     private int minWidth = 0, minHeight = 0;
     private int preferredWidth = 0, preferredHeight = 0;
-    private boolean sizeUnknown = true;
     private float ratio;
 
+
+    /**
+     * Creates a new PercentLayout that will center in its parent and the height will be equal to width*ratio.
+     * @param ratio The proportions between the width and the height.
+     */
     public PercentLayout(float ratio) {
         this.ratio = ratio;
     }
 
+    /**
+     *
+     * @param comp The component to effect in the container.
+     * @param x The center x coordinate between 0 and 1.
+     * @param y The center y coordinate between 0 and 1.
+     * @param width The fraction of the parents width.
+     * @param ratio The height the component will be in ratio to the width of the component.
+     */
     public void setConstraintsRatioByWidth(Component comp, float x, float y, float width, float ratio) {
         Constraints constraints = null;
         for (Constraints it : children) {
@@ -115,7 +150,6 @@ public class PercentLayout implements LayoutManager {
         Insets insets = parent.getInsets();
         dim.width = preferredWidth + insets.left + insets.right;
         dim.height = preferredHeight + insets.top + insets.bottom;
-        sizeUnknown = false;
 
         return dim;
     }
@@ -127,7 +161,6 @@ public class PercentLayout implements LayoutManager {
         Insets insets = parent.getInsets();
         dim.width = minWidth + insets.left + insets.right;
         dim.height = minHeight + insets.top + insets.bottom;
-        sizeUnknown = false;
 
         return dim;
     }

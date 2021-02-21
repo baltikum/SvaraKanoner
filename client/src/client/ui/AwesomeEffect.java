@@ -4,18 +4,39 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 
-/** Used to animate any component that implements the AwesomeEffect.User interface.
- * Example of moving a component in x and y direction by 1000 pixels during 200ms.
- *    AwesomeEffect.create().addTranslationKey(1000, 200).animate(user, AwesomeEffect.FOREGROUND);
+/**
+ * Can be used to translate the apperance of any component extending the AwesomeEffect.User interface.
+ * It can translate, scale and rotate the apperance as well as changing the image the component.
+ *
+ * @author Jesper Jansson
+ * @version 17/02/21
  */
 public class AwesomeEffect {
 
+    /**
+     * Implement this to allow your component to be animated.
+     */
     public interface User {
+        /**
+         * Should store the effect in the component and call AwesomeUtil.register
+         * @param effect The effect to set.
+         */
         void setEffect(AwesomeEffect effect);
+
+        /**
+         * Should return the effect last set by set Effect.
+         * @return The set effect or null if non has been set.
+         */
         AwesomeEffect getEffect();
+
+        /**
+         * Should return this of any component implementing this interface.
+         * @return Return the implementer of the interface.
+         */
         Component getComponent();
     }
 
+    public static final int INFINITY = -1;
     public static final boolean FORWARD = false;
     public static final boolean BACKWARDS = true;
 
@@ -30,6 +51,10 @@ public class AwesomeEffect {
     private static final int SCALE_Y = 16;
     private static final int SPRITES = 32;
 
+    /**
+     * Creates a builder to start creating the effect.
+     * @return A instance of AwesomeEffect.Builder
+     */
     public static Builder create() {
         return new Builder();
     }
@@ -47,18 +72,27 @@ public class AwesomeEffect {
     private final int durationMillis;
     private int elapsedMillis;
     private int repeatsLeft;
-    private final int effects;
+    private final int effectedLayer;
 
-    private AwesomeEffect(Key[] keys, User user, int effects) {
+    private AwesomeEffect(Key[] keys, User user, int effectedLayer) {
         target = user;
         this.keys = keys;
-        this.effects = effects;
+        this.effectedLayer = effectedLayer;
         durationMillis = keys[keys.length - 1].timeStamp;
     }
 
-    public AwesomeEffect(User user, int x, int y, float scaleX, float scaleY, float degrees) {
+    /**
+     * Used to create a static effect with no animation.
+     * @param user The user to apply the effect to.
+     * @param x The amount to translate the component horizontally.
+     * @param y The amount to translate the component vertically.
+     * @param scaleX The amount to scale the components width by, 1.0 is no scaling.
+     * @param scaleY The amount to scale the components height by, 1.0 is no scaling.
+     * @param degrees The degrees to rotate the component by.
+     */
+    public AwesomeEffect(User user, int x, int y, float scaleX, float scaleY, float degrees, int effectedLayer) {
         durationMillis = 0;
-        effects = 0;
+        this.effectedLayer = effectedLayer;
         target = user;
         keys = null;
         this.x = x;
@@ -68,51 +102,83 @@ public class AwesomeEffect {
         this.rotation = (float)Math.toRadians(degrees);
     }
 
-    // Play the animation from the beginning in the forward direction.
+    /**
+     * Plays the animation from the beginning in the forwards direction,
+     * if already playing restarts the animation from the beginning.
+     */
     public void play() {
         target.setEffect(this);
         elapsedMillis = 0;
         direction = FORWARD;
     }
 
-    // Pauses the animation where it's.
+    /**
+     * Stops the animation and remembers it's position.
+     */
     public void pause() {
         AwesomeUtil.unregister(this);
     }
 
-    // Resumes the animation from where it's.
+    /**
+     * Resumes the animation from where it was last, if already playing it does nothing.
+     */
     public void resume() {
         AwesomeUtil.register(target, this);
     }
 
-    // Resumes the animation from where it's in the opposite direction.
+    /**
+     * Changes the direction of the animation, if the animation is paused it also resumes it.
+     */
     public void reverse() {
-        target.setEffect(this);
+        AwesomeUtil.register(target, this);
         direction = !direction;
     }
+    /**
+     * Sets the direction of the animation, if the animation is paused it also resumes it.
+     * @param dir The direction to go in.
+     */
+    public void setDirection(boolean dir) {
+        AwesomeUtil.register(target, this);
+        direction = dir;
+    }
 
+    /**
+     * Sets the number of repeats left, 0 means it will stop when it reaches the end. INFINITY means it will never stop.
+     * @param repeats
+     */
     public void setRepeatsLeft(int repeats) {
         repeatsLeft = repeats;
     }
 
-    public int getEffects() {
-        return effects;
+    /**
+     * Returns the effected layer, either FOREGROUND, BACKGROUND or COMPONENT.
+     * @return The effected layer.
+     */
+    public int getEffectedLayer() {
+        return effectedLayer;
     }
 
+    /**
+     * Returns true if it's no a static effect.
+     * @return True if changes over time.
+     */
     public boolean isAnimated() {
         return keys != null;
     }
 
+    /**
+     * Returns the sprite for the current key frame.
+     * @return The image that should be rendered for this frame.
+     */
     public Image getSprite() {
         return sprite;
     }
 
-    // Resumes the animation from where it's in the given direction.
-    public void setDirection(boolean dir) {
-        target.setEffect(this);
-        direction = dir;
-    }
-
+    /**
+     * Transforms the given graphics context to represent the current time in the animation.
+     * @param g The context to transform.
+     * @param dimension The size of the area to transform, need to react appropriatly to the effects origin.
+     */
     public void transform(Graphics2D g, Dimension dimension) {
         float originX = this.originX * dimension.width;
         float originY = this.originY * dimension.height;
@@ -123,6 +189,11 @@ public class AwesomeEffect {
         g.translate(-originX, -originY);
     }
 
+    /**
+     * Increases the elapsed time by a given amount and updates the state of the effect.
+     * @param deltaMillis The amount to forward.
+     * @return Returns true if it reached the end and there is no more repeats, else false.
+     */
     public boolean update(int deltaMillis) {
         elapsedMillis += direction == FORWARD ? deltaMillis : -deltaMillis;
         boolean reachedEnd = false;
@@ -176,6 +247,9 @@ public class AwesomeEffect {
     // Helper classes below
     // =====================================================================
 
+    /**
+     * A data class to represent a given time in the animation.
+     */
     private static class Key implements Cloneable {
         private final int timeStamp;
         private float scaleX = 1.0f, scaleY = 1.0f, rotation;
@@ -197,6 +271,9 @@ public class AwesomeEffect {
         }
     }
 
+    /**
+     * Helps in the construction of an AwesomeEffect.
+     */
     public static class Builder {
         private final ArrayList<Integer> setFieldFlags = new ArrayList<>();
         private final ArrayList<Key> keys = new ArrayList<>();
@@ -208,16 +285,34 @@ public class AwesomeEffect {
             setKeyFields(TRANSLATION_X | TRANSLATION_Y | SCALE_X | SCALE_Y | ROTATION, 0);
         }
 
+        /**
+         * Set the number of repeats of the effect. Decreases each time the player bounces or restarts.
+         * @param times Number of times to repeat.
+         * @return this
+         */
         public Builder repeats(int times) {
             numRepeats = times;
             return this;
         }
 
+        /**
+         *
+         * @param val If true the animation will bounce back and forth, if
+         *            false the animation will restart and continue in the same direction.
+         * @return this
+         */
         public Builder bounce(boolean val) {
             shouldBounce = val;
             return this;
         }
 
+        /**
+         * Adds a key to move the targets position to.
+         * @param x Amount to translate horizontally.
+         * @param y Amount to translate vertically.
+         * @param timeStamp The absolute time of the position.
+         * @return this
+         */
         public Builder addTranslationKey(int x, int y, int timeStamp) {
             Key key = setKeyFields(TRANSLATION_X | TRANSLATION_Y, timeStamp);
             key.translationX = x;
@@ -225,18 +320,37 @@ public class AwesomeEffect {
             return this;
         }
 
+        /**
+         * Adds a key to move the targets horizontal position to.
+         * @param x Amount to translate horizontally.
+         * @param timeStamp The absolute time of the position.
+         * @return this
+         */
         public Builder addTranslationXKey(int x, int timeStamp) {
             Key key = setKeyFields(TRANSLATION_X, timeStamp);
             key.translationX = x;
             return this;
         }
 
+        /**
+         * Adds a key to move the targets vertical position to.
+         * @param y Amount to translate vertically.
+         * @param timeStamp The absolute time of the position.
+         * @return this
+         */
         public Builder addTranslationYKey(int y, int timeStamp) {
             Key key = setKeyFields(TRANSLATION_Y, timeStamp);
             key.translationY = y;
             return this;
         }
 
+        /**
+         * Adds a key to scale the targets size by.
+         * @param x Amount to scale width by.
+         * @param y Amount to scale height by.
+         * @param timeStamp The absolute time of the position.
+         * @return this
+         */
         public Builder addScaleKey(float x, float y, int timeStamp) {
             Key key = setKeyFields(SCALE_X |SCALE_Y, timeStamp);
             key.scaleX = x;
@@ -244,36 +358,71 @@ public class AwesomeEffect {
             return this;
         }
 
+        /**
+         * Adds a key to scale the targets width by.
+         * @param x Amount to scale width by.
+         * @param timeStamp The absolute time of the position.
+         * @return this
+         */
         public Builder addScaleXKey(float x, int timeStamp) {
             Key key = setKeyFields(SCALE_X, timeStamp);
             key.scaleX = x;
             return this;
         }
 
+        /**
+         * Adds a key to scale the targets height by.
+         * @param y Amount to scale height by.
+         * @param timeStamp The absolute time of the position.
+         * @return this
+         */
         public Builder addScaleYKey(float y, int timeStamp) {
             Key key = setKeyFields(SCALE_Y, timeStamp);
             key.scaleY = y;
             return this;
         }
 
+        /**
+         * Adds a key to rotate the target by.
+         * @param degrees Amount to rotate the target by.
+         * @param timeStamp The absolute time of the position.
+         * @return this
+         */
         public Builder addRotationKey(float degrees, int timeStamp) {
             Key key = setKeyFields(ROTATION, timeStamp);
             key.rotation = (float)Math.toRadians(degrees);
             return this;
         }
 
+        /**
+         * Sets the current sprite of the given timeStamp and this sprite will be held until the next key where it's set.
+         * @param sprite The image to be rendered at this key and after.
+         * @param timeStamp The absolute time of the position.
+         * @return this
+         */
         public Builder addSpriteKey(Image sprite, int timeStamp) {
             Key key = setKeyFields(SPRITES, timeStamp);
             key.sprite = sprite;
             return this;
         }
 
-        // From where the objects scales and rotates, defaults to centrum (0.5, 0.5).
+        /**
+         * Sets the origin to scale and rotate around, defaults to (0.5, 0.5) which represents the center.
+         * @param x The origin horizontally, 0 is the left edge 1 is the right.
+         * @param y The origin vertically, 0 is the top edge 1 is the bottom.
+         */
         public void setOrigin(float x, float y) {
             originX = x;
             originY = y;
         }
 
+        /**
+         * Returns an existing key for the given time stamp or create a new one.
+         * And marks what fields are set given by fields.
+         * @param fields The fields that are will be set in the key.
+         * @param timeStamp At what time the key exists.
+         * @return The key for the given timeStamp.
+         */
         private Key setKeyFields(int fields, int timeStamp) {
             Key key = null;
             int keyIndex = 0;
@@ -295,7 +444,12 @@ public class AwesomeEffect {
             return key;
         }
 
-        public void animate(User user, int what) {
+        /**
+         * Creates an instance of AwesomeEffect with all properties set until this point.
+         * @param user The target to effect.
+         * @param effectedLayer What layer to effect FOREGROUND, BACKGROUND or COMPONENT.
+         */
+        public void animate(User user, int effectedLayer) {
             if (user.getEffect() != null) {
                 user.setEffect(null);
             }
@@ -415,7 +569,7 @@ public class AwesomeEffect {
                 prevKey = keyCopy;
             }
 
-            AwesomeEffect effect = new AwesomeEffect(keysCopy, user, what);
+            AwesomeEffect effect = new AwesomeEffect(keysCopy, user, effectedLayer);
             effect.originX = originX;
             effect.originY = originY;
             effect.shouldBounce = shouldBounce;

@@ -1,37 +1,64 @@
 package server;
 
-import common.GameSettings;
-import common.Phase;
-
-import java.io.IOException;
-import java.net.Socket;
-import java.util.ArrayList;
+import common.*;
+import java.util.*;
 
 public class GameSession {
 
+    public String sessionID;
     private ClientHandler host;
-    private ArrayList<ClientHandler> clients;
+    private ArrayList<ClientHandler> connectedClients;
+    private ClientHandler[] activeClients;
     private ArrayList<RoundData> sessionRounds;
     private ArrayList<Integer> points;
     private GameSettings gameSettings;
     private Phase currentPhase;
-    private int nbrPlayers;
+    private Timer timeLeft;
 
     public GameSession(ClientHandler host, GameSettings settings ) {
+        this.sessionID = generateSessionID();
         this.host = host;
         this.gameSettings = settings;
-        this.currentPhase = new JoinPhase();
-        this.clients = new ArrayList<ClientHandler>();
-        this.sessionRounds = new ArrayList<RoundData>();
-        this.points = new ArrayList<Integer>();
-        this.nbrPlayers = 1;
+        this.connectedClients = new ArrayList<>();
+        this.sessionRounds = new ArrayList<>();
+        this.points = new ArrayList<>();
 
-        addClient(host);
+        JoinPhase joinPhase = new JoinPhase(this);
+        setPhase(joinPhase);
+        joinPhase.addClient(host);
     }
 
-    public void addClient(ClientHandler client ) {
-        clients.add(client);
+    public void receiveMessage(Message msg) {
+        switch (msg.type) {
+            default -> {
+                if (currentPhase != null) {
+                    currentPhase.message(msg);
+                }
+            }
+        }
     }
+
+    public void sendMessageToAll(Message msg) {
+        for (ClientHandler handle : connectedClients)
+            handle.sendMessage(msg);
+    }
+
+    public List<ClientHandler> getConnectedPlayers() {
+        return connectedClients;
+    }
+
+    /**
+     * Generates a sessionID
+     * @return String
+     */
+    private String generateSessionID(){
+        StringBuilder sessionIdBuilder = new StringBuilder(6);
+        Random random = new Random();
+        for (int i = 0; i < 3; i++) { sessionIdBuilder.append((char) ('A' + random.nextInt(26))); }
+        for (int i = 0; i < 3; i++) { sessionIdBuilder.append((char) ('0' + random.nextInt(10))); }
+        return sessionIdBuilder.toString();
+    }
+
     public void setPhase(Phase newPhase ) { currentPhase = newPhase; }
 
 }

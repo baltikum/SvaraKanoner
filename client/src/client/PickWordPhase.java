@@ -1,8 +1,8 @@
 package client;
 
 import client.ui.*;
-import common.Message;
-import common.Phase;
+import common.*;
+
 
 import javax.swing.*;
 import javax.swing.text.Utilities;
@@ -29,16 +29,17 @@ public class PickWordPhase extends Phase {
         playersPanel.setBackground(new Color(0xe67e22));
 
 
-        addPlayerToList(new Player(0, "Jesper", Assets.getPlayerIcons()[0]));
-        addPlayerToList(new Player(1, "Mattias", Assets.getPlayerIcons()[2]));
-        addPlayerToList(new Player(2, "Lukas", Assets.getPlayerIcons()[4]));
-        addPlayerToList(new Player(3, "Johnny", Assets.getPlayerIcons()[6]));
+        addPlayerToList(new Player(0, "Jesper", 0));
+        addPlayerToList(new Player(1, "Mattias", 1));
+        addPlayerToList(new Player(2, "Lukas", 2));
+        addPlayerToList(new Player(3, "Johnny", 3));
 
 
 
         PercentLayout percentLayout = new PercentLayout(1.0f);
 
-        AwesomeText header = new AwesomeText("Pick a word!", AwesomeUtil.BIG_TEXT);
+        AwesomeText header = new AwesomeText("Pick a word!");
+        AwesomeUtil.dynamicFont(header, 0.2f);
         percentLayout.setConstraintsRatioByWidth(header, 0.65f, 0.1f, 0.8f, 0.8f);
 
 
@@ -73,7 +74,7 @@ public class PickWordPhase extends Phase {
     }
 
     private void addPlayerToList(Player player) {
-        AwesomeIconLabel playerLabel = new AwesomeIconLabel(player.getAvatar(), player.getName());
+        AwesomeIconLabel playerLabel = new AwesomeIconLabel(Assets.getPlayerIcons()[player.getAvatarId()], player.getName());
         playerLabel.setPreferredSize(new Dimension(175, 40));
         playerLabel.setMaximumSize(new Dimension(175, 40));
 
@@ -85,8 +86,8 @@ public class PickWordPhase extends Phase {
     }
 
     private void addWordToList(String word, PercentLayout percentLayout, float x, float y) {
-        AwesomeButton wordButton = new AwesomeButton(word, Assets.getButtonIcon(), AwesomeUtil.BIG_TEXT);
-
+        AwesomeButton wordButton = new AwesomeButton(word, Assets.getButtonIcon());
+        AwesomeUtil.dynamicFont(wordButton, 0.5f);
         percentLayout.setConstraintsRatioByWidth(wordButton, x, y, 0.4f, 0.4f);
 
         AwesomeUtil.wiggleOnHover(wordButton, 20);

@@ -5,21 +5,17 @@ import common.Message;
 import common.GameSettings;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executors;
-import java.net.*;
 
 
 public class Main {
 
     public static final int PORT = 12345;
 
-    public static ArrayList<ClientHandler> clients = new ArrayList<>();
     private static ArrayList<GameSession> gameSessions = new ArrayList<>();
-
 
     public static void main(String[] args) throws IOException {
         System.out.println("Server is running");
@@ -28,20 +24,42 @@ public class Main {
             while (true) {
                 ClientHandler client = new ClientHandler(listener.accept());
                 pool.execute(client); // wait for new connection -> create new thread for it
-
-                clients.add(client);
-                System.out.println("New Client Joined. Clients: " + clients);
             }
         }
     }
 
-    public static void createGameSession(ClientHandler host, GameSettings settings) {
-        gameSessions.add(new GameSession(host, settings));
-        Message message = new Message(Message.Type.CREATE_GAME_OK);
-        host.sendMessage(message);
+    public static void createGameSession(Message msg) {
+        ClientHandler host = (ClientHandler) msg.player;
+        host.setName((String) msg.data.getOrDefault("requestPlayerName", ""));
+        host.setAvatarId((int) msg.data.getOrDefault("requestAvatarId", 0));
+        GameSession gameSession = new GameSession(host, (GameSettings) msg.data.get("settings"));
+        gameSessions.add(gameSession);
 
+        // Respond
+        Message message = new Message(Message.Type.RESPONSE);
+        message.addParameter("playerId", host.getId());
+        message.addParameter("playerName", host.getName());
+        message.addParameter("sessionId", gameSession.sessionID);
+        host.sendMessage(message);
     }
 
-
+    public static void joinGame(Message msg) {
+        String gameCode = (String) msg.data.getOrDefault("sessionId", "");
+        ClientHandler joiner = (ClientHandler) msg.player;
+        GameSession joinedSession = null;
+        for (GameSession session : gameSessions) {
+            if (session.sessionID.equals(gameCode)) {
+                joinedSession = session;
+                break;
+            }
+        }
+        if (joinedSession == null) {
+            Message errorResponse = new Message(Message.Type.RESPONSE);
+            errorResponse.error = "Invalid session id. ";
+            joiner.sendMessage(errorResponse);
+        } else {
+            joinedSession.receiveMessage(msg);
+        }
+    }
 }
 

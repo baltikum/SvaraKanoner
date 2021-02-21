@@ -1,5 +1,7 @@
 package common;
 
+import com.sun.tools.javac.Main;
+
 import java.io.*;
 
 /**
@@ -10,19 +12,19 @@ import java.io.*;
 
 public class GameSettings implements Serializable {
 
-    private long pickTimeMilliseconds;
-    private long drawTimeMilliseconds;
-    private long guessTimeMilliseconds;
-    private long revealTimeMilliseconds;
-    private long courtTimeMilliseconds;
-    private boolean keepScore;
-    private boolean chooseWords;
-    private boolean shakyHands;
-    private int maxPlayers;
-    private int numRounds;
+    public long pickTimeMilliseconds;
+    public long drawTimeMilliseconds;
+    public long guessTimeMilliseconds;
+    public long revealTimeMilliseconds;
+    public long courtTimeMilliseconds;
+    public boolean keepScore;
+    public boolean chooseWords;
+    public boolean shakyHands;
+    public int maxPlayers;
+    public int numRounds;
+    public int numberOfWordsToPickFrom;
 
     /**
-     *
      * Constructor GameSettings.
      * Default settings.
      */
@@ -37,10 +39,10 @@ public class GameSettings implements Serializable {
         this.shakyHands = false;
         this.maxPlayers = 4;
         this.numRounds = 5;
+        this.numberOfWordsToPickFrom = 4;
     }
 
     /**
-     *
      * Set variable functions. Flipswitch.
      */
     public void toggleKeepScore() {
@@ -54,7 +56,6 @@ public class GameSettings implements Serializable {
     }
 
     /**
-     *
      * Set variable functions.
      * Returns true if value is set.
      * @param max,rounds,seconds.
@@ -121,9 +122,15 @@ public class GameSettings implements Serializable {
             return false;
         }
     }
+    public boolean setNumberOfWords(int amount ) {
+        if ( amount >= 1 && amount < 60 ) {
+            this.numberOfWordsToPickFrom = amount;
+            return true;
+        }
+        return false;
+    }
 
     /**
-     *
      * Get variable functions.
      * @return
      */
@@ -132,62 +139,76 @@ public class GameSettings implements Serializable {
     public boolean getShakyHands(){ return shakyHands; }
     public int getMaxPlayers(){ return maxPlayers; }
     public int getNumRounds(){ return numRounds; }
+    public int getNumberOfWords() { return numberOfWordsToPickFrom; }
     public long getPickTimeMilliseconds(){ return pickTimeMilliseconds; }
     public long getDrawTimeMilliseconds(){ return drawTimeMilliseconds; }
     public long getGuessTimeMilliseconds(){ return guessTimeMilliseconds; }
     public long getRevealTimeMilliseconds(){ return revealTimeMilliseconds; }
     public long getCourtTimeMilliseconds(){ return courtTimeMilliseconds; }
 
+
     /**
-     *
      * Saves GameSettings on host.
      *
      * @return true if successful.
      *
      */
-    public boolean saveSettings() {
-        try (
-            FileOutputStream fileOutStream = new FileOutputStream("server/settings/settings.dat");
-            ObjectOutputStream objOutStream = new ObjectOutputStream(fileOutStream); ) {
-            objOutStream.writeObject(this);
-        } catch(IOException ex) {
+    public boolean saveSettingsIni() {
+        try {
+            IniStream.write(this, new File("server/settings/settings.ini"));
+            return true;
+        } catch (IOException ex) {
             return false;
         }
-        return true;
     }
 
     /**
-     *
      * Loads GameSettings from host to game.
      * @return true if successful.
      *
      */
-    public boolean loadSettings() {
-        GameSettings loadedSettings;
-        try (
-            FileInputStream fileInStream = new FileInputStream("server/settings/settings.dat");
-            ObjectInputStream objInStream = new ObjectInputStream(fileInStream)
-        ){
-            loadedSettings = (GameSettings)objInStream.readObject();
-        } catch (IOException | ClassNotFoundException ex) {
+    public boolean loadSettingsIni() {
+        GameSettings loadedSettings = new GameSettings();
+        try {
+            IniStream.read(loadedSettings, new File("server/settings/settings.ini"));
+        } catch (IOException ex) {
+            ex.printStackTrace();
             return false;
         }
 
-        this.pickTimeMilliseconds = loadedSettings.getPickTimeMilliseconds();
-        this.drawTimeMilliseconds = loadedSettings.getDrawTimeMilliseconds();
-        this.guessTimeMilliseconds = loadedSettings.getGuessTimeMilliseconds();
-        this.revealTimeMilliseconds = loadedSettings.getRevealTimeMilliseconds();
-        this.courtTimeMilliseconds = loadedSettings.getCourtTimeMilliseconds();
+        this.pickTimeMilliseconds = checkLongValue(loadedSettings.getPickTimeMilliseconds());
+        this.drawTimeMilliseconds = checkLongValue(loadedSettings.getDrawTimeMilliseconds());
+        this.guessTimeMilliseconds = checkLongValue(loadedSettings.getGuessTimeMilliseconds());
+        this.revealTimeMilliseconds = checkLongValue(loadedSettings.getRevealTimeMilliseconds());
+        this.courtTimeMilliseconds = checkLongValue(loadedSettings.getCourtTimeMilliseconds());
         this.keepScore = loadedSettings.getKeepScore();
         this.chooseWords = loadedSettings.getChooseWords();
         this.shakyHands = loadedSettings.getShakyHands();
-        this.maxPlayers = loadedSettings.getMaxPlayers();
-        this.numRounds = loadedSettings.getNumRounds();
+        this.maxPlayers = checkIntValue(loadedSettings.getMaxPlayers());
+        this.numRounds = checkIntValue(loadedSettings.getNumRounds());
+        this.numberOfWordsToPickFrom = checkIntValue(loadedSettings.getNumberOfWords());
         return true;
     }
 
     /**
-     *
+     * Controls validity of time values before loading them.
+     * @param time
+     * @return corrected value if needed
+     */
+    private long checkLongValue(long time ) {
+        return Math.max(0L, Math.min(300000L, time));
+    }
+    /**
+     * Controls validity of integer values before loading them.
+     * @param value
+     * @return corrected value if needed.
+     */
+    private int checkIntValue(int value ) {
+        return Math.max(0, Math.min(300000, value));
+    }
+
+
+    /**
      * Displays the settings of this game.
      * @return String
      */

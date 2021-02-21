@@ -4,6 +4,12 @@ import java.io.*;
 import java.lang.reflect.Field;
 import java.util.Locale;
 
+/**
+ * A static utility class for saving down class fields in the ini format.
+ * Only supports primitive fields and strings as field types.
+ * @author Jesper Jansson
+ * @version 19/02/21
+ */
 public class IniStream {
 
     /** Read ini file entries into an object.
@@ -33,6 +39,7 @@ public class IniStream {
                     if (field == null) throw new IOException("Illegal entry no field '" + nameValue[0] + "'.");
 
                     Class<?> type = field.getType();
+
                     if (type.isPrimitive()) {
                         if (type.isAssignableFrom(boolean.class))
                             field.set(obj, Boolean.valueOf(value));
@@ -51,6 +58,7 @@ public class IniStream {
                         else
                             throw new IllegalArgumentException("Unknown primitive type. ");
                     } else if (type.isAssignableFrom(String.class)) {
+                        System.out.println("string");
                         field.set(obj, value);
                     } else {
                         throw new IllegalArgumentException("Unknown type for field '" + field.getName() + "'. ");
@@ -92,11 +100,11 @@ public class IniStream {
                     else if (type.isAssignableFrom(double.class))
                         writeDecimal(out, field.getName(), (double) field.get(obj));
                     else
-                        throw new IllegalArgumentException("Unknown primitive type. ");
+                        throw new IOException("Unknown primitive type. ");
                 } else if (type.isAssignableFrom(String.class)) {
                     writeString(out, field.getName(), (String)field.get(obj));
                 } else {
-                    throw new IllegalArgumentException("Unknown type for field '" + field.getName() + "'. ");
+                    throw new IOException("Unknown type for field '" + field.getName() + "'. ");
                 }
             }
         } catch (IllegalAccessException e) {

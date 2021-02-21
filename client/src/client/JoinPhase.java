@@ -9,15 +9,27 @@ import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
 
+/**
+ * Represent the clients join phase, where the other players can be seen to appear and the game starts
+ * when all are ready.
+ *
+ * Can send a TOGGLE_PLAYER_READY or LEAVE message.
+ * Gets a message from the server when all are ready to goto the next phase PickWord or DrawPhase.
+ */
 public class JoinPhase extends Phase {
     private static final int NUM_POSITIONS = 16;
     private static final int POSITION_DATA_COMPONENTS = 3;
 
+    //private final Image[] playerIcons;
+    private final float[] positionData;
+    private final ArrayList<Integer> freePositions;
+    private final JPanel panel;
+    private final Map<Integer, AwesomeIconLabel> playerIdToLabel = new HashMap<>();
 
-    private float[] positionData;
-    private ArrayList<Integer> freePositions;
-    private JPanel panel;
-    private boolean isReady = false;
+
+    /**
+     * Initiates the join phase ui.
+     */
 
     public JoinPhase() {
         Random random = Game.game.random;
@@ -52,34 +64,32 @@ public class JoinPhase extends Phase {
         panel.setOpaque(true);
         panel.setBackground(new Color(0, 0, 0, 0));
 
-        AwesomeText gameCode = new AwesomeText(Game.game.getGameCode(), AwesomeUtil.BIG_TEXT);
+        AwesomeText gameCode = new AwesomeText(Game.game.getGameCode());
         panel.add(gameCode);
-        layout.setConstraintsRatioByWidth(gameCode, 0.5f, .167f * 2, .5f, 0.25f);
+        layout.setConstraintsRatioByWidth(gameCode, 0.5f, .167f * 2, .35f, 0.25f);
+        AwesomeUtil.dynamicFont(gameCode, 1.0f);
 
-        AwesomeButton ready = new AwesomeButton("Ready!", AwesomeUtil.MEDIUM_TEXT);
+        AwesomeButton ready = new AwesomeButton("Ready!");
         panel.add(ready);
         layout.setConstraintsRatioByWidth(ready, .75f, .167f * 5, .3f, 0.25f);
 
         ready.addActionListener(e -> {
-            isReady = !isReady;
-            ready.setText(isReady ? "Not ready!" : "Ready!");
+            Game.game.sendMessage(new Message(Message.Type.TOGGLE_READY_STATUS));
         });
+        AwesomeUtil.dynamicFont(ready, 1.0f);
 
-        AwesomeButton leave = new AwesomeButton("Leave", AwesomeUtil.MEDIUM_TEXT);
+        AwesomeButton leave = new AwesomeButton("Leave");
         panel.add(leave);
         layout.setConstraintsRatioByWidth(leave, .25f, .167f * 5, .3f, 0.25f);
         leave.addActionListener(e -> {
-            Game.game.setCurrentPhase(null);
-            Game.game.setContentPanel(new MainMenu());
+            Game.game.sendMessage(new Message(Message.Type.DISCONNECT));
+            Game.game.setCurrentPhase(new MainMenu());
         });
-
+        AwesomeUtil.dynamicFont(leave, 1.0f);
 
         Game.game.setContentPanel(panel);
 
-        addPlayer(new Player(0, "Jesper", Assets.getPlayerIcons()[0]));
-        addPlayer(new Player(1, "Mattias", Assets.getPlayerIcons()[2]));
-        addPlayer(new Player(2, "Lukas", Assets.getPlayerIcons()[4]));
-        addPlayer(new Player(3, "Johnny", Assets.getPlayerIcons()[6]));
+        addPlayer(Game.game.getThisPlayer());
 
     }
 
@@ -90,12 +100,13 @@ public class JoinPhase extends Phase {
         int positionIndex = players.size() < 8 ?
                 freePositions.remove(Game.game.random.nextInt(8 - players.size())) :
                 freePositions.remove(Game.game.random.nextInt(freePositions.size()));
-        AwesomeIconLabel playerLabel = new AwesomeIconLabel(player.getAvatar(), player.getName());
-        playerLabel.setRotation(positionData[positionIndex * POSITION_DATA_COMPONENTS + 2]);
+        AwesomeIconLabel playerLabel = new AwesomeIconLabel(Assets.getPlayerIcons()[player.getAvatarId()], player.getName());
         panel.add(playerLabel);
         ((PercentLayout)panel.getLayout()).setConstraintsRatioByWidth(playerLabel,
                 positionData[positionIndex * POSITION_DATA_COMPONENTS],
                 positionData[positionIndex * POSITION_DATA_COMPONENTS + 1],0.2f, 0.3f);
+        playerIdToLabel.put(player.getId(), playerLabel);
+        AwesomeUtil.dynamicFont(playerLabel, .5f);
 
         AwesomeEffect.create()
                 .addScaleKey(0.0f, 0.0f, 0)
@@ -107,7 +118,27 @@ public class JoinPhase extends Phase {
 
     @Override
     public void message(Message msg) {
-
+        switch (msg.type) {
+            case PLAYER_CONNECTED -> {
+                Player player = new Player(
+                        (int) msg.data.get("playerId"),
+                        (String) msg.data.get("playerName"),
+                        (int) msg.data.get("playerAvatarId")
+                );
+                addPlayer(player);
+            }
+            case PLAYER_DISCONNECTED -> {
+                int playerId = (int) msg.data.getOrDefault("playerId", -1);
+                AwesomeIconLabel label = playerIdToLabel.get(playerId);
+                if (label != null) panel.remove(label);
+            }
+            case PLAYER_READY_STATUS_CHANGED -> {
+                int playerId = (int) msg.data.getOrDefault("playerId", -1);
+                boolean status = (boolean) msg.data.getOrDefault("status", false);
+                AwesomeIconLabel label = playerIdToLabel.get(playerId);
+                if (label != null) label.setTextColor(status ? Color.GREEN : Color.BLACK);
+            }
+        }
     }
 
 }
