@@ -10,6 +10,8 @@ import java.io.IOException;
 
 public class Assets {
     private static BufferedImage errorImage = null;
+    private static Image[] playerIcons;
+    private static BufferedImage buttonIcon;
 
     public static File getResourceFile(String name) {
         return new File(AwesomeUtil.resourcesPath() + name);
@@ -61,6 +63,23 @@ public class Assets {
             }
         }
         return result;
+    }
+
+    public static Image[] getPlayerIcons() {
+        if (playerIcons == null) {
+            BufferedImage tileMap = Assets.loadImage("player-icons.png");
+            playerIcons = Assets.getTiles(tileMap, 0, 0, 1, 1, 8, 4, 1, 16);
+        }
+
+        return playerIcons;
+    }
+
+    public static BufferedImage getButtonIcon() {
+        if (buttonIcon == null) {
+            BufferedImage tileMap = Assets.loadImage("mainmenu.png");
+            buttonIcon = Assets.getTile(tileMap, 0, 0, 3, 1, 8);
+        }
+        return buttonIcon;
     }
 
 }

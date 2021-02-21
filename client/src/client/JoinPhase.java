@@ -14,7 +14,6 @@ public class JoinPhase extends Phase {
     private static final int POSITION_DATA_COMPONENTS = 3;
 
 
-    private Image[] playerIcons;
     private float[] positionData;
     private ArrayList<Integer> freePositions;
     private JPanel panel;
@@ -46,8 +45,7 @@ public class JoinPhase extends Phase {
             freePositions.add(i);
         }
 
-        BufferedImage tileMap = Assets.loadImage("player-icons.png");
-        playerIcons = Assets.getTiles(tileMap, 0, 0, 1, 1, 8, 4, 1, 16);
+
 
         PercentLayout layout = new PercentLayout(1.0f);
         panel = new JPanel(layout);
@@ -78,10 +76,10 @@ public class JoinPhase extends Phase {
 
         Game.game.setContentPanel(panel);
 
-        addPlayer(new Player(0, "Jesper", playerIcons[0]));
-        addPlayer(new Player(1, "Mattias", playerIcons[2]));
-        addPlayer(new Player(2, "Lukas", playerIcons[4]));
-        addPlayer(new Player(3, "Johnny", playerIcons[6]));
+        addPlayer(new Player(0, "Jesper", Assets.getPlayerIcons()[0]));
+        addPlayer(new Player(1, "Mattias", Assets.getPlayerIcons()[2]));
+        addPlayer(new Player(2, "Lukas", Assets.getPlayerIcons()[4]));
+        addPlayer(new Player(3, "Johnny", Assets.getPlayerIcons()[6]));
 
     }
 
