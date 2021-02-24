@@ -19,11 +19,21 @@ public class Message implements Serializable {
         PLAYER_DISCONNECTED,   // JoinPhase -> JoinPhase
         PLAYER_READY_STATUS_CHANGED,   // JoinPhase -> JoinPhase
 
+        SENDING_IMAGE_DATA,
+
+
+
         // Client to server messages
         CREATE_GAME,           // MainMenu -> Server
         JOIN_GAME,             // MainMenu -> Server
         DISCONNECT,            // JoinPhase -> JoinPhase
         TOGGLE_READY_STATUS,   // JoinPhase -> JoinPhase
+
+        IMAGE_DATA_RECIEVED,
+
+        RETURNING_GUESS
+
+
     }
 
     public transient Player player;
