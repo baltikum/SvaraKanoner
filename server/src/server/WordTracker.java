@@ -27,6 +27,8 @@ public class WordTracker {
     public WordTracker(int id, String word ){
         this.wordOwnerId = id;
         this.word = word;
+        this.images = new HashMap<>();
+        this.guesses = new HashMap<>();
     }
 
     /**
