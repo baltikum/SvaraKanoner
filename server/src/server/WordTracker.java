@@ -1,6 +1,7 @@
 package server;
 
 import java.awt.Image;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -14,8 +15,8 @@ public class WordTracker {
 
     private int wordOwnerId;
     private String word;
-    private Map<Integer,Image> images;
-    private Map<Integer, String> guesses;
+    private HashMap<Integer,Image> images;
+    private HashMap<Integer, String> guesses;
 
 
     /**
@@ -68,6 +69,19 @@ public class WordTracker {
      * guess, string
      */
     public String getGuess(int id ) { return guesses.get(id); }
+
+    /**
+     * Used to retrieve all guesses made on this word throughout the round.
+     * @return HashMap, playerID maps guess
+     */
+    public HashMap<Integer,String> getAllGuesses() { return guesses; }
+
+    /**
+     * Used to retrieve all images made for this word.
+     * @return HashMap, PlayerId maps Images.
+     */
+    public HashMap<Integer,Image> getAllImages() { return images; }
+
     /**
      * Gets an image based on which id. Example ownId -1 is the one to guess on.(Except if your id 0)
      * @param id

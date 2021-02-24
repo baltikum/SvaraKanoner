@@ -39,6 +39,9 @@ public class RoundData {
         }
         this.numberOfWords = pickedWords.size();
         this.wordMap = new HashMap<>();
+        this.playerOrder = new ArrayList<>();
+        this.lastOrder = new ArrayList<>();
+        this.wordResolver = new ArrayList<>();
         this.roundCount = 0;
 
         for ( int i = 0; i < numberOfWords; i++ ) {
@@ -61,6 +64,7 @@ public class RoundData {
         rotateOrder();
         return toReturn;
     }
+
     /**
      * Used to retrieve images for guessing in guessPhase.
      * @return HashMap playerId maps Images.
@@ -72,6 +76,18 @@ public class RoundData {
         }
         return toReturn;
     }
+
+    /**
+     * Used to retrieve a list of all the words used in this round.
+     * @return
+     */
+    public ArrayList<String> getRoundWords() { return wordResolver; }
+
+    /**
+     * Used to retrieve a words WordTracker for use of further functions inside.
+     * @return wordTracker
+     */
+    public WordTracker getWordTracker(String word){ return wordMap.get(word); }
 
 
 
@@ -141,11 +157,6 @@ public class RoundData {
      * @return integer, numberOfWords
      */
     public int getNumberOfWords(){ return numberOfWords; }
-    /**
-     * Used to retrieve a words WordTracker for use of further functions inside.
-     * @return wordTracker
-     */
-    public WordTracker getWordTracker(String word){ return wordMap.get(word); }
     /**
      * Displays a RoundData as String.
      * @return String
