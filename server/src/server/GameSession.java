@@ -61,6 +61,12 @@ public class GameSession {
 
     public void setPhase(Phase newPhase ) { currentPhase = newPhase; }
 
+    /**
+     * Used to retrieve current rounddata inside a phase.
+     * @return RoundData.
+     */
+    public RoundData getCurrentRoundData(){ return sessionRounds.get((sessionRounds.size()-1));}
+
 }
 
 
