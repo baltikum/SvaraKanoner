@@ -2,93 +2,171 @@ package server;
 
 import java.awt.Image;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
+
 
 /**
  * A Class that keeps track of a gamerounds data.
  *
- * ArrayList of words ( WordTrackers ).
- * The number of words in this round, int.
+ * Map of wordtrackers.
  *
- * Has functions to save drawn images and guesses.
+ * Use getWordTracker to save and get data etc for words.
  *
- * Also has functions to get the drawn images and guesses.
- *
- * baltikum 20210210
+ * @author Mattias Davidsson 20210223
  *
  *
  */
 
 public class RoundData {
 
-    private int nbrWords;
-    private List<WordTracker> wordTracker;
+    private int numberOfWords;
+    private GameSession gameSession;
+    private ArrayList<Integer> playerOrder;
+    private ArrayList<Integer> lastOrder;
+    private ArrayList<String> wordResolver;
+    private HashMap<String,WordTracker> wordMap;
+    private int roundCount;
 
     /**
-     * Constructor.
-     *
-     * @param pickedWords
+     * Constructor
+     * @param session the gamesession
+     * @param pickedWords pickedword mapped on playerIds
      */
-    public RoundData(ArrayList<String> pickedWords){
+    public RoundData(GameSession session, HashMap<Integer,String> pickedWords ){
+        this.gameSession = session;
+        for ( ClientHandler client : session.getConnectedPlayers()) {
+            playerOrder.add(client.getId());
+        }
+        this.numberOfWords = pickedWords.size();
+        this.wordMap = new HashMap<>();
+        this.playerOrder = new ArrayList<>();
+        this.lastOrder = new ArrayList<>();
+        this.wordResolver = new ArrayList<>();
+        this.roundCount = 0;
 
-        nbrWords = pickedWords.size();
-        wordTracker = new ArrayList<WordTracker>();
-
-        ListIterator<String> pickedIterator = pickedWords.listIterator();
-        while ( pickedIterator.hasNext() ) {
-            this.wordTracker.add( new WordTracker( pickedIterator.next() ) );
+        for ( int i = 0; i < numberOfWords; i++ ) {
+            int id = playerOrder.get(i);
+            String str = pickedWords.get(id);
+            this.wordMap.put(str, new WordTracker(id,str));
         }
     }
 
     /**
-     * Saves the drawn images for this round.
-     *
-     * @param images
-     * @throws Exception
+     * Used to retrieve words to draw.
+     * @return HashMap, playerId maps the Word.
      */
-    public void saveDrawings( ArrayList<Image> images ) throws Exception {
-        if ( images.size() == nbrWords ) {
-            ListIterator<Image> imagesIterator = images.listIterator();
-            ListIterator<WordTracker> wordIterator = wordTracker.listIterator();;
-            while ( imagesIterator.hasNext() ) {
-                wordIterator.next().saveDrawing(imagesIterator.next());
-            }
-
-        } else {
-            throw new Exception("Number of drawn images does not match the amount of this round");
+    public HashMap<Integer,String> getWordsToDraw(){
+        HashMap<Integer,String> toReturn = new HashMap<>();
+        for ( int i = 0; i < numberOfWords; i++ ) {
+            toReturn.put(playerOrder.get(i),wordResolver.get(i));
         }
+        roundCount++;
+        rotateOrder();
+        return toReturn;
     }
 
     /**
-     * Saves the guesses for this round.
-     *
-     * @param guesses
-     * @throws Exception
+     * Used to retrieve images for guessing in guessPhase.
+     * @return HashMap playerId maps Images.
      */
-    public void saveGuesses( ArrayList<String> guesses ) throws Exception {
-        if ( guesses.size() == nbrWords ) {
-            ListIterator<String> guessesIterator = guesses.listIterator();
-            ListIterator<WordTracker> wordIterator = wordTracker.listIterator();;
-            while ( guessesIterator.hasNext() ) {
-                wordIterator.next().saveGuess(guessesIterator.next());
-            }
-        } else {
-            throw new Exception("Number of guesses does not match the amount of this round");
+    public HashMap<Integer,Image> getImagesToGuessOn(){
+        HashMap<Integer,Image> toReturn = new HashMap<>();
+        for ( int i = 0; i < numberOfWords; i++ ) {
+            toReturn.put(playerOrder.get(i),wordMap.get(wordResolver.get(i)).getDrawing(lastOrder.get(i))); // lastorder borde de va kolla så rotation går åt rätt håll
         }
+        return toReturn;
     }
 
     /**
-     * Displays a RoundData as String.
+     * Used to retrieve a list of all the words used in this round.
      * @return
      */
-    public String toString() {
-        String words = "";
-        ListIterator<WordTracker> wordIterator = wordTracker.listIterator();;
-        while ( wordIterator.hasNext() ) {
-            words += wordIterator.next().toString();
+    public ArrayList<String> getRoundWords() { return wordResolver; }
+
+    /**
+     * Used to retrieve a words WordTracker for use of further functions inside.
+     * @return wordTracker
+     */
+    public WordTracker getWordTracker(String word){ return wordMap.get(word); }
+
+
+
+    /**
+     * Used to save a drawn image to the wordtracker.-
+     * @param id personalId of the artist.
+     * @param word The word drawn
+     * @param image The image
+     * @return
+     */
+    public boolean saveImage(int id, String word, Image image ) {
+        return wordMap.get(word).saveDrawing(id,image);
+    }
+    /**
+     * Used to save a guess on a image.
+     * @param id guesser ID
+     * @param guess guess
+     * @return boolean
+     */
+    public boolean saveGuess(int id, String guess ) {
+        int index = playerOrder.indexOf(id);
+        boolean toReturn = wordMap.get(wordResolver.get(index)).saveGuess(id,guess);
+
+        if ( checkAnswer(guess,wordResolver.get(index)) ) {
+            //gameSession.givePoint(id); funktionen existerar ej än
         }
-        return words;
+        rotateOrder();
+        roundCount++;
+        return toReturn;
+    }
+
+
+    /**
+     * Helper function, used to check for correct answer.
+     * @param guess the guess
+     * @param answer correct answer
+     * @return boolean
+     */
+    private boolean checkAnswer(String guess ,String answer) {
+        String str = guess.trim();
+        str = str.toLowerCase(Locale.ROOT);
+        return str.equals(answer);
+    }
+    /**
+     * Used to rotate the order of players such that the right players get the correct data on requests.
+     * Also stores lastOrder for easier finding of personal ids of who draw or guessed.
+     */
+    private void rotateOrder() {
+        int temp = playerOrder.get(0);
+        Iterator<Integer> playerIter = playerOrder.iterator();
+        while(playerIter.hasNext()) {
+            lastOrder.add(playerIter.next());
+        }
+        playerOrder.remove(0);
+        playerOrder.trimToSize();
+        playerOrder.add(temp);
+    }
+
+    /**
+     * Used to check if rounds are the same as number of words. ( round over )
+     *
+     * @return boolean
+     */
+    public boolean checkRoundCount() { return roundCount==numberOfWords; }
+    /**
+     * Used to retrieve the number of words used in this round.
+     * @return integer, numberOfWords
+     */
+    public int getNumberOfWords(){ return numberOfWords; }
+    /**
+     * Displays a RoundData as String.
+     * @return String
+     */
+    public String toString() {
+        StringBuilder words = new StringBuilder();
+            for ( int i = 0; i < wordResolver.size(); i++ ) {
+                words.append(i + wordResolver.get(i)+"\n");
+            }
+        return words.toString();
     }
 
 }
