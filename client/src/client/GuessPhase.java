@@ -12,13 +12,8 @@ import java.util.Map;
 import java.util.Random;
 
 public class GuessPhase extends Phase {
+
     private final JPanel panel;
-
-    private static final int NUM_POSITIONS = 16;
-    private static final int POSITION_DATA_COMPONENTS = 3;
-
-    private final float[] positionData;
-    private final ArrayList<Integer> freePositions;
 
     private final Map<Integer, AwesomeIconLabel> playerIdToLabel = new HashMap<>();
 
@@ -27,39 +22,11 @@ public class GuessPhase extends Phase {
     private String guess;
 
     public GuessPhase() {
-        Random random = Game.game.random;
-        freePositions = new ArrayList<>(16);
-        positionData = new float[NUM_POSITIONS * POSITION_DATA_COMPONENTS];
-
-        float x = 0.0f, y = 0.167f;
-        for (int i = 0; i < NUM_POSITIONS; i++) {
-            if (i == 5) {
-                x = 0.2f * 4;
-                y = 0.167f * 2;
-            } else if (i == 14) {
-                x = 0.2f * 2;
-                y = 0.167f * 5;
-            } else {
-                x += 0.2f;
-                if (x > 0.95f) {
-                    x = 0.2f;
-                    y += 0.167f;
-                }
-            }
-
-            positionData[i * POSITION_DATA_COMPONENTS] = x;
-            positionData[i * POSITION_DATA_COMPONENTS + 1] = y;
-            positionData[i * POSITION_DATA_COMPONENTS + 2] = (random.nextFloat() - 0.5f) * 90.0f;
-            freePositions.add(i);
-
-        }
 
         PercentLayout layout = new PercentLayout(1.0f);
         panel = new JPanel(layout);
         panel.setOpaque(true);
         panel.setBackground(new Color(0, 0, 0, 0));
-
-
 
         AwesomeImage image = new AwesomeImage(imageToGuess);
 
@@ -76,8 +43,6 @@ public class GuessPhase extends Phase {
             Game.game.sendMessage(submitMessage);
         });
         AwesomeUtil.dynamicFont(submit, 1.0f);
-
-
 
         Game.game.setContentPanel(panel);
     }
