@@ -126,8 +126,7 @@ public class JoinPhase extends Phase {
 
                         Message gotoWordPhaseMessage = new Message(Message.Type.GOTO_PICK_WORD_PHASE);
                         session.sendMessageToAll(gotoWordPhaseMessage);
-                        PickWordPhase test = new PickWordPhase(session);
-                        //session.setPhase(test);
+                        session.setPhase(new PickWordPhase(session));
                     } else {
                         session.sendMessageToAll(response);
                     }

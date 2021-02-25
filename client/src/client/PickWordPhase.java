@@ -5,20 +5,30 @@ import common.*;
 
 
 import javax.swing.*;
-import javax.swing.text.Utilities;
 import java.awt.*;
-import java.util.List;
+
+
+/**
+ * Client side of the pick word phase
+ *
+ * gets word options from server
+ *
+ * sends the chosen word back to server
+ *
+ * @author Lukas Magnusson
+ */
 
 public class PickWordPhase extends Phase {
 
     JPanel panel;
-    JPanel playersPanel;
     JPanel wordsPanel;
     PercentLayout percentLayout;
 
     boolean pressedWord = false;
 
-    public PickWordPhase(PhaseUI phaseUI) {
+    public PickWordPhase() {
+        PhaseUI phaseUI = new PhaseUI();
+
         panel = new JPanel();
         panel.setOpaque(false);
         panel.setBackground(new Color(0xe67e22));
@@ -44,23 +54,6 @@ public class PickWordPhase extends Phase {
 
 
         phaseUI.setContent(panel);
-/*
-        Message message = new Message(Message.Type.GET_WORD_CHOICES);
-        Game.game.sendMessage(message, new MessageResponseListener() {
-            @Override
-            public void onSuccess(Message msg) {
-                String[] words = (String[])msg.data.get("words");
-
-                for (int i = 0; i < words.length; i++) {
-                    addWordToList(words[i],i, 0.75f, 0.6f);
-                }
-            }
-
-            @Override
-            public void onError(String errorMsg) {
-
-            }
-        });*/
 
     }
 
@@ -69,11 +62,7 @@ public class PickWordPhase extends Phase {
         switch (msg.type) {
             case SEND_WORD_CHOICES -> {
                 String[] words = (String[])msg.data.get("words");
-                /*
-                for (int i = 0; i < words.length; i++) {
-                    addWordToList(words[i],i, 0.75f, 0.6f);
-                   }
-                 */
+
                 // fixa bättre grid layout eller alltid ha 4 valbara ord
                 addWordToList(words[0],0, 0.25f, 0.3f);
                 addWordToList(words[1],1, 0.75f, 0.3f);
@@ -94,7 +83,6 @@ public class PickWordPhase extends Phase {
         AwesomeUtil.wiggleOnHover(wordButton, 20);
 
         wordsPanel.add(wordButton);
-        //wordsPanel.revalidate();
 
         wordButton.addActionListener(e -> {
             if (pressedWord) return;

@@ -140,8 +140,7 @@ public class JoinPhase extends Phase {
             }
 
             case GOTO_PICK_WORD_PHASE -> {
-                PhaseUI phaseUI = new PhaseUI();
-                PickWordPhase pickWordPhase = new PickWordPhase(phaseUI);
+                PickWordPhase pickWordPhase = new PickWordPhase();
                 Game.game.setCurrentPhase(pickWordPhase);
             }
         }

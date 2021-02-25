@@ -32,17 +32,19 @@ public class RoundData {
      * @param session the gamesession
      * @param pickedWords pickedword mapped on playerIds
      */
-    public RoundData(GameSession session, HashMap<Integer,String> pickedWords ){
+    public RoundData(GameSession session, HashMap<Integer,String> pickedWords ) {
         this.gameSession = session;
-        for ( ClientHandler client : session.getConnectedPlayers()) {
-            playerOrder.add(client.getId());
-        }
+
         this.numberOfWords = pickedWords.size();
         this.wordMap = new HashMap<>();
         this.playerOrder = new ArrayList<>();
         this.lastOrder = new ArrayList<>();
         this.wordResolver = new ArrayList<>();
         this.roundCount = 0;
+
+        for ( ClientHandler client : session.getConnectedPlayers()) {
+            playerOrder.add(client.getId());
+        }
 
         for ( int i = 0; i < numberOfWords; i++ ) {
             int id = playerOrder.get(i);

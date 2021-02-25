@@ -47,9 +47,7 @@ public class GameSession {
         return connectedClients;
     }
 
-    public GameSettings getGameSettings() {
-        return gameSettings;
-    }
+
 
     /**
      * Generates a sessionID
@@ -70,6 +68,10 @@ public class GameSession {
      * @return RoundData.
      */
     public RoundData getCurrentRoundData(){ return sessionRounds.get((sessionRounds.size()-1));}
+
+    public void createRoundData(HashMap<Integer,String> pickedWords) {
+        sessionRounds.add(new RoundData(this, pickedWords));
+    }
     /**
      * Used to retrieve the gamesettings inside a phase.
      * @return This sessions GameSettings

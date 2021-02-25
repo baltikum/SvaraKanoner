@@ -51,11 +51,12 @@ public class AllWords {
      */
     public  ArrayList<String> getWords(int amount) {
         ArrayList<String> gameWords = new ArrayList<>(amount);
-        int total = allWords.size();
+
         int index;
         for ( int i = 0; i<amount; i++ ) {
-            index = random.nextInt(total-1);
+            index = random.nextInt(allWords.size()-1);
             gameWords.add(allWords.get(index));
+            allWords.remove(index);
         }
         return gameWords;
     }
