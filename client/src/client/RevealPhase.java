@@ -9,7 +9,6 @@ import java.awt.*;
 
 
 public class RevealPhase extends Phase {
-
     private final AwesomeIconLabel currentWordOwner = new AwesomeIconLabel(null, null);
     private final AwesomeText currentWordText = new AwesomeText("");
     private final AwesomeText revealedText = new AwesomeText("");

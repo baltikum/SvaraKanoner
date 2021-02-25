@@ -7,26 +7,35 @@ import java.util.List;
 
 
 public class RevealPhase extends Phase {
+
     private final GameSession session;
-    private int currentRoundIndex = 0;
+    private final RoundData round;
+    private WordTracker tracker = null;
     private int currentWordIndex = 0;
-    private int currentRevealIndex = -1;
+    private int currentRevealIndex = 0;
 
     public RevealPhase(GameSession session) {
+        List<RoundData> sessionRounds = session.getSessionRounds();
         this.session = session;
+        this.round = sessionRounds.get(sessionRounds.size() - 1);
         revealNext();
     }
 
     public void revealNext() {
-        List<RoundData> sessionRounds = session.getSessionRounds();
-        if (sessionRounds.size() == currentRoundIndex) {
+        if (round.getNumberOfWords() == currentWordIndex) {
             // TODO: Go to win phase.
-        } else if (currentRevealIndex == -1){
-            // TODO: Reveal given word
-        } else if (currentRevealIndex % 2 == 0) {
-            // TODO: Reveal drawing
         } else {
-            // TODO: Reveal guess
+            if (tracker == null){
+                String word = round.getRoundWords().get(currentWordIndex);
+                tracker = round.getWordTracker(word);
+                ClientHandler wordOwner = session.getConnectedPlayer(tracker.getWordOwnerId());
+
+
+            } else if (currentRevealIndex % 2 == 0) {
+                // TODO: Reveal drawing
+            } else {
+                // TODO: Reveal guess
+            }
         }
     }
 

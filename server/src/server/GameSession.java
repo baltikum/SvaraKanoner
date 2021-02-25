@@ -8,7 +8,6 @@ public class GameSession {
     public String sessionID;
     private ClientHandler host;
     private ArrayList<ClientHandler> connectedClients;
-    private ClientHandler[] activeClients;
     private ArrayList<RoundData> sessionRounds;
     private ArrayList<Integer> points;
     private GameSettings gameSettings;
@@ -45,6 +44,15 @@ public class GameSession {
 
     public List<ClientHandler> getConnectedPlayers() {
         return connectedClients;
+    }
+
+    public ClientHandler getConnectedPlayer(int playerId) {
+        for (ClientHandler c : connectedClients) {
+            if (c.getId() == playerId) {
+                return c;
+            }
+        }
+        return null;
     }
 
     public List<RoundData> getSessionRounds() {
