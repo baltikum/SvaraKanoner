@@ -25,31 +25,30 @@ public class RoundData {
     private ArrayList<Integer> lastOrder;
     private ArrayList<String> wordResolver;
     private HashMap<String,WordTracker> wordMap;
-    private int roundCount;
+    private int roundPartCount;
 
     /**
      * Constructor
      * @param session the gamesession
      * @param pickedWords pickedword mapped on playerIds
      */
-    public RoundData(GameSession session, HashMap<Integer,String> pickedWords ) {
+    public RoundData(GameSession session, HashMap<Integer,String> pickedWords ){
         this.gameSession = session;
-
+        for ( ClientHandler client : session.getConnectedPlayers()) {
+            playerOrder.add(client.getId());
+        }
         this.numberOfWords = pickedWords.size();
         this.wordMap = new HashMap<>();
         this.playerOrder = new ArrayList<>();
         this.lastOrder = new ArrayList<>();
         this.wordResolver = new ArrayList<>();
-        this.roundCount = 0;
-
-        for ( ClientHandler client : session.getConnectedPlayers()) {
-            playerOrder.add(client.getId());
-        }
+        this.roundPartCount = 0;
 
         for ( int i = 0; i < numberOfWords; i++ ) {
             int id = playerOrder.get(i);
             String str = pickedWords.get(id);
             this.wordMap.put(str, new WordTracker(id,str));
+            this.wordResolver.add(str);
         }
     }
 
@@ -62,7 +61,7 @@ public class RoundData {
         for ( int i = 0; i < numberOfWords; i++ ) {
             toReturn.put(playerOrder.get(i),wordResolver.get(i));
         }
-        roundCount++;
+        roundPartCount++;
         rotateOrder();
         return toReturn;
     }
@@ -74,7 +73,10 @@ public class RoundData {
     public HashMap<Integer,Image> getImagesToGuessOn(){
         HashMap<Integer,Image> toReturn = new HashMap<>();
         for ( int i = 0; i < numberOfWords; i++ ) {
-            toReturn.put(playerOrder.get(i),wordMap.get(wordResolver.get(i)).getDrawing(lastOrder.get(i))); // lastorder borde de va kolla så rotation går åt rätt håll
+            WordTracker temp = wordMap.get(wordResolver.get(i));
+            int index = (temp.getAllImages().size()-1);
+            Pair tempPair = temp.getDrawing(index);
+            toReturn.put(playerOrder.get(i),tempPair.getImage());
         }
         return toReturn;
     }
@@ -90,8 +92,6 @@ public class RoundData {
      * @return wordTracker
      */
     public WordTracker getWordTracker(String word){ return wordMap.get(word); }
-
-
 
     /**
      * Used to save a drawn image to the wordtracker.-
@@ -117,7 +117,7 @@ public class RoundData {
             //gameSession.givePoint(id); funktionen existerar ej än
         }
         rotateOrder();
-        roundCount++;
+        roundPartCount++;
         return toReturn;
     }
 
@@ -144,7 +144,6 @@ public class RoundData {
             lastOrder.add(playerIter.next());
         }
         playerOrder.remove(0);
-        playerOrder.trimToSize();
         playerOrder.add(temp);
     }
 
@@ -153,7 +152,7 @@ public class RoundData {
      *
      * @return boolean
      */
-    public boolean checkRoundCount() { return roundCount==numberOfWords; }
+    public boolean checkRoundCount() { return roundPartCount ==numberOfWords; }
     /**
      * Used to retrieve the number of words used in this round.
      * @return integer, numberOfWords
