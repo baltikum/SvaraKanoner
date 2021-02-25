@@ -3,6 +3,7 @@ package server;
 import common.Message;
 import common.Player;
 
+import java.awt.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -42,6 +43,18 @@ public class ClientHandler extends Player implements Runnable {
                     synchronized (System.out) {
                         System.out.println("Received message: " + message.toString());
                     }
+
+                    switch (message.type) {
+                        case SUBMIT_GUESS-> {
+                            gameSession.getCurrentRoundData().saveGuess(getId(), (String) message.data.get("guess"));
+                        }
+                        case IMAGE_DATA_RECEIVED -> {
+                            System.out.println("Image data received at clients side");
+                        }
+                    }
+
+
+
                     if (message.type == Message.Type.CREATE_GAME)
                         Main.createGameSession(message);
                     else if (message.type == Message.Type.JOIN_GAME)

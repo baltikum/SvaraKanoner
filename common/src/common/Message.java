@@ -19,7 +19,7 @@ public class Message implements Serializable {
         PLAYER_DISCONNECTED,   // JoinPhase -> JoinPhase
         PLAYER_READY_STATUS_CHANGED,   // JoinPhase -> JoinPhase
 
-        SENDING_IMAGE_DATA,
+        IMAGE_DATA, // GuessPhase -> GuessPhase
 
 
 
@@ -29,9 +29,9 @@ public class Message implements Serializable {
         DISCONNECT,            // JoinPhase -> JoinPhase
         TOGGLE_READY_STATUS,   // JoinPhase -> JoinPhase
 
-        IMAGE_DATA_RECIEVED,
 
-        RETURNING_GUESS
+        IMAGE_DATA_RECEIVED, // GuessPhase -> GuessPhase
+        SUBMIT_GUESS // GuessPhase -> GuessPhase
 
 
     }
