@@ -25,14 +25,15 @@ public class GuessPhase extends Phase {
 
         PercentLayout layout = new PercentLayout(1.0f);
         panel = new JPanel(layout);
-        panel.setOpaque(true);
-        panel.setBackground(new Color(0, 0, 0, 0));
+       // panel.setOpaque(true);
+        panel.setBackground(new Color(23, 0, 0, 0));
 
         AwesomeImage image = new AwesomeImage(imageToGuess);
 
         Message submitMessage = new Message(Message.Type.SUBMIT_GUESS);
 
         JTextField guessField = new JTextField();
+        panel.add(guessField);
 
         AwesomeButton submit = new AwesomeButton("Submit");
         panel.add(submit);
@@ -43,7 +44,6 @@ public class GuessPhase extends Phase {
             Game.game.sendMessage(submitMessage);
         });
         AwesomeUtil.dynamicFont(submit, 1.0f);
-
         Game.game.setContentPanel(panel);
     }
 
