@@ -39,6 +39,14 @@ public class AwesomeIconLabel extends JComponent implements AwesomeEffect.User {
         textColor = color;
     }
 
+    /**
+     * Sets the text to be displayed
+     * @param text The text?!
+     */
+    public void setText(String text) {
+        this.text = text;
+    }
+
     @Override
     public void paintComponent(Graphics g) {
         Dimension iconDim = getSize();

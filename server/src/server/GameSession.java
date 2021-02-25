@@ -47,6 +47,10 @@ public class GameSession {
         return connectedClients;
     }
 
+    public List<RoundData> getSessionRounds() {
+        return sessionRounds;
+    }
+
     /**
      * Generates a sessionID
      * @return String

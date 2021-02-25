@@ -17,13 +17,15 @@ public class Message implements Serializable {
         // Server to client messages
         PLAYER_CONNECTED,      // JoinPhase -> JoinPhase
         PLAYER_DISCONNECTED,   // JoinPhase -> JoinPhase
-        PLAYER_READY_STATUS_CHANGED,   // JoinPhase -> JoinPhase
+        PLAYER_READY_STATUS_CHANGED, // JoinPhase -> JoinPhase
+        REVEAL_NEXT,                 // RevealPhase -> RevealPhase
 
         // Client to server messages
         CREATE_GAME,           // MainMenu -> Server
         JOIN_GAME,             // MainMenu -> Server
         DISCONNECT,            // JoinPhase -> JoinPhase
         TOGGLE_READY_STATUS,   // JoinPhase -> JoinPhase
+        REVEAL_NEXT_REQUEST,   // RevealPhase -> RevealPhase
     }
 
     public transient Player player;
