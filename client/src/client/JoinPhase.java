@@ -138,6 +138,12 @@ public class JoinPhase extends Phase {
                 AwesomeIconLabel label = playerIdToLabel.get(playerId);
                 if (label != null) label.setTextColor(status ? Color.GREEN : Color.BLACK);
             }
+
+            case GOTO_PICK_WORD_PHASE -> {
+                PhaseUI phaseUI = new PhaseUI();
+                PickWordPhase pickWordPhase = new PickWordPhase(phaseUI);
+                Game.game.setCurrentPhase(pickWordPhase);
+            }
         }
     }
 

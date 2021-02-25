@@ -47,6 +47,10 @@ public class GameSession {
         return connectedClients;
     }
 
+    public GameSettings getGameSettings() {
+        return gameSettings;
+    }
+
     /**
      * Generates a sessionID
      * @return String

@@ -15,6 +15,7 @@ public class AllWords {
     private static Random random;
     private static ArrayList<String> allWords;
 
+
     /**
      *
      * Constructor. Reads from file.
@@ -48,8 +49,8 @@ public class AllWords {
      * @param amount
      * @return gameWords
      */
-    public static ArrayList<String> getWords(int amount) {
-        ArrayList<String> gameWords = new ArrayList<String>(amount);
+    public  ArrayList<String> getWords(int amount) {
+        ArrayList<String> gameWords = new ArrayList<>(amount);
         int total = allWords.size();
         int index;
         for ( int i = 0; i<amount; i++ ) {
