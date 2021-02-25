@@ -1,5 +1,7 @@
 package server;
 
+import common.Pair;
+
 import java.awt.Image;
 import java.util.ArrayList;
 import java.util.*;
@@ -59,7 +61,15 @@ public class RoundData {
     public HashMap<Integer,String> getWordsToDraw(){
         HashMap<Integer,String> toReturn = new HashMap<>();
         for ( int i = 0; i < numberOfWords; i++ ) {
-            toReturn.put(playerOrder.get(i),wordResolver.get(i));
+            WordTracker temp = wordMap.get(wordResolver.get(i));
+            if ( roundPartCount > 0) {
+                int index = (temp.getAllGuesses().size() - 1);
+                Pair tempPair = temp.getGuess(index);
+                String tempGuess = tempPair.getGuess();
+                toReturn.put(playerOrder.get(i), tempGuess);
+            } else {
+                toReturn.put(playerOrder.get(i),wordResolver.get(i));
+            }
         }
         roundPartCount++;
         rotateOrder();
