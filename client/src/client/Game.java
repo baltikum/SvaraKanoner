@@ -75,6 +75,10 @@ public class Game implements ActionListener, WindowListener {
         Timer timer = new Timer(1000 / 30, this);
         timer.setInitialDelay(1000 / 30);
         timer.start();
+
+        // test a phase
+        //setCurrentPhase(new PickWordPhase());
+        //setCurrentPhase(new );
     }
 
     private void initTopLayer() {

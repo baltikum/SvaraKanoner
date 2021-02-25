@@ -1,8 +1,8 @@
 package server;
 
 import java.awt.Image;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * A Class that keeps track of one word.
@@ -15,8 +15,8 @@ public class WordTracker {
 
     private int wordOwnerId;
     private String word;
-    private HashMap<Integer,Image> images;
-    private HashMap<Integer, String> guesses;
+    private ArrayList<Pair> images;
+    private ArrayList<Pair> guesses;
 
 
     /**
@@ -27,30 +27,30 @@ public class WordTracker {
     public WordTracker(int id, String word ){
         this.wordOwnerId = id;
         this.word = word;
-        this.images = new HashMap<>();
-        this.guesses = new HashMap<>();
+        this.images = new ArrayList<>();
+        this.guesses = new ArrayList<>();
     }
 
     /**
-     * Saves a drawing into its Wordtracker.
+     * Saves a drawing into its Wordtracker as a Pair.
      * @param id personal id or artist.
      * @param image The image.
      * @return boolean
      */
     public boolean saveDrawing(int id, Image image) {
         int temp = images.size();
-        this.images.put(id,image);
+        this.images.add(new Pair(id,image));
         return (temp+1) == images.size();
     }
     /**
-     * Saves a guess into its Wordtracker.
+     * Saves a guess into its Wordtracker as a Pair.
      * @param id tagging the guess with a personal id
      * @param guess the guess
      * @return boolean
      */
     public boolean saveGuess(int id, String guess ) {
         int temp = guesses.size();
-        this.guesses.put(id,guess);
+        this.guesses.add(new Pair(id,guess));
         return (temp+1) == images.size();
     }
 
@@ -66,30 +66,29 @@ public class WordTracker {
     public String getWord() { return word; }
     /**
      * Gets one guess from the WordTracker based on id.
-     * @param id , The id of who made the guess
-     * @return
-     * guess, string
+     * @param i , The index of the guess, see roundpartCount in RoundData.
+     * @return Pair Playerid , String guess
      */
-    public String getGuess(int id ) { return guesses.get(id); }
+    public Pair getGuess(int i ) { return guesses.get(i); }
 
     /**
      * Used to retrieve all guesses made on this word throughout the round.
-     * @return HashMap, playerID maps guess
+     * @return ArrayList of Pairs, playerID , guess
      */
-    public HashMap<Integer,String> getAllGuesses() { return guesses; }
+    public ArrayList<Pair> getAllGuesses() { return guesses; }
 
     /**
      * Used to retrieve all images made for this word.
-     * @return HashMap, PlayerId maps Images.
+     * @return ArrayList of pairs. PlayerId, Images.
      */
-    public HashMap<Integer,Image> getAllImages() { return images; }
+    public ArrayList<Pair> getAllImages() { return images; }
 
     /**
-     * Gets an image based on which id. Example ownId -1 is the one to guess on.(Except if your id 0)
-     * @param id
-     * @return image
+     * Gets an image based on index. See roundCountData.
+     * @param i index to get.
+     * @return Pair id,Image
      */
-    public Image getDrawing(int id ) { return images.get(id); }
+    public Pair getDrawing(int i ) { return images.get(i); }
 
     /**
      * Return this WordTracker as a simple String for debugging.

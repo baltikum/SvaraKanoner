@@ -20,15 +20,17 @@ public class JoinPhase extends Phase {
     private static final int NUM_POSITIONS = 16;
     private static final int POSITION_DATA_COMPONENTS = 3;
 
-    private final Image[] playerIcons;
+    //private final Image[] playerIcons;
     private final float[] positionData;
     private final ArrayList<Integer> freePositions;
     private final JPanel panel;
     private final Map<Integer, AwesomeIconLabel> playerIdToLabel = new HashMap<>();
 
+
     /**
      * Initiates the join phase ui.
      */
+
     public JoinPhase() {
         Random random = Game.game.random;
         freePositions = new ArrayList<>(16);
@@ -55,8 +57,7 @@ public class JoinPhase extends Phase {
             freePositions.add(i);
         }
 
-        BufferedImage tileMap = Assets.loadImage("player-icons.png");
-        playerIcons = Assets.getTiles(tileMap, 0, 0, 1, 1, 8, 4, 1, 16);
+
 
         PercentLayout layout = new PercentLayout(1.0f);
         panel = new JPanel(layout);
@@ -87,7 +88,9 @@ public class JoinPhase extends Phase {
         AwesomeUtil.dynamicFont(leave, 1.0f);
 
         Game.game.setContentPanel(panel);
+
         addPlayer(Game.game.getThisPlayer());
+
     }
 
     public void addPlayer(Player player) {
@@ -97,7 +100,7 @@ public class JoinPhase extends Phase {
         int positionIndex = players.size() < 8 ?
                 freePositions.remove(Game.game.random.nextInt(8 - players.size())) :
                 freePositions.remove(Game.game.random.nextInt(freePositions.size()));
-        AwesomeIconLabel playerLabel = new AwesomeIconLabel(playerIcons[player.getAvatarId()], player.getName());
+        AwesomeIconLabel playerLabel = new AwesomeIconLabel(Assets.getPlayerIcons()[player.getAvatarId()], player.getName());
         panel.add(playerLabel);
         ((PercentLayout)panel.getLayout()).setConstraintsRatioByWidth(playerLabel,
                 positionData[positionIndex * POSITION_DATA_COMPONENTS],
@@ -134,6 +137,11 @@ public class JoinPhase extends Phase {
                 boolean status = (boolean) msg.data.getOrDefault("status", false);
                 AwesomeIconLabel label = playerIdToLabel.get(playerId);
                 if (label != null) label.setTextColor(status ? Color.GREEN : Color.BLACK);
+            }
+
+            case GOTO_PICK_WORD_PHASE -> {
+                PickWordPhase pickWordPhase = new PickWordPhase();
+                Game.game.setCurrentPhase(pickWordPhase);
             }
         }
     }

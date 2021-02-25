@@ -117,11 +117,17 @@ public class JoinPhase extends Phase {
                     response.addParameter("status", false);
                     session.sendMessageToAll(response);
                 } else {
+                    readyPlayers.add(player);
+                    response.addParameter("status", true);
+
                     if (readyPlayers.size() == session.getConnectedPlayers().size()) {
                         // TODO: Goto next phase
+                        // if word choices is enabled... ska vi ha det??
+
+                        Message gotoWordPhaseMessage = new Message(Message.Type.GOTO_PICK_WORD_PHASE);
+                        session.sendMessageToAll(gotoWordPhaseMessage);
+                        session.setPhase(new PickWordPhase(session));
                     } else {
-                        readyPlayers.add(player);
-                        response.addParameter("status", true);
                         session.sendMessageToAll(response);
                     }
                 }

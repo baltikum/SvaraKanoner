@@ -19,6 +19,8 @@ public class Message implements Serializable {
         PLAYER_DISCONNECTED,   // JoinPhase -> JoinPhase
         PLAYER_READY_STATUS_CHANGED, // JoinPhase -> JoinPhase
         REVEAL_NEXT,                 // RevealPhase -> RevealPhase
+        GOTO_PICK_WORD_PHASE,          // JoinPhase -> JoinPhase
+        SEND_WORD_CHOICES,
 
         IMAGE_DATA, // GuessPhase -> GuessPhase
 
@@ -30,6 +32,9 @@ public class Message implements Serializable {
         DISCONNECT,            // JoinPhase -> JoinPhase
         TOGGLE_READY_STATUS,   // JoinPhase -> JoinPhase
         REVEAL_NEXT_REQUEST,   // RevealPhase -> RevealPhase
+
+        PICK_WORD,             // PickWordPhase -> PickWordPhase
+
         IMAGE_DATA_RECEIVED, // GuessPhase -> GuessPhase
         SUBMIT_GUESS // GuessPhase -> GuessPhase
     }
