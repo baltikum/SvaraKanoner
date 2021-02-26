@@ -37,7 +37,7 @@ public class GuessPhase extends Phase {
         panel.add(guessField);
         layout.setConstraintsRatioByWidth(guessField, .75f, .167f * 5, .3f, 0.25f);
 
-        AwesomeButton submit = new AwesomeButton("Submit");
+        AwesomeButton submit = new AwesomeButton("Guess");
         panel.add(submit);
         layout.setConstraintsRatioByWidth(submit, .75f, .167f * 5, .3f, 0.25f);
 
