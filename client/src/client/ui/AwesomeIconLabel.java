@@ -47,6 +47,15 @@ public class AwesomeIconLabel extends JComponent implements AwesomeEffect.User {
         this.text = text;
     }
 
+    /**
+     * Sets the icon to be displayed
+     * @param icon The icon, or the moon?!
+     */
+    public void setIcon(Image icon) {
+        this.img = icon;
+    }
+
+
     @Override
     public void paintComponent(Graphics g) {
         Dimension iconDim = getSize();

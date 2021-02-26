@@ -25,15 +25,10 @@ public class AudioPlayer {
 
             audioClip = (Clip) AudioSystem.getLine(info);
             audioClip.open(audioStream);
+            setMusicVolume(settings.getMusicVolume());
 
-            if (!settings.muteMusic)
+            if (!settings.isMusicMuted())
                 audioClip.loop(Clip.LOOP_CONTINUOUSLY);
-
-            FloatControl gainControl = (FloatControl) audioClip.getControl(FloatControl.Type.MASTER_GAIN);
-            float range = gainControl.getMaximum() - gainControl.getMinimum();
-            float gain = (range * settings.musicVolume) + gainControl.getMinimum();
-            gainControl.setValue(gain);
-
         } catch (UnsupportedAudioFileException ex) {
             System.out.println("The specified audio file is not supported.");
             ex.printStackTrace();
@@ -45,55 +40,34 @@ public class AudioPlayer {
             ex.printStackTrace();
         }
 
+        settings.addListener(new Settings.Listener() {
+            @Override
+            public void propertyChanged(Settings.Properties property, Settings settings) {
+                switch (property) {
+                    case MUTE_MUSIC -> {
+                        if (audioClip != null) {
+                            if (settings.isMusicMuted())
+                                audioClip.stop();
+                            else
+                                audioClip.loop(Clip.LOOP_CONTINUOUSLY);
+                        }
+                    }
+                    case MUTE_EFFECTS -> {
+                        // TODO: Mute music
+                    }
+                    case MUSIC_VOLUME -> setMusicVolume(settings.getMusicVolume());
+                    case EFFECTS_VOLUME -> {
+                        // TODO: Change effects volume
+                    }
+                }
+            }
+        });
     }
 
-    /**
-     * Changes the settings muteMusic to true and stops the music.
-     */
-    public void muteMusic() {
-        Game.game.getSettings().muteMusic = true;
-        if (audioClip != null) {
-            audioClip.stop();
-        }
+    private void setMusicVolume(float volume) {
+        FloatControl gainControl = (FloatControl) audioClip.getControl(FloatControl.Type.MASTER_GAIN);
+        float range = gainControl.getMaximum() - gainControl.getMinimum();
+        float gain = (range * volume) + gainControl.getMinimum();
+        gainControl.setValue(gain);
     }
-
-
-    /**
-     * Changes the settings muteMusic to false and resumes the music.
-     */
-    public void unmuteMusic() {
-        Game.game.getSettings().muteMusic = false;
-        if (audioClip != null) {
-            audioClip.loop(Clip.LOOP_CONTINUOUSLY);
-        }
-    }
-
-    /**
-     * For now only changes the muteEffects to true setting.
-     */
-    public void muteEffects() {
-        Game.game.getSettings().muteEffects = true;
-    }
-
-    /**
-     * For now only changes the muteEffects to false setting.
-     */
-    public void unmuteEffects() {
-        Game.game.getSettings().muteEffects = false;
-    }
-
-    /**
-     * @return true If settings muteMusic is true else false.
-     */
-    public boolean isMusicMuted() {
-        return Game.game.getSettings().muteMusic;
-    }
-
-    /**
-     * @return true If settings muteEffects is true else false.
-     */
-    public boolean isEffectsMuted() {
-        return Game.game.getSettings().muteEffects;
-    }
-
 }

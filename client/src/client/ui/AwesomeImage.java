@@ -22,6 +22,14 @@ public class AwesomeImage extends JComponent implements AwesomeEffect.User {
         image = img;
     }
 
+    /**
+     * I give you 10 guesses what this does.
+     * @param img Can it be cheese?
+     */
+    public void setImage(Image img) {
+        image = img;
+    }
+
     @Override
     public void paintComponent(Graphics g) {
         if (!isVisible()) return;

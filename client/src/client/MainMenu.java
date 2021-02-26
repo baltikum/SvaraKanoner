@@ -24,6 +24,7 @@ public class MainMenu extends Phase {
     private boolean hasPlayedQuitAnimation = false;
     private final Image wham, leftArrow, rightArrow;
     private final Image rocket, flame0, flame1, block;
+    private Settings.Listener settingsListener;
 
     private final GameSettings gameSettings = new GameSettings();
 
@@ -68,6 +69,8 @@ public class MainMenu extends Phase {
         AwesomeImage rocketFlame = new AwesomeImage(flame0);
         rocketFlame.setVisible(false);
 
+        title.setTextColor(Color.RED);
+
         AwesomeUtil.dynamicFont(title, 1.0f);
         AwesomeUtil.dynamicFont(joinGameButton, .2f);
         AwesomeUtil.dynamicFont(createGameButton, .2f);
@@ -96,6 +99,21 @@ public class MainMenu extends Phase {
                 System.exit(0);
             }
         });
+
+        AwesomeButton nextIcon = new AwesomeButton(rightArrow);
+        AwesomeButton prevIcon = new AwesomeButton(leftArrow);
+        AwesomeImage playerIcon = new AwesomeImage(Assets.getPlayerIcons()[Game.game.getSettings().getPreferredAvatarId()]);
+        nextIcon.addActionListener( e -> Game.game.getSettings().nextPreferredIcon());
+        prevIcon.addActionListener( e -> Game.game.getSettings().prevPreferredIcon());
+
+        panel.add(nextIcon);
+        panel.add(prevIcon);
+        panel.add(playerIcon);
+        layout.setConstraintsRatioByWidth(prevIcon, 0.1f, 0.1f, 0.05f, 1.0f);
+        layout.setConstraintsRatioByWidth(playerIcon, 0.15f, 0.1f, 0.05f, 1.0f);
+        layout.setConstraintsRatioByWidth(nextIcon, 0.2f, 0.1f, 0.05f, 1.0f);
+        settingsListener = (property, settings) -> playerIcon.setImage(Assets.getPlayerIcons()[settings.getPreferredAvatarId()]);
+        Game.game.getSettings().addListener(settingsListener);
 
         panel.add(title);
         panel.add(joinGameButton);
@@ -180,12 +198,9 @@ public class MainMenu extends Phase {
             }
         });
         nameInput.getDocument().addDocumentListener(new DocumentListener() {
-            @Override public void insertUpdate(DocumentEvent e) { }
-            @Override public void removeUpdate(DocumentEvent e) { }
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                Game.game.getThisPlayer().setName(nameInput.getText());
-            }
+            @Override public void insertUpdate(DocumentEvent e) { Game.game.getSettings().setPreferredName(nameInput.getText()); }
+            @Override public void removeUpdate(DocumentEvent e) { Game.game.getSettings().setPreferredName(nameInput.getText()); }
+            @Override public void changedUpdate(DocumentEvent e) { Game.game.getSettings().setPreferredName(nameInput.getText()); }
         });
     }
 
@@ -343,11 +358,11 @@ public class MainMenu extends Phase {
     private void joinGame(String code) {
         if (joinGameClicked) return;
         joinGameClicked = true;
-        Player thisPlayer = Game.game.getThisPlayer();
+        Settings clientSettings = Game.game.getSettings();
         Message msg = new Message(Message.Type.JOIN_GAME);
         msg.data.put("sessionId", code);
-        msg.data.put("requestedName", thisPlayer.getName());
-        msg.data.put("requestedAvatarId", thisPlayer.getAvatarId());
+        msg.data.put("requestedName", clientSettings.getPreferredName());
+        msg.data.put("requestedAvatarId", clientSettings.getPreferredAvatarId());
         Game.game.sendMessage(msg, new MessageResponseListener() {
             @Override
             public void onSuccess(Message msg) {
@@ -366,6 +381,8 @@ public class MainMenu extends Phase {
                 for (int i = 0; i < existingPlayerIds.length; i++) {
                     joinPhase.addPlayer(new Player(existingPlayerIds[i], existingPlayerNames[i], existingPlayerAvatarIds[i]));
                 }
+
+                Game.game.getSettings().removeListener(settingsListener);
             }
 
             @Override
@@ -376,12 +393,16 @@ public class MainMenu extends Phase {
         });
     }
 
+
+    private boolean createGameClicked = false;
     private void createGame() {
-        Player playerInfo = Game.game.getThisPlayer();
+        if (createGameClicked) return;
+        createGameClicked = true;
+        Settings clientSettings = Game.game.getSettings();
         Message msg =  new Message(Message.Type.CREATE_GAME);
         msg.data.put("settings", gameSettings);
-        msg.data.put("requestedName", playerInfo.getName());
-        msg.data.put("requestedAvatarId", playerInfo.getAvatarId());
+        msg.data.put("requestedName", clientSettings.getPreferredName());
+        msg.data.put("requestedAvatarId", clientSettings.getPreferredAvatarId());
         Game.game.sendMessage(msg, new MessageResponseListener() {
             @Override
             public void onSuccess(Message msg) {
@@ -390,11 +411,14 @@ public class MainMenu extends Phase {
                 Game.game.getThisPlayer().setName((String) msg.data.get("playerName"));
                 JoinPhase joinPhase = new JoinPhase();
                 Game.game.setCurrentPhase(joinPhase);
+
+                Game.game.getSettings().removeListener(settingsListener);
             }
 
             @Override
             public void onError(String errorMsg) {
-
+                createGameClicked = false;
+                Game.game.setErrorMsg(errorMsg);
             }
         });
     }

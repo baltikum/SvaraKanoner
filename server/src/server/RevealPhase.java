@@ -3,9 +3,12 @@ package server;
 import common.Message;
 import common.Phase;
 
-import java.util.List;
+import java.io.Serializable;
 
 
+/**
+ *
+ */
 public class RevealPhase extends Phase {
 
     private final GameSession session;
@@ -13,30 +16,48 @@ public class RevealPhase extends Phase {
     private WordTracker tracker = null;
     private int currentWordIndex = 0;
     private int currentRevealIndex = 0;
+    private boolean shouldRevealDrawing = true;
 
     public RevealPhase(GameSession session) {
-        List<RoundData> sessionRounds = session.getSessionRounds();
         this.session = session;
-        this.round = sessionRounds.get(sessionRounds.size() - 1);
+        this.round = session.getCurrentRoundData();
         revealNext();
     }
 
     public void revealNext() {
-        if (round.getNumberOfWords() == currentWordIndex) {
-            // TODO: Go to win phase.
-        } else {
+        Message msg = new Message(Message.Type.REVEAL_NEXT);
+        if (currentWordIndex < round.getNumberOfWords()) {
+            int playerId = -1;
             if (tracker == null){
                 String word = round.getRoundWords().get(currentWordIndex);
                 tracker = round.getWordTracker(word);
-                ClientHandler wordOwner = session.getConnectedPlayer(tracker.getWordOwnerId());
-
-
-            } else if (currentRevealIndex % 2 == 0) {
-                // TODO: Reveal drawing
+                playerId = tracker.getWordOwnerId();
+                msg.addParameter("word", tracker.getWord());
             } else {
-                // TODO: Reveal guess
+                if (shouldRevealDrawing) {
+                    Pair img = tracker.getDrawing(currentRevealIndex);
+                    // msg.addParameter("drawing", img.getImage());
+                    playerId = img.getPlayerId();
+                } else {
+                    Pair guess = tracker.getGuess(currentRevealIndex);
+                    msg.addParameter("guess", guess.getGuess());
+                    if (++currentRevealIndex == tracker.getAllGuesses().size()) {
+                        ++currentWordIndex;
+                        tracker = null;
+                    }
+                    playerId = guess.getPlayerId();
+                }
+                shouldRevealDrawing = !shouldRevealDrawing;
+            }
+            msg.addParameter("playerId", playerId);
+        } else {
+            if (session.getSessionRounds().size() == session.getGameSettings().getNumRounds()) {
+                msg.addParameter("goto", "WinnerPhase");
+            } else {
+                msg.addParameter("goto", "PickWordPhase");
             }
         }
+        session.sendMessageToAll(msg);
     }
 
     @Override

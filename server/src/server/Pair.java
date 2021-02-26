@@ -15,6 +15,8 @@ public class Pair {
         this.id = id;
         this.word = str;
     }
+
+    public int getPlayerId() { return id; }
     public Image getImage(){ return image; }
     public String getGuess() { return word; }
 }

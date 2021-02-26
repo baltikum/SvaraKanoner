@@ -59,8 +59,19 @@ public class ClientHandler extends Player implements Runnable {
                         Main.createGameSession(message);
                     else if (message.type == Message.Type.JOIN_GAME)
                         Main.joinGame(message);
-                    else if (gameSession != null)
-                        gameSession.receiveMessage(message);
+                    else if (gameSession != null) {
+                        if (message.type == Message.Type.CHAT_MESSAGE) {
+                            Message msg = new Message(Message.Type.CHAT_MESSAGE);
+                            msg.addParameter("message", message.data.getOrDefault("message", "Hello, sailor!"));
+                            for (ClientHandler c : gameSession.getConnectedPlayers()) {
+                                if (c.getId() != this.getId()) {
+                                    c.sendMessage(msg);
+                                }
+                            }
+                        } else {
+                            gameSession.receiveMessage(message);
+                        }
+                    }
                 } catch (Exception e) {
                     break;
                 }

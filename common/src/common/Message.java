@@ -13,6 +13,7 @@ public class Message implements Serializable {
     public enum Type {
         // Both way messages
         RESPONSE,
+        CHAT_MESSAGE,
 
         // Server to client messages
         PLAYER_CONNECTED,      // JoinPhase -> JoinPhase

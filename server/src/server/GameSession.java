@@ -6,7 +6,6 @@ import java.util.*;
 public class GameSession {
 
     public String sessionID;
-    private ClientHandler host;
     private ArrayList<ClientHandler> connectedClients;
     private ArrayList<RoundData> sessionRounds;
     private ArrayList<Integer> points;
@@ -16,7 +15,6 @@ public class GameSession {
 
     public GameSession(ClientHandler host, GameSettings settings ) {
         this.sessionID = generateSessionID();
-        this.host = host;
         this.gameSettings = settings;
         this.connectedClients = new ArrayList<>();
         this.sessionRounds = new ArrayList<>();
@@ -28,12 +26,8 @@ public class GameSession {
     }
 
     public void receiveMessage(Message msg) {
-        switch (msg.type) {
-            default -> {
-                if (currentPhase != null) {
-                    currentPhase.message(msg);
-                }
-            }
+        if (currentPhase != null) {
+            currentPhase.message(msg);
         }
     }
 
@@ -82,6 +76,7 @@ public class GameSession {
     public void createRoundData(HashMap<Integer,String> pickedWords) {
         sessionRounds.add(new RoundData(this, pickedWords));
     }
+
     /**
      * Used to retrieve the gamesettings inside a phase.
      * @return This sessions GameSettings
