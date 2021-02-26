@@ -122,7 +122,7 @@ public class Game implements ActionListener, WindowListener {
         effect.animate(muteMusic, AwesomeEffect.COMPONENT);
         effect.animate(muteEffects, AwesomeEffect.COMPONENT);
         muteMusic.addActionListener(e -> settings.setMuteMusic(!settings.isMusicMuted()) );
-        muteEffects.addActionListener(e -> settings.setMuteMusic(!settings.isMusicMuted()) );
+        muteEffects.addActionListener(e -> settings.setMuteEffects(!settings.isEffectsMuted()) );
 
         settings.addListener((property, settings) -> {
             switch (property) {
