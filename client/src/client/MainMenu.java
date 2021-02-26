@@ -57,6 +57,7 @@ public class MainMenu extends Phase {
      * @param root The panel to add the card to.
      */
     private void initMainMenu(JPanel root) {
+        Game.game.chat.setVisible(false);
         PercentLayout layout = new PercentLayout(1.0f);
         JPanel panel = new JPanel(layout);
         panel.setBackground(new Color(0xe67e22));

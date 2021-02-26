@@ -29,6 +29,7 @@ public class JoinPhase extends Phase {
      * Initiates the join phase ui.
      */
     public JoinPhase() {
+        Game.game.chat.setVisible(true);
         Random random = Game.game.random;
         freePositions = new ArrayList<>(16);
         positionData = new float[NUM_POSITIONS * POSITION_DATA_COMPONENTS];

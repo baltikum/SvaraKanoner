@@ -2,9 +2,7 @@ package server;
 
 import common.Message;
 import common.Phase;
-
-import java.io.Serializable;
-
+import common.Pair;
 
 /**
  *

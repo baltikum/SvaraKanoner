@@ -140,7 +140,7 @@ public class Chat extends JPanel {
 
         String msg = inputField.getText();
         if (!msg.isEmpty()) {
-            msg = msg + "\n";
+            msg = Game.game.getThisPlayer().getName() + ": " + msg + "\n";
             messageData.append(msg);
             inputField.setText("");
 

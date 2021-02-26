@@ -21,7 +21,7 @@ public class Game implements ActionListener, WindowListener {
     private Phase currentPhase;
 
     private final Settings settings = new Settings();
-    private Chat chat;
+    public Chat chat;
     private final AudioPlayer audioPlayer;
 
     private Network network;
