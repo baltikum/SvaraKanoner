@@ -23,8 +23,9 @@ public class Message implements Serializable {
         GOTO_PICK_WORD_PHASE,          // JoinPhase -> JoinPhase
         SEND_WORD_CHOICES,
 
-        IMAGE_DATA, // GuessPhase -> GuessPhase
-
+        IMAGE_DATA,          // GuessPhase -> GuessPhase
+        GOTO_DRAW_PHASE,     // GuessPhase -> GuessPhase
+        GOTO_REVEAL_PHASE,   // GuessPhase -> GuessPhase
 
 
         // Client to server messages
@@ -36,8 +37,10 @@ public class Message implements Serializable {
 
         PICK_WORD,             // PickWordPhase -> PickWordPhase
 
-        IMAGE_DATA_RECEIVED, // GuessPhase -> GuessPhase
-        SUBMIT_GUESS // GuessPhase -> GuessPhase
+        IMAGE_DATA_RECEIVED,    // GuessPhase -> GuessPhase
+        SUBMIT_GUESS,            // GuessPhase -> GuessPhase
+
+
     }
 
     public transient Player player;

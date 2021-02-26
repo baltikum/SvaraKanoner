@@ -157,12 +157,14 @@ public class RoundData {
         playerOrder.add(temp);
     }
 
+
+    public int getRoundPartCount(){ return roundPartCount; }
     /**
      * Used to check if rounds are the same as number of words. ( round over )
      *
      * @return boolean
      */
-    public boolean checkRoundCount() { return roundPartCount ==numberOfWords; }
+    public boolean checkRoundCount() { return roundPartCount == numberOfWords; }
     /**
      * Used to retrieve the number of words used in this round.
      * @return integer, numberOfWords
