@@ -29,6 +29,14 @@ public class GuessPhase extends Phase {
 
     @Override
     public void message(Message msg) {
+        switch (msg.type) {
+            case SUBMIT_GUESS-> {
+                gameSession.getCurrentRoundData().saveGuess(msg.player.getId(), (String) msg.data.get("guess"));
+            }
+            case IMAGE_DATA_RECEIVED -> {
+                System.out.println("Image data received at clients side");
+            }
+        }
 
     }
 }

@@ -1,8 +1,9 @@
 package server;
 
+import common.Pair;
+
 import java.awt.Image;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * A Class that keeps track of one word.
