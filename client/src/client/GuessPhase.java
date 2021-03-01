@@ -35,21 +35,21 @@ public class GuessPhase extends Phase {
 
         AwesomeText guessMessage = new AwesomeText("What is this?");
         guessMessage.setTextColor(Color.RED);
-        layout.setConstraintsRatioByWidth(guessMessage, .5f, .15f, .85f, 0.25f);
+        layout.setConstraintsRatioByWidth(guessMessage, .5f, .85f, .85f, 0.25f);
         AwesomeUtil.dynamicFont(guessMessage, 0.4f);
         panel.add(guessMessage);
 
         DrawPanel image= new DrawPanel(imageToGuess);
         panel.add(image);
-        layout.setConstraintsRatioByWidth(image, .5f, .5f, .8f, 0.8f);
+        layout.setConstraintsRatioByWidth(image, .5f, .5f, .75f, 0.75f);
 
         JTextField guessField = new JTextField();
         panel.add(guessField);
-        layout.setConstraintsRatioByWidth(guessField, .3f, .8f, .5f, 0.15f);
+        layout.setConstraintsRatioByWidth(guessField, .33f, .1f, .41f, 0.15f);
 
         AwesomeButton submit = new AwesomeButton("Guess!!", wham);
         AwesomeUtil.dynamicFont(submit, 0.4f);
-        layout.setConstraintsRatioByWidth(submit, .75f, .8f, .3f, 0.35f);
+        layout.setConstraintsRatioByWidth(submit, .73f, .1f, .3f, 0.35f);
         panel.add(submit);
 
         submit.addActionListener(e -> {
@@ -61,7 +61,8 @@ public class GuessPhase extends Phase {
             }
             AwesomeUtil.dynamicFont(text, 0.25f);
             text.setTextColor(Color.BLUE);
-            layout.setConstraintsRatioByWidth(text, .5f, .5f, .8f, 0.25f);
+            layout.setConstraintsRatioByWidth(text, .5f, .17f, .8f, 0.25f);
+            panel.remove(text);
             panel.add(text);
         });
         Game.game.setContentPanel(panel);
@@ -74,9 +75,13 @@ public class GuessPhase extends Phase {
      * @return boolean
      */
     private boolean checkAndSendGuess(String guessed ){
+        if ( guessed.equals("") ) {
+            return false;
+        }
         boolean sent = false;
         String str = guessed.trim();
         str = str.toLowerCase(Locale.ROOT);
+
         if ( isAlphabetical(str)){
             System.out.println(str);
             Message submitMessage = new Message(Message.Type.SUBMIT_GUESS);
@@ -106,18 +111,5 @@ public class GuessPhase extends Phase {
 
     @Override
     public void message(Message msg) {
-        switch (msg.type) {
-            case GOTO -> {
-                String str = (String)msg.data.get("phase");
-                switch ( str ) {
-                    case "DrawPhase":
-                        Game.game.setCurrentPhase(new DrawPhase(msg));
-                    case "RevealPhase":
-                        Game.game.setCurrentPhase(new RevealPhase(msg));
-                    case "WaitingPhase":
-                        Game.game.setCurrentPhase(new WaitingPhase(msg));
-                }
-            }
-        }
     }
 }

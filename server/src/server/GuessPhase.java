@@ -65,6 +65,9 @@ public class GuessPhase extends Phase {
         }
     }
 
+    /**
+     * Increment submit by one.
+     */
     private void incrementSubmit(){ this.submits++; };
 
     /**
