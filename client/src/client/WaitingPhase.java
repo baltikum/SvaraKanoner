@@ -71,12 +71,18 @@ public class WaitingPhase extends Phase {
     @Override
     public void message(Message msg) {
         switch (msg.type) {
-            case GOTO_DRAW_PHASE -> {
-                Game.game.setCurrentPhase(new DrawPhase());
+            case GOTO -> {
+                String str = (String)msg.data.get("phase");
+                switch ( str ) {
+                    case "DrawPhase":
+                        Game.game.setCurrentPhase(new DrawPhase(msg));
+                    case "RevealPhase":
+                        Game.game.setCurrentPhase(new RevealPhase(msg));
+                    case "GuessPhase":
+                        Game.game.setCurrentPhase(new GuessPhase(msg));
+                }
             }
-            case GOTO_REVEAL_PHASE -> {
-                Game.game.setCurrentPhase(new RevealPhase());
-            }
+
         }
     }
 }
