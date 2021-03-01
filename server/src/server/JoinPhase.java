@@ -121,8 +121,6 @@ public class JoinPhase extends Phase {
                     response.addParameter("status", true);
 
                     if (readyPlayers.size() == session.getConnectedPlayers().size()) {
-                        Message gotoWordPhaseMessage = new Message(Message.Type.GOTO_PICK_WORD_PHASE);
-                        session.sendMessageToAll(gotoWordPhaseMessage);
                         session.setPhase(new PickWordPhase(session));
                     } else {
                         session.sendMessageToAll(response);
