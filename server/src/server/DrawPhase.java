@@ -54,7 +54,7 @@ public class DrawPhase extends Phase {
         switch (msg.type) {
             case SUBMIT_PICTURE-> {	    //  Hur göra här med bild, ska alltid gå till guessPhase
                 // kolla medelandet
-                gameSession.getCurrentRoundData().saveImage(msg.player.getId(), (String) msg.data.get("guess"), (PaintPoint) msg.data.get("image"));
+                //gameSession.getCurrentRoundData().saveImage(msg.player.getId(), (String) msg.data.get("guess"), (PaintPoint) msg.data.get("image"));
                 this.submits++;
                 if ( submits == gameSession.getConnectedPlayers().size() ) {
                     Message msg2 = new Message(Message.Type.GOTO);

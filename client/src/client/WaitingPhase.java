@@ -64,25 +64,12 @@ public class WaitingPhase extends Phase {
         layout.setConstraintsRatioByWidth(rocketButton, 0.5f, 0.7f, .6f, .5f);
         layout.setConstraintsRatioByWidth(rocketFlame, 0.28f, 0.7f, .1f, 1.0f);
 
-
         Game.game.setContentPanel(panel);
     }
 
     @Override
     public void message(Message msg) {
-        switch (msg.type) {
-            case GOTO -> {
-                String str = (String)msg.data.get("phase");
-                switch ( str ) {
-                    case "DrawPhase":
-                        Game.game.setCurrentPhase(new DrawPhase(msg));
-                    case "RevealPhase":
-                        Game.game.setCurrentPhase(new RevealPhase(msg));
-                    case "GuessPhase":
-                        Game.game.setCurrentPhase(new GuessPhase(msg));
-                }
-            }
 
-        }
+
     }
 }
