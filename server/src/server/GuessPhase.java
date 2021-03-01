@@ -1,11 +1,12 @@
 package server;
 
-import common.*;
+import common.GameSettings;
+import common.Message;
+import common.PaintPoint;
+import common.Phase;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.HashMap;
 
 
@@ -16,21 +17,22 @@ public class GuessPhase extends Phase {
     private GameSettings settings;
     private HashMap<Integer, PaintPoint> guessImages;
     private int submits;
+    private HashMap<Integer,Boolean> dataRecievedCount;
+    private Timer resendCheck;
 
-
+    /**
+     * Contructor takes a GameSession
+     * @param session
+     */
     public GuessPhase(GameSession session){
         this.gameSession = session;
         this.roundData = this.gameSession.getCurrentRoundData();
         this.guessImages = this.roundData.getImagesToGuessOn();
         this.settings = this.gameSession.getGameSettings();
         this.submits = 0;
-
-        timeLeft = new Timer((int) settings.getGuessTimeMilliseconds(), new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                advancePhase();
-            }
-        });
+        this.dataRecievedCount = new HashMap<>();
+        this.timeLeft = new Timer((int) settings.getGuessTimeMilliseconds(), timeOut -> advancePhase());
+        this.resendCheck = new Timer(3000, timeOut -> checkForResend());
 
         for (ClientHandler client: gameSession.getConnectedPlayers()) {
             Message message;
@@ -42,32 +44,50 @@ public class GuessPhase extends Phase {
             client.sendMessage(message);
         }
 
+        sendImages();
 
-        for (ClientHandler client: gameSession.getConnectedPlayers()) {
-            Message message = new Message(Message.Type.IMAGE_DATA);
-      //      message.addParameter("image", guessImages.get(client.getId())); // Nån annan egen klass som är serializable
-            client.sendMessage(message);
-        }
-
-
+        timeLeft.start();
+        resendCheck.start();
     }
 
     /**
-     * Sends messsage to all clients.
-     * @param msg
+     * Timer calls this if time runs out for a client to acknowledge it recieved its image.
+     * If not it restarts the timer and initiates a resend of the images.
      */
-    private void phaseMessage(Message msg){
-        for (ClientHandler client: gameSession.getConnectedPlayers()) {
-            client.sendMessage(msg);
+    private void checkForResend(){
+        if ( dataRecievedCount.size() == guessImages.size() ) {
+            System.out.println("All images were received at clientside");
+        } else {
+            sendImages();
+            resendCheck.restart();
         }
     }
 
+    /**
+     * Function sends the images out to clients. Can be used initially or to resend data.
+     */
+    private void sendImages(){
+        for (ClientHandler client: gameSession.getConnectedPlayers()) {
+            Message message = new Message(Message.Type.IMAGE_DATA);
+            int id = client.getId();
+            if ( !dataRecievedCount.containsKey(id) ) { // Kollar ifall bilden redan är överförd.
+                if ( guessImages.containsKey(id)) {
+                    //    message.addParameter("image", guessImages.get(client.getId())); // Egen klass med linjer för att generera bild.
+                    client.sendMessage(message);
+                }
+            }
+        }
+    }
+
+    /**
+     * Used to advance to next phase, chooses between Draw and Reveal phases.
+     */
     private void advancePhase(){
         if ( roundData.getRoundPartCount() == roundData.getNumberOfWords()) {
-            phaseMessage(new Message(Message.Type.GOTO_REVEAL_PHASE));
+            gameSession.sendMessageToAll(new Message(Message.Type.GOTO_REVEAL_PHASE));
             gameSession.setPhase(new RevealPhase(gameSession));
         } else {
-            phaseMessage(new Message(Message.Type.GOTO_DRAW_PHASE));
+            gameSession.sendMessageToAll(new Message(Message.Type.GOTO_DRAW_PHASE));
             gameSession.setPhase(new DrawPhase(gameSession));
         }
     }
@@ -87,9 +107,13 @@ public class GuessPhase extends Phase {
                 }
             }
             case IMAGE_DATA_RECEIVED -> {
-                System.out.println("Image data received at clients side"); // Response ?
+                this.dataRecievedCount.put(msg.player.getId(),true);
+                System.out.println("Image data received from client id : " + msg.player.getId());
+
+                if ( dataRecievedCount.size() == guessImages.size() ) {
+                    resendCheck.stop(); // terminate the timer if all images were received.
+                }
             }
         }
-
     }
 }

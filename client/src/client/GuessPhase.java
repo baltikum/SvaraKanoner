@@ -36,11 +36,6 @@ public class GuessPhase extends Phase {
         AwesomeUtil.dynamicFont(guessMessage, 0.4f);
         panel.add(guessMessage);
 
-
-
-
-
-
        // display thew image to guess
 
 
@@ -69,7 +64,6 @@ public class GuessPhase extends Phase {
         Game.game.setContentPanel(panel);
     }
 
-   // Game.game.setCurrentPhase(new PickWordPhase());
 
     /**
      * Helper function controls the input and sends the answer.
