@@ -26,6 +26,7 @@ public class Message implements Serializable {
         IMAGE_DATA,          // GuessPhase -> GuessPhase
         GOTO_DRAW_PHASE,     // GuessPhase -> GuessPhase
         GOTO_REVEAL_PHASE,   // GuessPhase -> GuessPhase
+        GOTO_WAIT_PHASE,     // GuessPhase -> GuessPhase
 
 
         WORD_DATA,     // DrawPhase -> DrawPhase

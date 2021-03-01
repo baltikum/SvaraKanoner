@@ -31,16 +31,24 @@ public class GuessPhase extends Phase {
         timeLeft = new Timer((int) settings.getGuessTimeMilliseconds(), new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                advancePhase();
             }
         });
 
-
+        for (ClientHandler client: gameSession.getConnectedPlayers()) {
+            Message message;
+            if ( guessImages.containsKey(client.getId())) {
+                message = new Message(Message.Type.GOTO_GUESS_PHASE);
+            } else {
+                message = new Message(Message.Type.GOTO_WAIT_PHASE);
+            }
+            client.sendMessage(message);
+        }
 
 
         for (ClientHandler client: gameSession.getConnectedPlayers()) {
             Message message = new Message(Message.Type.IMAGE_DATA);
-      //      message.addParameter("image", guessImages.get(client.getId())); // Nån annan egen klass som 'r serializable
+      //      message.addParameter("image", guessImages.get(client.getId())); // Nån annan egen klass som är serializable
             client.sendMessage(message);
         }
 
@@ -57,6 +65,16 @@ public class GuessPhase extends Phase {
         }
     }
 
+    private void advancePhase(){
+        if ( roundData.getRoundPartCount() == roundData.getNumberOfWords()) {
+            phaseMessage(new Message(Message.Type.GOTO_REVEAL_PHASE));
+            gameSession.setPhase(new RevealPhase(gameSession));
+        } else {
+            phaseMessage(new Message(Message.Type.GOTO_DRAW_PHASE));
+            gameSession.setPhase(new DrawPhase(gameSession));
+        }
+    }
+
     /**
      * Message handling of this phase, server side.
      * @param msg Message
@@ -65,17 +83,10 @@ public class GuessPhase extends Phase {
     public void message(Message msg) {
         switch (msg.type) {
             case SUBMIT_GUESS-> {
-                // kolla medelandet
                 gameSession.getCurrentRoundData().saveGuess(msg.player.getId(), (String) msg.data.get("guess"));
                 this.submits++;
                 if ( submits == roundData.getNumberOfWords() ) {
-                    if ( roundData.getRoundPartCount() == roundData.getNumberOfWords()) {
-                        phaseMessage(new Message(Message.Type.GOTO_REVEAL_PHASE));
-           //             gameSession.setPhase(new RevealPhase());
-                    } else {
-                        phaseMessage(new Message(Message.Type.GOTO_DRAW_PHASE));
-     //                   gameSession.setPhase(new DrawPhase());
-                    }
+                    advancePhase();
                 }
             }
             case IMAGE_DATA_RECEIVED -> {
