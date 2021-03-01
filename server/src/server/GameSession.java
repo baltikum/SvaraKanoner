@@ -23,7 +23,7 @@ public class GameSession {
         joinPhase.addClient(host);
     }
 
-    public void receiveMessage(Message msg) {
+    public synchronized void receiveMessage(Message msg) {
         if (currentPhase != null) {
             currentPhase.message(msg);
         }

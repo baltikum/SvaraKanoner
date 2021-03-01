@@ -17,7 +17,6 @@ public class ClientHandler extends Player implements Runnable {
     private final Socket socket;
     private ObjectOutputStream objectOutputStream;
     private GameSession gameSession;
-    private final Queue<MessageResponseListener> responseListeners = new ArrayDeque<>();
     private int points;
 
     public ClientHandler(Socket socket) {
@@ -29,17 +28,6 @@ public class ClientHandler extends Player implements Runnable {
         try {
             objectOutputStream.writeObject(message);
             objectOutputStream.flush();
-        } catch (Exception e) {
-
-        }
-
-    }
-
-    public void sendMessage(Message message, MessageResponseListener responseListener) {
-        try {
-            objectOutputStream.writeObject(message);
-            objectOutputStream.flush();
-            responseListeners.add(responseListener);
         } catch (Exception e) {
 
         }
@@ -58,12 +46,7 @@ public class ClientHandler extends Player implements Runnable {
                     synchronized (System.out) {
                         System.out.println("Received message: " + message.toString());
                     }
-                    if (message.type == Message.Type.RESPONSE) {
-                        if (message.error == null)
-                            responseListeners.poll().onSuccess(message);
-                        else
-                            responseListeners.poll().onError(message.error);
-                    } else if (message.type == Message.Type.CREATE_GAME)
+                    if (message.type == Message.Type.CREATE_GAME)
                         Main.createGameSession(message);
                     else if (message.type == Message.Type.JOIN_GAME)
                         Main.joinGame(message);
