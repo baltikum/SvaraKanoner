@@ -1,6 +1,6 @@
 package client;
-import client.ui.AwesomeButton;
-import client.ui.AwesomeUtil;
+import client.ui.*;
+
 import common.Message;
 import common.Phase;
 
@@ -19,6 +19,9 @@ import java.awt.event.*;
 public class DrawPhase extends Phase implements ActionListener {
 
 
+    private String wordToDraw;
+    JPanel panelTop;
+
 
     public DrawPhase() {
 
@@ -32,10 +35,20 @@ public class DrawPhase extends Phase implements ActionListener {
 
         mainFrame.add(panel);
 
-        JPanel panelTop = new JPanel();
+        panelTop = new JPanel();
+        GridBagConstraints c = new GridBagConstraints();
+        c.gridwidth = 1;
+        c.gridheight = 1;
+        c.weightx = 0.5;
+        c.weighty = 0.5;
+
         panelTop.setLayout(new GridBagLayout());
 
+
         panel.add(panelTop, BorderLayout.NORTH);
+
+
+        addWord("hej");
 
         JPanel panelBottom = new JPanel();
         panel.add(panelBottom, BorderLayout.SOUTH);
@@ -45,11 +58,6 @@ public class DrawPhase extends Phase implements ActionListener {
         JPanel panelRight = new JPanel();
         panel.add(panelRight, BorderLayout.EAST);
         panelRight.setLayout(new GridBagLayout());
-        GridBagConstraints c = new GridBagConstraints();
-        c.gridwidth = 1;
-        c.gridheight = 1;
-        c.weightx = 0.5;
-        c.weighty = 0.5;
 
         JPanel panelCenter = new JPanel();
         panel.add(panelCenter);
@@ -229,17 +237,11 @@ public class DrawPhase extends Phase implements ActionListener {
         });
 
 
-        AwesomeButton ready = new AwesomeButton("Done!");
-        panelBottom.add(ready);
-
-
-        ready.addActionListener(e -> {
-          //        Game.game.sendMessage(new Message(Message.Type.TOGGLE_READY_STATUS));
+        AwesomeButton done = new AwesomeButton("Done!");
+        panelBottom.add(done);
+        done.addActionListener(e -> {
+                  Game.game.sendMessage(new Message(Message.Type.SUBMIT_PICTURE));
         });
-       // AwesomeUtil.dynamicFont(ready, 1.0f);
-
-
-
 
 
         mainFrame.pack();
@@ -261,14 +263,18 @@ public class DrawPhase extends Phase implements ActionListener {
     @Override
     public void message(Message msg) {
         switch (msg.type) {
-            case IMAGE_DATA -> {
-                //      this.imageToGuess = (Image) msg.data.get("image");
-                Game.game.sendMessage(new Message(Message.Type.IMAGE_DATA_RECEIVED));
+            case WORD_DATA -> {
+                this.wordToDraw = (String) msg.data.get("word");
+                addWord(wordToDraw);
+                Game.game.sendMessage(new Message(Message.Type.WORD_DATA_RECEIVED));
             }
         }
     }
 
-
+    private void addWord(String word) {
+        JLabel jlabelWord = new JLabel("Word to draw: "+word);
+        panelTop.add(jlabelWord);
+    }
 
 
 

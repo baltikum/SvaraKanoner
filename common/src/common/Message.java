@@ -28,6 +28,10 @@ public class Message implements Serializable {
         GOTO_REVEAL_PHASE,   // GuessPhase -> GuessPhase
 
 
+        WORD_DATA,     // DrawPhase -> DrawPhase
+        GOTO_GUESS_PHASE,   // DrawPhase -> DrawPhase
+
+
         // Client to server messages
         CREATE_GAME,           // MainMenu -> Server
         JOIN_GAME,             // MainMenu -> Server
@@ -39,6 +43,10 @@ public class Message implements Serializable {
 
         IMAGE_DATA_RECEIVED,    // GuessPhase -> GuessPhase
         SUBMIT_GUESS,            // GuessPhase -> GuessPhase
+
+
+        WORD_DATA_RECEIVED,    // DrawPhase -> DrawPhase
+        SUBMIT_PICTURE,            // DrawPhase -> DrawPhase
 
 
     }
