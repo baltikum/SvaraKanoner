@@ -108,6 +108,9 @@ public class JoinPhase extends Phase {
             }
             case DISCONNECT -> {
                 disconnectClient((ClientHandler) msg.player);
+                if (session.getConnectedPlayers().isEmpty()) {
+                    Main.removeSession(session);
+                }
             }
             case TOGGLE_READY_STATUS -> {
                 Message response = new Message(Message.Type.PLAYER_READY_STATUS_CHANGED);
@@ -122,6 +125,7 @@ public class JoinPhase extends Phase {
 
                     if (readyPlayers.size() == session.getConnectedPlayers().size()) {
                         session.setPhase(new PickWordPhase(session));
+                        Main.removeSession(session);
                     } else {
                         session.sendMessageToAll(response);
                     }

@@ -62,7 +62,7 @@ public class Game implements ActionListener, WindowListener {
         initTopLayer();
 
         // Start with
-        setCurrentPhase(new MainMenu());
+        setCurrentPhase(new WinnerPhase(new Message(Message.Type.GOTO)));
         // setCurrentPhase(new DrawPhase());
         // setCurrentPhase(new WaitingPhase());
         // setCurrentPhase(new GuessPhase());
@@ -208,6 +208,10 @@ public class Game implements ActionListener, WindowListener {
         return settings;
     }
 
+    public AudioPlayer getAudioPlayer() {
+        return audioPlayer;
+    }
+
     public void updateUI() {
         frame.pack();
     }
@@ -237,7 +241,7 @@ public class Game implements ActionListener, WindowListener {
         } else if (msg.type == Message.Type.GOTO) {
             String targetPhase = (String) msg.data.get("phase");
             switch (targetPhase) {
-                case "PickWordPhase" -> setCurrentPhase(new PickWordPhase(msg));
+                // case "PickWordPhase" -> setCurrentPhase(new PickWordPhase(msg));
                 case "DrawPhase" -> setCurrentPhase(new DrawPhase(msg));
                 case "GuessPhase" -> setCurrentPhase(new GuessPhase(msg));
                 case "RevealPhase" -> setCurrentPhase(new RevealPhase(msg));

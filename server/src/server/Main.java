@@ -15,7 +15,7 @@ public class Main {
 
     public static final int PORT = 12345;
 
-    private static ArrayList<GameSession> gameSessions = new ArrayList<>();
+    private static final ArrayList<GameSession> gameSessions = new ArrayList<>();
 
     public static void main(String[] args) throws IOException {
         System.out.println("Server is running");
@@ -28,7 +28,7 @@ public class Main {
         }
     }
 
-    public static void createGameSession(Message msg) {
+    public static synchronized void createGameSession(Message msg) {
         ClientHandler host = (ClientHandler) msg.player;
         host.setName((String) msg.data.getOrDefault("requestPlayerName", ""));
         host.setAvatarId((int) msg.data.getOrDefault("requestAvatarId", 0));
@@ -43,7 +43,7 @@ public class Main {
         host.sendMessage(message);
     }
 
-    public static void joinGame(Message msg) {
+    public static synchronized void joinGame(Message msg) {
         String gameCode = (String) msg.data.getOrDefault("sessionId", "");
         ClientHandler joiner = (ClientHandler) msg.player;
         GameSession joinedSession = null;
@@ -60,6 +60,10 @@ public class Main {
         } else {
             joinedSession.receiveMessage(msg);
         }
+    }
+
+    public static synchronized void removeSession(GameSession session) {
+        gameSessions.remove(session);
     }
 }
 

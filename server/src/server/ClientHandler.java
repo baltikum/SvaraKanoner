@@ -18,6 +18,7 @@ public class ClientHandler extends Player implements Runnable {
     private ObjectOutputStream objectOutputStream;
     private GameSession gameSession;
     private final Queue<MessageResponseListener> responseListeners = new ArrayDeque<>();
+    private int points;
 
     public ClientHandler(Socket socket) {
         super(-1, "", -1);
@@ -95,7 +96,16 @@ public class ClientHandler extends Player implements Runnable {
     }
 
     public void setGameSession(GameSession session) {
+        points = 0;
         gameSession = session;
+    }
+
+    public void givePoints(int amount) {
+        points += points;
+    }
+
+    public int getPoints() {
+        return points;
     }
 
     public GameSession getGameSession() {
