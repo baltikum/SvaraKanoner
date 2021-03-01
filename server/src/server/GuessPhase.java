@@ -43,12 +43,10 @@ public class GuessPhase extends Phase {
 
         for (ClientHandler client: gameSession.getConnectedPlayers()) {
             Message message;
-            if ( guessImages.containsKey(client.getId())) {
-                message = new Message(Message.Type.GOTO_GUESS_PHASE);
-            } else {
+            if ( !guessImages.containsKey(client.getId())) {
                 message = new Message(Message.Type.GOTO_WAIT_PHASE);
+                client.sendMessage(message);
             }
-            client.sendMessage(message);
         }
 
         sendImages();
