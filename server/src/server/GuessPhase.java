@@ -1,9 +1,6 @@
 package server;
 
-import common.GameSettings;
-import common.Message;
-import common.Pair;
-import common.Phase;
+import common.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,7 +14,7 @@ public class GuessPhase extends Phase {
     private GameSession gameSession;
     private RoundData roundData;
     private GameSettings settings;
-    private HashMap<Integer,Image> guessImages;
+    private HashMap<Integer, PaintPoint> guessImages;
     private int submits;
 
 

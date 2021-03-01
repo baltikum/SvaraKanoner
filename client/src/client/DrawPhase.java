@@ -20,7 +20,7 @@ public class DrawPhase extends Phase implements ActionListener {
 
 
     private String wordToDraw;
-    JPanel panelTop;
+    private JPanel panelTop;
 
 
     public DrawPhase() {
@@ -266,7 +266,7 @@ public class DrawPhase extends Phase implements ActionListener {
             case WORD_DATA -> {
                 this.wordToDraw = (String) msg.data.get("word");
                 addWord(wordToDraw);
-                Game.game.sendMessage(new Message(Message.Type.WORD_DATA_RECEIVED));
+                //      Game.game.sendMessage(new Message(Message.Type.WORD_DATA_RECEIVED));
             }
         }
     }

@@ -9,6 +9,7 @@ import javax.swing.Timer;
 
 import common.GameSettings;
 import common.Message;
+import common.PaintPoint;
 import common.Phase;
 import server.ClientHandler;
 import server.GameSession;
@@ -19,13 +20,15 @@ public class DrawPhase extends Phase {
     private GameSession gameSession;
     private RoundData roundData;
     private int submits;
+    private GameSettings gameSettings;
 
     public DrawPhase(GameSession session){
         this.gameSession = session;
         this.roundData = this.gameSession.getCurrentRoundData();
         this.submits = 0;
+        this.gameSettings = gameSession.getGameSettings();
 
-        timeLeft = new Timer((int) settings.getGuessTimeMilliseconds(), new ActionListener() {
+        timeLeft = new Timer((int) gameSettings.getGuessTimeMilliseconds(), new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
 
@@ -35,7 +38,7 @@ public class DrawPhase extends Phase {
 
         for (ClientHandler client: gameSession.getConnectedPlayers()) {
             Message message = new Message(Message.Type.WORD_DATA);
-            message.addParameter("words", generatedWords.get(client.getId()));
+            message.addParameter("word", roundData.getWordsToDraw().get(client.getId()));
             client.sendMessage(message);
         }
 
@@ -51,16 +54,12 @@ public class DrawPhase extends Phase {
         switch (msg.type) {
             case SUBMIT_PICTURE-> {	    //  Hur göra här med bild, ska alltid gå till guessPhase
                 // kolla medelandet
-                gameSession.getCurrentRoundData().saveGuess(msg.player.getId(), (String) msg.data.get("guess"));
+                gameSession.getCurrentRoundData().saveImage(msg.player.getId(), (String) msg.data.get("guess"), (PaintPoint) msg.data.get("image"));
                 this.submits++;
-                if ( submits == roundData.getNumberOfWords() ) {
-                    if ( roundData.getRoundPartCount() == roundData.getNumberOfWords()) {
-                        phaseMessage(new Message(Message.Type.GOTO_REVEAL_PHASE));
-                        //             gameSession.setPhase(new RevealPhase());
-                    } else {
-                        phaseMessage(new Message(Message.Type.GOTO_DRAW_PHASE));
-                        //                   gameSession.setPhase(new DrawPhase());
-                    }
+                if ( submits == gameSession.getConnectedPlayers().size() ) {
+
+                        gameSession.sendMessageToAll(new Message(Message.Type.GOTO_GUESS_PHASE));
+                                    gameSession.setPhase(new GuessPhase(gameSession));
                 }
             }
             case WORD_DATA_RECEIVED -> {

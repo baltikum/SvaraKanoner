@@ -1,5 +1,6 @@
 package server;
 
+import common.PaintPoint;
 import common.Pair;
 
 import java.awt.Image;
@@ -38,7 +39,7 @@ public class WordTracker {
      * @param image The image.
      * @return boolean
      */
-    public boolean saveDrawing(int id, Image image) {
+    public boolean saveDrawing(int id, PaintPoint image) {
         int temp = images.size();
         this.images.add(new Pair(id,image));
         return (temp+1) == images.size();
