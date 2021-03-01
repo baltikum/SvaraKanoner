@@ -4,10 +4,10 @@ import java.awt.*;
 
 public class Pair {
     private int id;
-    private Image image;
+    private PaintPoint image;
     private String word;
 
-    public Pair( int id, Image image ) {
+    public Pair( int id, PaintPoint image ) {
         this.id = id;
         this.image = image;
     }
@@ -17,6 +17,6 @@ public class Pair {
     }
 
     public int getPlayerId() { return id; }
-    public Image getImage(){ return image; }
+    public PaintPoint getImage(){ return image; }
     public String getGuess() { return word; }
 }

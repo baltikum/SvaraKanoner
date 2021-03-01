@@ -5,6 +5,7 @@ import common.Pair;
 import java.awt.Image;
 import java.util.ArrayList;
 import java.util.*;
+import common.PaintPoint;
 
 
 /**
@@ -80,8 +81,8 @@ public class RoundData {
      * Used to retrieve images for guessing in guessPhase.
      * @return HashMap playerId maps Images.
      */
-    public HashMap<Integer,Image> getImagesToGuessOn(){
-        HashMap<Integer,Image> toReturn = new HashMap<>();
+    public HashMap<Integer,PaintPoint> getImagesToGuessOn(){
+        HashMap<Integer,PaintPoint> toReturn = new HashMap<>();
         for ( int i = 0; i < numberOfWords; i++ ) {
             WordTracker temp = wordMap.get(wordResolver.get(i));
             int index = (temp.getAllImages().size()-1);
@@ -110,7 +111,7 @@ public class RoundData {
      * @param image The image
      * @return
      */
-    public boolean saveImage(int id, String word, Image image ) {
+    public boolean saveImage(int id, String word, PaintPoint image ) {
         return wordMap.get(word).saveDrawing(id,image);
     }
     /**

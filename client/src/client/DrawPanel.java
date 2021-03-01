@@ -1,5 +1,7 @@
 package client;
 
+import common.PaintPoint;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -11,13 +13,14 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Line2D;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
-public class DrawPanel extends JPanel implements MouseListener, MouseMotionListener {
+public class DrawPanel extends JPanel implements Serializable, MouseListener, MouseMotionListener {
 
     private Color color;
     private double lastBrushSize;
@@ -42,6 +45,14 @@ public class DrawPanel extends JPanel implements MouseListener, MouseMotionListe
         addMouseMotionListener(this);
 
     }
+
+
+    public DrawPanel(ArrayList<List<PaintPoint>> paintPoints) {
+        super();
+        this.paintPoints = paintPoints;
+    }
+
+
 
     @Override
     protected void paintComponent(Graphics g) {
