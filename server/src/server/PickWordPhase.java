@@ -4,10 +4,14 @@ import common.GameSettings;
 import common.Message;
 import common.Phase;
 
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 
 /**
@@ -23,17 +27,18 @@ public class PickWordPhase extends Phase {
 
 
     private GameSession session;
-
     private GameSettings settings;
 
     private Map<Integer, String[]> generatedWords = new HashMap<>();
-
     private HashMap<Integer,String> pickedWords = new HashMap<>();
+
+    private Timer timer;
 
     public PickWordPhase(GameSession gameSession) {
         this.session = gameSession;
         settings = session.getGameSettings();
         AllWords allwords = new AllWords();
+
 
 
         ArrayList<String> allGenerateWords = allwords.getWords(session.getConnectedPlayers().size()*settings.getNumberOfWords());
@@ -57,12 +62,32 @@ public class PickWordPhase extends Phase {
         }
 
 
+        timer = new Timer((int)settings.pickTimeMilliseconds, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Random random = new Random();
+                // time is up
+                for (ClientHandler client: session.getConnectedPlayers()) {
+                    if (!pickedWords.containsKey(client.getId())) {
+                        String randomWord = generatedWords.get(client.getId())[random.nextInt()%4];
+                        addPickedWords(client.getId(), randomWord);
+                    }
+                }
+            }
+        });
+
+
 
     }
 
 
 
-
+    private void addPickedWords(int id, String word) {
+        addPickedWords(id, word);
+        if (pickedWords.size() == session.getConnectedPlayers().size()) {
+            enterDrawPhase();
+        }
+    }
 
 
 
@@ -76,11 +101,8 @@ public class PickWordPhase extends Phase {
                     return;
                 String word = generatedWords.get(msg.player.getId())[wordIndex];
                 System.out.println("Picked word: " + word);
-                pickedWords.put(msg.player.getId(), word);
+                addPickedWords(msg.player.getId(), word);
 
-                if (pickedWords.size() == session.getConnectedPlayers().size()) {
-                    enterDrawPhase();
-                }
 
             }
         }

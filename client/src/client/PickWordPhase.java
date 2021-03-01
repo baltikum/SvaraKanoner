@@ -23,6 +23,7 @@ public class PickWordPhase extends Phase {
     JPanel panel;
     JPanel wordsPanel;
     PercentLayout percentLayout;
+    AwesomeText header;
 
     boolean pressedWord = false;
 
@@ -36,7 +37,7 @@ public class PickWordPhase extends Phase {
 
         percentLayout = new PercentLayout(1.0f);
 
-        AwesomeText header = new AwesomeText("Pick a word!");
+        header = new AwesomeText("Pick a word!");
         header.setTextColor(Color.black);
         AwesomeUtil.dynamicFont(header, 0.2f);
         percentLayout.setConstraintsRatioByWidth(header, 0.5f, 0.1f, 0.7f, 0.7f);
@@ -92,6 +93,7 @@ public class PickWordPhase extends Phase {
             Game.game.sendMessage(message);
 
             panel.remove(wordsPanel);
+            header.setText("Waiting on players...");
         });
 
     }
