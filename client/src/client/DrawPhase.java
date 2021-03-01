@@ -23,8 +23,8 @@ public class DrawPhase extends Phase implements ActionListener {
     private JPanel panelTop;
 
 
-    public DrawPhase(Message msg ) {    //  ?
-
+       //  public DrawPhase( ) {    //  ?
+       public DrawPhase(Message msg) {    //  ?
         super();
 
         // JFrame mainFrame = new JFrame("Ryktet går!");

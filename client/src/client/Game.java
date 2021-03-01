@@ -63,6 +63,7 @@ public class Game implements ActionListener, WindowListener {
 
         // Start with
         //setCurrentPhase(new MainMenu());
+        setCurrentPhase(new DrawPhase());
         //setCurrentPhase(new WaitingPhase());
        // setCurrentPhase(new GuessPhase());
 
