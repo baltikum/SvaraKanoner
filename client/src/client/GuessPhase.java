@@ -2,12 +2,14 @@ package client;
 
 import client.ui.*;
 import common.Message;
+import common.PaintPoint;
 import common.Phase;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
+import java.util.List;
 
 
 public class GuessPhase extends Phase {
@@ -17,7 +19,8 @@ public class GuessPhase extends Phase {
     private final Map<Integer, AwesomeIconLabel> playerIdToLabel = new HashMap<>();
     private final Image wham;
 
-    private Image imageToGuess;
+
+    private ArrayList<List<PaintPoint>> imageToGuess;
     private String guess;
 
     public GuessPhase(Message msg) {
@@ -36,9 +39,9 @@ public class GuessPhase extends Phase {
         AwesomeUtil.dynamicFont(guessMessage, 0.4f);
         panel.add(guessMessage);
 
-       // display thew image to guess
-
-
+        DrawPanel image= new DrawPanel(imageToGuess);
+        panel.add(image);
+        layout.setConstraintsRatioByWidth(image, .5f, .5f, .8f, 0.8f);
 
         JTextField guessField = new JTextField();
         panel.add(guessField);
@@ -104,10 +107,6 @@ public class GuessPhase extends Phase {
     @Override
     public void message(Message msg) {
         switch (msg.type) {
-            case IMAGE_DATA -> {
-                this.imageToGuess = (Image) msg.data.get("image");
-                Game.game.sendMessage(new Message(Message.Type.IMAGE_DATA_RECEIVED));
-            }
             case GOTO -> {
                 String str = (String)msg.data.get("phase");
                 switch ( str ) {

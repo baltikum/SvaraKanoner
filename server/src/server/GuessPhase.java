@@ -7,6 +7,7 @@ import common.Phase;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -22,7 +23,7 @@ public class GuessPhase extends Phase {
     private GameSession gameSession;
     private RoundData roundData;
     private GameSettings settings;
-    private HashMap<Integer, PaintPoint> guessImages;
+    private HashMap<Integer, ArrayList<java.util.List<PaintPoint>>> guessImages;
     private int submits;
 
     /**
@@ -49,6 +50,7 @@ public class GuessPhase extends Phase {
             }
             client.sendMessage(message);
         }
+
         timeLeft.start();
     }
 
@@ -63,6 +65,8 @@ public class GuessPhase extends Phase {
         }
     }
 
+    private void incrementSubmit(){ this.submits++; };
+
     /**
      * Message handling of this phase, server side.
      * @param msg Message
@@ -72,7 +76,7 @@ public class GuessPhase extends Phase {
         switch (msg.type) {
             case SUBMIT_GUESS -> {
                 gameSession.getCurrentRoundData().saveGuess(msg.player.getId(), (String) msg.data.get("guess"));
-                this.submits++;
+                incrementSubmit();
                 if ( submits == roundData.getNumberOfWords() ) {
                     advancePhase();
                 }

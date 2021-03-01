@@ -5,6 +5,7 @@ import common.Pair;
 
 import java.awt.Image;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A Class that keeps track of one word.
@@ -39,7 +40,7 @@ public class WordTracker {
      * @param image The image.
      * @return boolean
      */
-    public boolean saveDrawing(int id, PaintPoint image) {
+    public boolean saveDrawing(int id, ArrayList<List<PaintPoint>> image) {
         int temp = images.size();
         this.images.add(new Pair(id,image));
         return (temp+1) == images.size();
