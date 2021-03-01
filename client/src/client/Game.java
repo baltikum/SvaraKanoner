@@ -233,6 +233,16 @@ public class Game implements ActionListener, WindowListener {
     public void receiveMessage(Message msg) {
         if (msg.type == Message.Type.CHAT_MESSAGE) {
             chat.message(msg);
+        } else if (msg.type == Message.Type.GOTO) {
+            String targetPhase = (String) msg.data.get("phase");
+            switch (targetPhase) {
+                case "JoinPhase" -> setCurrentPhase(new JoinPhase(msg));
+                case "PickWordPhase" -> setCurrentPhase(new PickWordPhase(msg));
+                case "DrawPhase" -> setCurrentPhase(new DrawPhase(msg));
+                case "GuessPhase" -> setCurrentPhase(new GuessPhase(msg));
+                case "RevealPhase" -> setCurrentPhase(new RevealPhase(msg));
+                case "WaitingPhase" -> setCurrentPhase(new WaitingPhase(msg));
+            }
         } else {
             if (currentPhase != null) currentPhase.message(msg);
         }

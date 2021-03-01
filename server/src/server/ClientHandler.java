@@ -1,6 +1,7 @@
 package server;
 
 import common.Message;
+import common.MessageResponseListener;
 import common.Player;
 
 import java.awt.*;
@@ -8,12 +9,15 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayDeque;
+import java.util.Queue;
 
 public class ClientHandler extends Player implements Runnable {
 
     private final Socket socket;
     private ObjectOutputStream objectOutputStream;
     private GameSession gameSession;
+    private final Queue<MessageResponseListener> responseListeners = new ArrayDeque<>();
 
     public ClientHandler(Socket socket) {
         super(-1, "", -1);
@@ -30,8 +34,18 @@ public class ClientHandler extends Player implements Runnable {
 
     }
 
-    public void run() {
+    public void sendMessage(Message message, MessageResponseListener responseListener) {
+        try {
+            objectOutputStream.writeObject(message);
+            objectOutputStream.flush();
+            responseListeners.add(responseListener);
+        } catch (Exception e) {
 
+        }
+
+    }
+
+    public void run() {
         try {
             ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
             objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
@@ -43,7 +57,12 @@ public class ClientHandler extends Player implements Runnable {
                     synchronized (System.out) {
                         System.out.println("Received message: " + message.toString());
                     }
-                    if (message.type == Message.Type.CREATE_GAME)
+                    if (message.type == Message.Type.RESPONSE) {
+                        if (message.error == null)
+                            responseListeners.poll().onSuccess(message);
+                        else
+                            responseListeners.poll().onError(message.error);
+                    } else if (message.type == Message.Type.CREATE_GAME)
                         Main.createGameSession(message);
                     else if (message.type == Message.Type.JOIN_GAME)
                         Main.joinGame(message);
@@ -64,7 +83,6 @@ public class ClientHandler extends Player implements Runnable {
                     break;
                 }
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         } finally { // Client left / disconnected
