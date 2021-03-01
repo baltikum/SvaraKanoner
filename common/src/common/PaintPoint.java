@@ -1,8 +1,9 @@
 package common;
 
 import java.awt.Color;
+import java.io.Serializable;
 
-public class PaintPoint {
+public class PaintPoint implements Serializable {
 
     private double x;
     private double y;
