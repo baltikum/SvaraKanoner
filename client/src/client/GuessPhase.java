@@ -20,7 +20,7 @@ public class GuessPhase extends Phase {
     private Image imageToGuess;
     private String guess;
 
-    public GuessPhase() {
+    public GuessPhase(Message msg) {
 
         PercentLayout layout = new PercentLayout(1.0f);
         panel = new JPanel(layout);
@@ -108,14 +108,16 @@ public class GuessPhase extends Phase {
                 this.imageToGuess = (Image) msg.data.get("image");
                 Game.game.sendMessage(new Message(Message.Type.IMAGE_DATA_RECEIVED));
             }
-            case GOTO_DRAW_PHASE -> {
-                Game.game.setCurrentPhase(new DrawPhase());
-            }
-            case GOTO_REVEAL_PHASE -> {
-                Game.game.setCurrentPhase(new RevealPhase());
-            }
-            case GOTO_WAIT_PHASE-> {
-                Game.game.setCurrentPhase(new WaitingPhase());
+            case GOTO -> {
+                String str = (String)msg.data.get("phase");
+                switch ( str ) {
+                    case "DrawPhase":
+                        Game.game.setCurrentPhase(new DrawPhase(msg));
+                    case "RevealPhase":
+                        Game.game.setCurrentPhase(new RevealPhase(msg));
+                    case "WaitingPhase":
+                        Game.game.setCurrentPhase(new WaitingPhase(msg));
+                }
             }
         }
     }

@@ -23,17 +23,21 @@ public class DrawPhase extends Phase implements ActionListener {
     private JPanel panelTop;
 
 
-    public DrawPhase() {
-
+       //  public DrawPhase( ) {    //  ?
+       public DrawPhase(Message msg) {    //  ?
         super();
 
-        JFrame mainFrame = new JFrame("Ryktet går!");
+        // JFrame mainFrame = new JFrame("Ryktet går!");
 
 
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
 
-        mainFrame.add(panel);
+
+
+        //mainFrame.add(panel);
+        Game.game.setContentPanel(panel);
+
 
         panelTop = new JPanel();
         GridBagConstraints c = new GridBagConstraints();
@@ -52,6 +56,7 @@ public class DrawPhase extends Phase implements ActionListener {
 
         JPanel panelBottom = new JPanel();
         panel.add(panelBottom, BorderLayout.SOUTH);
+        ///   panelBottom.setLayout(new BorderLayout());
 
         DrawPanel drawPanel = new DrawPanel();
 
@@ -70,12 +75,12 @@ public class DrawPhase extends Phase implements ActionListener {
 
         drawPanel.setBackground(Color.WHITE);
 
-        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //    mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        mainFrame.setLocation(500, 200);
+        //  mainFrame.setLocation(500, 200);
 
-        mainFrame.setPreferredSize(new Dimension(1000, 1000));
-        mainFrame.setMinimumSize(new Dimension(600, 600));
+        //  mainFrame.setPreferredSize(new Dimension(1000, 1000));
+        //    mainFrame.setMinimumSize(new Dimension(600, 600));
 
         panelCenter.addComponentListener(new ComponentAdapter() {
             @Override
@@ -97,11 +102,18 @@ public class DrawPhase extends Phase implements ActionListener {
         });
 
 
+
+        JLabel blank = new JLabel("");
+        c.gridx = 0;
+        c.gridy = 1;
+        panelRight.add(blank, c);
+
+
         JButton btnGreen = new JButton(new ImageIcon("client\\assets\\greenColor.png"));
         btnGreen.setContentAreaFilled(false);
         btnGreen.setBorderPainted(false);
         c.gridx = 0;
-        c.gridy = 0;
+        c.gridy = 2;
         panelRight.add(btnGreen, c);
 
         btnGreen.addActionListener(new ActionListener() {
@@ -115,7 +127,7 @@ public class DrawPhase extends Phase implements ActionListener {
         btnBlue.setContentAreaFilled(false);
         btnBlue.setBorderPainted(false);
         c.gridx = 0;
-        c.gridy = 2;
+        c.gridy = 3;
         panelRight.add(btnBlue, c);
         btnBlue.addActionListener(new ActionListener() {
             @Override
@@ -240,21 +252,21 @@ public class DrawPhase extends Phase implements ActionListener {
         AwesomeButton done = new AwesomeButton("Done!");
         panelBottom.add(done);
         done.addActionListener(e -> {
-                  Game.game.sendMessage(new Message(Message.Type.SUBMIT_PICTURE));
+            Game.game.sendMessage(new Message(Message.Type.SUBMIT_PICTURE));
         });
 
 
-        mainFrame.pack();
-        mainFrame.setVisible(true);
+        // mainFrame.pack();
+        // mainFrame.setVisible(true);
 
 
-      //  Game.game.setContentPanel(panel);      //  korrekt?
+        //  Game.game.setContentPanel(panel);      //  korrekt?
 
     }
 
-    public static void main(String[] args) {
-        new DrawPhase();
-    }
+    //   public static void main(String[] args) {
+    //     new DrawPhase();
+    //   }
 
     @Override
     public void actionPerformed(ActionEvent e) {

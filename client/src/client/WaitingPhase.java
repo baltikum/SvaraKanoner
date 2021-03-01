@@ -17,7 +17,7 @@ public class WaitingPhase extends Phase {
 
     private final Map<Integer, AwesomeIconLabel> playerIdToLabel = new HashMap<>();
 
-    public WaitingPhase() {
+    public WaitingPhase(Message msg) {
         PercentLayout layout = new PercentLayout(1.0f);
         panel = new JPanel(layout);
         panel.setOpaque(true);
