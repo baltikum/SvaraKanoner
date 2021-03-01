@@ -5,7 +5,6 @@ import common.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
 
@@ -20,7 +19,6 @@ public class JoinPhase extends Phase {
     private static final int NUM_POSITIONS = 16;
     private static final int POSITION_DATA_COMPONENTS = 3;
 
-    //private final Image[] playerIcons;
     private final float[] positionData;
     private final ArrayList<Integer> freePositions;
     private final JPanel panel;
@@ -30,8 +28,8 @@ public class JoinPhase extends Phase {
     /**
      * Initiates the join phase ui.
      */
-
     public JoinPhase() {
+        Game.game.chat.setVisible(true);
         Random random = Game.game.random;
         freePositions = new ArrayList<>(16);
         positionData = new float[NUM_POSITIONS * POSITION_DATA_COMPONENTS];
@@ -56,8 +54,6 @@ public class JoinPhase extends Phase {
             positionData[i * POSITION_DATA_COMPONENTS + 2] = (random.nextFloat() - 0.5f) * 90.0f;
             freePositions.add(i);
         }
-
-
 
         PercentLayout layout = new PercentLayout(1.0f);
         panel = new JPanel(layout);
@@ -90,7 +86,6 @@ public class JoinPhase extends Phase {
         Game.game.setContentPanel(panel);
 
         addPlayer(Game.game.getThisPlayer());
-
     }
 
     public void addPlayer(Player player) {

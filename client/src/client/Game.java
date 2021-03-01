@@ -1,19 +1,17 @@
 package client;
 
-import client.ui.AwesomeButton;
-import client.ui.AwesomeEffect;
-import client.ui.AwesomeUtil;
+import client.ui.*;
 import common.*;
 
 import javax.swing.*;
+import javax.swing.Timer;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
+import java.io.*;
+import java.util.*;
 import java.util.List;
-import java.util.Random;
+
 
 public class Game implements ActionListener, WindowListener {
     public static Game game;
@@ -23,7 +21,7 @@ public class Game implements ActionListener, WindowListener {
     private Phase currentPhase;
 
     private final Settings settings = new Settings();
-    private Chat chat;
+    public Chat chat;
     private final AudioPlayer audioPlayer;
 
     private Network network;
@@ -49,12 +47,14 @@ public class Game implements ActionListener, WindowListener {
         network = new Network();
         network.start();
 
+
         // Initiate the window
+        Rectangle windowBounds = settings.getWindowBounds();
         frame = new JFrame("Ryktet går!");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.addWindowListener(this);
         frame.setBackground(new Color(0xe67e22));
-        frame.setPreferredSize(new Dimension(settings.windowWidth, settings.windowHeight));
+        frame.setPreferredSize(new Dimension(windowBounds.width, windowBounds.height));
         frame.setMinimumSize(new Dimension(500, 500));
 
         // Initiate the LayeredPane
@@ -65,10 +65,10 @@ public class Game implements ActionListener, WindowListener {
         setCurrentPhase(new MainMenu());
 
         // Move and show window
-        if (settings.windowPositionX < 0 || settings.windowPositionY < 0)
+        if (windowBounds.x < 0 || windowBounds.y < 0)
             frame.setLocationRelativeTo(null);
         else
-            frame.setLocation(settings.windowPositionX, settings.windowPositionY);
+            frame.setLocation(windowBounds.x, windowBounds.y);
         frame.setVisible(true);
 
         // Start timer for updating graphics
@@ -95,8 +95,8 @@ public class Game implements ActionListener, WindowListener {
 
         // Mute settings
         JLabel copyRight = new JLabel("Music: www.bensound.com");
-        AwesomeButton muteMusic = new AwesomeButton(settings.muteMusic ? unmuteMusicIcon : muteMusicIcon);
-        AwesomeButton muteEffects = new AwesomeButton(settings.muteEffects ? unmuteEffectsIcon : muteEffectsIcon);
+        AwesomeButton muteMusic = new AwesomeButton(settings.isMusicMuted() ? unmuteMusicIcon : muteMusicIcon);
+        AwesomeButton muteEffects = new AwesomeButton(settings.isEffectsMuted() ? unmuteEffectsIcon : muteEffectsIcon);
         muteMusic.setPreferredSize(new Dimension(32, 32));
         muteEffects.setPreferredSize(new Dimension(32, 32));
         parent.add(muteMusic, JLayeredPane.POPUP_LAYER);
@@ -121,14 +121,14 @@ public class Game implements ActionListener, WindowListener {
                 .addTranslationYKey(0, 3200).repeats(-1);
         effect.animate(muteMusic, AwesomeEffect.COMPONENT);
         effect.animate(muteEffects, AwesomeEffect.COMPONENT);
+        muteMusic.addActionListener(e -> settings.setMuteMusic(!settings.isMusicMuted()) );
+        muteEffects.addActionListener(e -> settings.setMuteEffects(!settings.isEffectsMuted()) );
 
-        muteMusic.addActionListener(e -> {
-            muteMusic.setBackground(audioPlayer.isMusicMuted() ? muteMusicIcon : unmuteMusicIcon);
-            if (audioPlayer.isMusicMuted()) audioPlayer.unmuteMusic(); else audioPlayer.muteMusic();
-        });
-        muteEffects.addActionListener(e -> {
-            muteEffects.setBackground(audioPlayer.isEffectsMuted() ? muteEffectsIcon : unmuteEffectsIcon);
-            if (audioPlayer.isEffectsMuted()) audioPlayer.unmuteEffects(); else audioPlayer.muteEffects();
+        settings.addListener((property, settings) -> {
+            switch (property) {
+                case MUTE_MUSIC -> muteMusic.setBackground(settings.isMusicMuted() ? unmuteMusicIcon : muteMusicIcon);
+                case MUTE_EFFECTS -> muteEffects.setBackground(settings.isEffectsMuted() ? unmuteEffectsIcon : muteEffectsIcon);
+            }
         });
 
         // Error label
@@ -229,20 +229,16 @@ public class Game implements ActionListener, WindowListener {
     }
 
     public void receiveMessage(Message msg) {
-        switch (msg.type) {
-            // TODO: Add chat messages here.
-            default -> {
-                if (currentPhase != null) currentPhase.message(msg);
-            }
+        if (msg.type == Message.Type.CHAT_MESSAGE) {
+            chat.message(msg);
+        } else {
+            if (currentPhase != null) currentPhase.message(msg);
         }
     }
 
     @Override
     public void windowClosing(WindowEvent e) {
-        settings.windowPositionX = frame.getX();
-        settings.windowPositionY = frame.getY();
-        settings.windowWidth = frame.getWidth();
-        settings.windowHeight = frame.getHeight();
+        settings.setWindowBounds(frame.getX(), frame.getY(), frame.getWidth(), frame.getHeight());
         try {
             IniStream.write(settings, new File(Assets.getResourcesPath() + "settings.ini"));
         } catch (IOException ignored) {}

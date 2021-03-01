@@ -47,7 +47,7 @@ public class AwesomeUtil {
      */
     public static boolean drawBouncingText(Graphics2D g, AwesomeEffect effect, Dimension dimension, String str, Font font, Color color, int alignment) {
         g.setClip(null);
-        if (str.isEmpty()) return false;
+        if (str == null || str.isEmpty()) return false;
 
         boolean isTransformed = false;
         if (effect != null) {

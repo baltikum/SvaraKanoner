@@ -1,6 +1,7 @@
 package client;
 
 import client.ui.AwesomeButton;
+import common.Message;
 
 import javax.swing.*;
 import java.awt.*;
@@ -132,15 +133,28 @@ public class Chat extends JPanel {
     }
 
     /**
-     * TODO: Implement this server vice.
+     * Send the content of the input filed
      */
     public void send() {
         open();
 
         String msg = inputField.getText();
         if (!msg.isEmpty()) {
-            messageData.append(msg + "\n");
+            msg = Game.game.getThisPlayer().getName() + ": " + msg + "\n";
+            messageData.append(msg);
             inputField.setText("");
+
+            Message serverMsg = new Message(Message.Type.CHAT_MESSAGE);
+            serverMsg.addParameter("message", msg);
+            Game.game.sendMessage(serverMsg);
         }
+    }
+
+    /**
+     * Recieve a message
+     * @param msg The server message
+     */
+    public void message(Message msg) {
+        messageData.append((String) msg.data.get("message"));
     }
 }

@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+
 public class GuessPhase extends Phase {
 
     private final JPanel panel;
@@ -34,8 +35,9 @@ public class GuessPhase extends Phase {
 
         JTextField guessField = new JTextField();
         panel.add(guessField);
+        layout.setConstraintsRatioByWidth(guessField, .75f, .167f * 5, .3f, 0.25f);
 
-        AwesomeButton submit = new AwesomeButton("Submit");
+        AwesomeButton submit = new AwesomeButton("Guess");
         panel.add(submit);
         layout.setConstraintsRatioByWidth(submit, .75f, .167f * 5, .3f, 0.25f);
 
@@ -46,6 +48,8 @@ public class GuessPhase extends Phase {
         AwesomeUtil.dynamicFont(submit, 1.0f);
         Game.game.setContentPanel(panel);
     }
+
+   // Game.game.setCurrentPhase(new PickWordPhase());
 
     @Override
     public void message(Message msg) {

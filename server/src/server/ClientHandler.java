@@ -43,24 +43,23 @@ public class ClientHandler extends Player implements Runnable {
                     synchronized (System.out) {
                         System.out.println("Received message: " + message.toString());
                     }
-
-                    switch (message.type) {
-                        case SUBMIT_GUESS-> {
-                            gameSession.getCurrentRoundData().saveGuess(getId(), (String) message.data.get("guess"));
-                        }
-                        case IMAGE_DATA_RECEIVED -> {
-                            System.out.println("Image data received at clients side");
-                        }
-                    }
-
-
-
                     if (message.type == Message.Type.CREATE_GAME)
                         Main.createGameSession(message);
                     else if (message.type == Message.Type.JOIN_GAME)
                         Main.joinGame(message);
-                    else if (gameSession != null)
-                        gameSession.receiveMessage(message);
+                    else if (gameSession != null) {
+                        if (message.type == Message.Type.CHAT_MESSAGE) {
+                            Message msg = new Message(Message.Type.CHAT_MESSAGE);
+                            msg.addParameter("message", message.data.getOrDefault("message", "Hello, sailor!"));
+                            for (ClientHandler c : gameSession.getConnectedPlayers()) {
+                                if (c.getId() != this.getId()) {
+                                    c.sendMessage(msg);
+                                }
+                            }
+                        } else {
+                            gameSession.receiveMessage(message);
+                        }
+                    }
                 } catch (Exception e) {
                     break;
                 }

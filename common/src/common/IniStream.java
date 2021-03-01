@@ -13,13 +13,12 @@ import java.util.Locale;
 public class IniStream {
 
     /** Read ini file entries into an object.
-     * @param obj The objects fields to write.
-     * @param file The output file.
+     * @param obj The objects fields to fill from the file.
+     * @param file The input file.
      * @throws IOException If the file doesn't exist or for other reasons can't be written to.
      */
     public static void read(Object obj, File file) throws IOException {
-       try {
-           BufferedReader input = new BufferedReader(new FileReader(file));
+       try (BufferedReader input = new BufferedReader(new FileReader(file))){
             while (input.ready()){
                 String line = input.readLine();
                 line = line.strip();
