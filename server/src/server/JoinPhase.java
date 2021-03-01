@@ -133,7 +133,7 @@ public class JoinPhase extends Phase {
     }
 
 
-    private static final String[] defaultNames = { "Johnny Deep", "Icewallowcum", "Tiny cox", "Moe Lester", "Ben Dover" };
+    private static final String[] defaultNames = { "Emily", "Courtney", "Alexander", "James", "Tyler" };
     /**
      * Checks that the given name is valid and not taken.
      * @param requestedName
