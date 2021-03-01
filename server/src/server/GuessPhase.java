@@ -9,6 +9,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.HashMap;
 
+/**
+ * The GuessPhase ServerSide
+ * Controls the phase, hands out image data to clients,
+ * Adds all the guesses from clients into rounddata wordtracker
+ *
+ * @author Mattias Davidsson 20210301
+ */
 
 public class GuessPhase extends Phase {
 

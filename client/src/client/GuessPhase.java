@@ -57,7 +57,7 @@ public class GuessPhase extends Phase {
                 text = new AwesomeText("Only characters allowed a-z");
             }
             AwesomeUtil.dynamicFont(text, 0.25f);
-            text.setTextColor(Color.black);
+            text.setTextColor(Color.BLUE);
             layout.setConstraintsRatioByWidth(text, .5f, .5f, .8f, 0.25f);
             panel.add(text);
         });
@@ -74,13 +74,30 @@ public class GuessPhase extends Phase {
         boolean sent = false;
         String str = guessed.trim();
         str = str.toLowerCase(Locale.ROOT);
-        if ( str.matches(".*[a-z].*")){
+        if ( isAlphabetical(str)){
+            System.out.println(str);
             Message submitMessage = new Message(Message.Type.SUBMIT_GUESS);
             submitMessage.addParameter("guess", str );
             Game.game.sendMessage(submitMessage);
             sent = true;
         }
         return sent;
+    }
+
+
+    /**
+     * Controls so all characters in string are alphabetical
+     * @param str
+     * @return
+     */
+    private boolean isAlphabetical(String str){
+        char[] temp = str.toCharArray();
+        for ( int i = 0 ; i < temp.length; i++ ) {
+            if ( temp[i] < 97 || temp[i] > 123 ) {
+                return false;
+            }
+        }
+        return true;
     }
 
 
