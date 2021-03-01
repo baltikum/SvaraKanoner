@@ -17,7 +17,7 @@ public class RevealPhase extends Phase {
     private final AwesomeText guessComp = new AwesomeText("");
     private final AwesomeImage drawingComp = new AwesomeImage(null);
 
-    public RevealPhase() {
+    public RevealPhase(Message gotoMessage) {
         currentWordOwner.setVisible(false);
         drawingOwnerLabel.setVisible(false);
         guessOwnerLabel.setVisible(false);
@@ -60,11 +60,12 @@ public class RevealPhase extends Phase {
         outerPanel.setBackground(new Color(0xe67e22));
         upperPanel.setBackground(new Color(0xe67e22));
         revealPanel.setBackground(new Color(0xe67e22));
+
+        revealNext(gotoMessage);
     }
 
     public void next() {
-        Message msg = new Message(Message.Type.REVEAL_NEXT_REQUEST);
-        Game.game.sendMessage(msg);
+        Game.game.sendMessage(new Message(Message.Type.REVEAL_NEXT_REQUEST));
     }
 
     public void revealNext(Message msg) {
@@ -75,14 +76,6 @@ public class RevealPhase extends Phase {
             revealNextGuess((String) msg.data.get("guess"), player);
         } else if (msg.data.containsKey("word")) {
             revealNextWord((String) msg.data.get("word"), player);
-        } else {
-            String nextPhase = (String) msg.data.getOrDefault("goto", "PickWordPhase");
-            if (nextPhase.equals("PickWordPhase")) {
-                Game.game.setCurrentPhase(new PickWordPhase());
-            } else {
-                // TODO: Go to winner phase instead
-                Game.game.setCurrentPhase(new MainMenu());
-            }
         }
     }
 

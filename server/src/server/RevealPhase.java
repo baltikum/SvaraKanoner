@@ -19,43 +19,47 @@ public class RevealPhase extends Phase {
     public RevealPhase(GameSession session) {
         this.session = session;
         this.round = session.getCurrentRoundData();
-        revealNext();
+
+        Message gotoRevealPhase = new Message(Message.Type.GOTO);
+        gotoRevealPhase.addParameter("phase", "RevealPhase");
+        fillRevealWordMessage(gotoRevealPhase);
+        session.sendMessageToAll(gotoRevealPhase);
     }
 
     public void revealNext() {
-        Message msg = new Message(Message.Type.REVEAL_NEXT);
         if (currentWordIndex < round.getNumberOfWords()) {
-            int playerId = -1;
+            Message revealNextMsg = new Message(Message.Type.REVEAL_NEXT);
             if (tracker == null){
-                String word = round.getRoundWords().get(currentWordIndex);
-                tracker = round.getWordTracker(word);
-                playerId = tracker.getWordOwnerId();
-                msg.addParameter("word", tracker.getWord());
+                fillRevealWordMessage(revealNextMsg);
             } else {
+                Pair pair = shouldRevealDrawing ? tracker.getDrawing(currentRevealIndex) :
+                                                  tracker.getGuess(currentRevealIndex);
+                shouldRevealDrawing = !shouldRevealDrawing;
                 if (shouldRevealDrawing) {
-                    Pair img = tracker.getDrawing(currentRevealIndex);
-                    // msg.addParameter("drawing", img.getImage());
-                    playerId = img.getPlayerId();
+                    revealNextMsg.addParameter("drawing", pair.getImage());
                 } else {
-                    Pair guess = tracker.getGuess(currentRevealIndex);
-                    msg.addParameter("guess", guess.getGuess());
+                    revealNextMsg.addParameter("guess", pair.getGuess());
                     if (++currentRevealIndex == tracker.getAllGuesses().size()) {
                         ++currentWordIndex;
                         tracker = null;
                     }
-                    playerId = guess.getPlayerId();
                 }
-                shouldRevealDrawing = !shouldRevealDrawing;
+                revealNextMsg.addParameter("playerId", pair.getPlayerId());
             }
-            msg.addParameter("playerId", playerId);
+            session.sendMessageToAll(revealNextMsg);
         } else {
-            if (session.getSessionRounds().size() == session.getGameSettings().getNumRounds()) {
-                msg.addParameter("goto", "WinnerPhase");
-            } else {
-                msg.addParameter("goto", "PickWordPhase");
-            }
+            if (session.getSessionRounds().size() == session.getGameSettings().getNumRounds())
+                session.setPhase(new WinnerPhase(session));
+            else
+                session.setPhase(new PickWordPhase(session));
         }
-        session.sendMessageToAll(msg);
+    }
+
+    private void fillRevealWordMessage(Message msg) {
+        String word = round.getRoundWords().get(currentWordIndex);
+        tracker = round.getWordTracker(word);
+        msg.addParameter("word", word);
+        msg.addParameter("playerId", tracker.getWordOwnerId());
     }
 
     @Override

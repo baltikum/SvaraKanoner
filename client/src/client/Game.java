@@ -242,6 +242,7 @@ public class Game implements ActionListener, WindowListener {
                 case "GuessPhase" -> setCurrentPhase(new GuessPhase(msg));
                 case "RevealPhase" -> setCurrentPhase(new RevealPhase(msg));
                 case "WaitingPhase" -> setCurrentPhase(new WaitingPhase(msg));
+                case "WinnerPhase" -> setCurrentPhase(new WinnerPhase(msg));
             }
         } else {
             if (currentPhase != null) currentPhase.message(msg);
