@@ -242,7 +242,7 @@ public class Game implements ActionListener, WindowListener {
         } else if (msg.type == Message.Type.GOTO) {
             String targetPhase = (String) msg.data.get("phase");
             switch (targetPhase) {
-                case "PickWordPhase" -> setCurrentPhase(new PickWordPhase(msg));
+                // case "PickWordPhase" -> setCurrentPhase(new PickWordPhase(msg));
                 case "DrawPhase" -> setCurrentPhase(new DrawPhase(msg));
                 case "GuessPhase" -> setCurrentPhase(new GuessPhase(msg));
                 case "RevealPhase" -> setCurrentPhase(new RevealPhase(msg));

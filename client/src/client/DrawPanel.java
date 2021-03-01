@@ -52,7 +52,9 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
         this.paintPoints = paintPoints;
     }
 
-
+    void setDrawData(ArrayList<List<PaintPoint>> paintPoints) {
+        this.paintPoints = paintPoints;
+    }
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -60,24 +62,27 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
         Graphics2D g2d = (Graphics2D) g.create();
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        for (List<PaintPoint> path : paintPoints) {
-            for (int i = 1; i < path.size(); i++) {
-                PaintPoint pointStart = path.get(i - 1);
-                PaintPoint pointEnd = path.get(i);
-                Color color = path.get(i).getFarg();
-                double finalBrushSize = path.get(i).getbrushSize() * getWidth();
-                float finalBrushSizeFloat = (float) finalBrushSize;
+        if (paintPoints != null) {
+            for (List<PaintPoint> path : paintPoints) {
+                for (int i = 1; i < path.size(); i++) {
+                    PaintPoint pointStart = path.get(i - 1);
+                    PaintPoint pointEnd = path.get(i);
+                    Color color = path.get(i).getFarg();
+                    double finalBrushSize = path.get(i).getbrushSize() * getWidth();
+                    float finalBrushSizeFloat = (float) finalBrushSize;
 
-                g2d.setStroke(new BasicStroke(finalBrushSizeFloat, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-                g2d.setColor(color);
+                    g2d.setStroke(new BasicStroke(finalBrushSizeFloat, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+                    g2d.setColor(color);
 
-                double pointStartX = pointStart.getX() * getWidth();
-                double pointStartY = pointStart.getY() * getHeight();
-                double pointEndX = pointEnd.getX() * getWidth();
-                double pointEndY = pointEnd.getY() * getHeight();
-                g2d.draw(new Line2D.Double(pointStartX, pointStartY, pointEndX, pointEndY));
+                    double pointStartX = pointStart.getX() * getWidth();
+                    double pointStartY = pointStart.getY() * getHeight();
+                    double pointEndX = pointEnd.getX() * getWidth();
+                    double pointEndY = pointEnd.getY() * getHeight();
+                    g2d.draw(new Line2D.Double(pointStartX, pointStartY, pointEndX, pointEndY));
+                }
             }
         }
+
         g2d.dispose();
     }
 
