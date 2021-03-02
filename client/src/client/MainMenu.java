@@ -26,8 +26,6 @@ public class MainMenu extends Phase {
     private final Image rocket, flame0, flame1, block;
     private Settings.Listener settingsListener;
 
-    private final GameSettings gameSettings = new GameSettings();
-
     /**
      * Initiates a MainMenu phase and sets up the ui.
      */
@@ -218,6 +216,8 @@ public class MainMenu extends Phase {
         AwesomeText maxPlayersLabel = new AwesomeText("MAX PLAYERS:");
         AwesomeButton increaseMaxPlayers = new AwesomeButton(rightArrow);
         AwesomeButton decreaseMaxPlayers = new AwesomeButton(leftArrow);
+
+        GameSettings gameSettings = Game.game.getGameSettings();
         AwesomeText maxPlayers = new AwesomeText(String.valueOf(gameSettings.getMaxPlayers()));
         increaseMaxPlayers.addActionListener(e -> {
             if (gameSettings.setMaxPlayers(gameSettings.getMaxPlayers() + 1)) {
@@ -368,6 +368,7 @@ public class MainMenu extends Phase {
             @Override
             public void onSuccess(Message msg) {
                 Game.game.setGameCode((String) msg.data.get("sessionId"));
+                Game.game.setGameSettings((GameSettings) msg.data.get("gameSettings"));
 
                 Player thisPlayer = Game.game.getThisPlayer();
                 thisPlayer.setAvatarId((int) msg.data.get("playerAvatarId"));
@@ -401,7 +402,7 @@ public class MainMenu extends Phase {
         createGameClicked = true;
         Settings clientSettings = Game.game.getSettings();
         Message msg =  new Message(Message.Type.CREATE_GAME);
-        msg.data.put("settings", gameSettings);
+        msg.data.put("settings", Game.game.getGameSettings());
         msg.data.put("requestedName", clientSettings.getPreferredName());
         msg.data.put("requestedAvatarId", clientSettings.getPreferredAvatarId());
         Game.game.sendMessage(msg, new MessageResponseListener() {

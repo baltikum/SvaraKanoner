@@ -104,6 +104,7 @@ public class JoinPhase extends Phase {
                 response.addParameter("playerAvatarId", joiner.getAvatarId());
                 response.addParameter("playerName", joiner.getName());
                 response.addParameter("playerId", joiner.getId());
+                response.addParameter("gameSettings", session.getGameSettings());
                 joiner.sendMessage(response);
             }
             case DISCONNECT -> {

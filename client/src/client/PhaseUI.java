@@ -1,17 +1,13 @@
 package client;
 
 
-import client.Assets;
 import client.ui.AwesomeIconLabel;
 import client.ui.AwesomeText;
 import client.ui.AwesomeUtil;
-import client.ui.PercentLayout;
 import common.Player;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 
