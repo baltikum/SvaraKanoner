@@ -64,6 +64,7 @@ public class ClientHandler extends Player implements Runnable {
                         }
                     }
                 } catch (Exception e) {
+                    e.printStackTrace();
                     break;
                 }
             }

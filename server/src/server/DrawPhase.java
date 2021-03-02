@@ -27,6 +27,7 @@ public class DrawPhase extends Phase {
     private final HashMap<Integer, String> words;
 
     public DrawPhase(GameSession session){
+        System.out.println("Wohoo! In draw phase!");
         this.gameSession = session;
         this.roundData = this.gameSession.getCurrentRoundData();
         this.gameSettings = gameSession.getGameSettings();
@@ -54,8 +55,9 @@ public class DrawPhase extends Phase {
                 //gameSession.getCurrentRoundData().saveImage(msg.player.getId(), (String) msg.data.get("guess"), (PaintPoint) msg.data.get("image"));
                 int playerId = msg.player.getId();
                 if (words.containsKey(playerId)) {
-                    if (roundData.saveImage(playerId, words.remove(playerId),
-                            (ArrayList<List<PaintPoint>>) msg.data.get("drawing"))) {
+                    roundData.saveImage(playerId, words.remove(playerId),
+                            (ArrayList<List<PaintPoint>>) msg.data.get("drawing"));
+                    if (words.isEmpty()) {
                         advancePhase();
                     }
                 }

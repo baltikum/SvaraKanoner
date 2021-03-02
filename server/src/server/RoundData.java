@@ -24,11 +24,11 @@ public class RoundData {
 
     private int numberOfWords;
     private GameSession gameSession;
-    private ArrayList<Integer> playerOrder;
-    private ArrayList<Integer> lastOrder;
-    private ArrayList<String> wordResolver;
-    private HashMap<String,WordTracker> wordMap;
-    private int roundPartCount;
+    private final ArrayList<Integer> playerOrder = new ArrayList<>();
+    private final ArrayList<Integer> lastOrder = new ArrayList<>();
+    private final ArrayList<String> wordResolver = new ArrayList<>();
+    private final HashMap<String,WordTracker> wordMap = new HashMap<>();
+    private int roundPartCount = 0;
 
     /**
      * Constructor
@@ -37,16 +37,11 @@ public class RoundData {
      */
     public RoundData(GameSession session, HashMap<Integer,String> pickedWords ){
         this.gameSession = session;
+        this.numberOfWords = pickedWords.size();
+
         for ( ClientHandler client : session.getConnectedPlayers()) {
             playerOrder.add(client.getId());
         }
-        this.numberOfWords = pickedWords.size();
-        this.wordMap = new HashMap<>();
-        this.playerOrder = new ArrayList<>();
-        this.lastOrder = new ArrayList<>();
-        this.wordResolver = new ArrayList<>();
-        this.roundPartCount = 0;
-
         for ( int i = 0; i < numberOfWords; i++ ) {
             int id = playerOrder.get(i);
             String str = pickedWords.get(id);
