@@ -16,7 +16,13 @@ public class Network extends Thread {
     ObjectOutputStream objectOutputStream;
     ObjectInputStream objectInputStream;
     private final Queue<MessageResponseListener> responseListeners = new ArrayDeque<>();
+    private final String ipAddress;
+    private final short portNumber;
 
+    public Network(Settings settings) {
+        ipAddress = settings.getIpAddress();
+        portNumber = settings.getSocket();
+    }
 
     public void sendMessage(Message message) {
         try {
@@ -39,7 +45,7 @@ public class Network extends Thread {
 
     public void run() {
         try {
-            socket = new Socket("localhost", 12345);
+            socket = new Socket(ipAddress, portNumber);
 
             objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
             objectInputStream = new ObjectInputStream(socket.getInputStream());

@@ -30,6 +30,8 @@ public class Settings {
 
     private int preferredAvatarId = 0;
     private String preferredName = "Bengt";
+    private String ipAddress = "localhost";
+    private short socket = 12345;
 
     private final ArrayList<Listener> listeners = new ArrayList<>();
 
@@ -117,6 +119,14 @@ public class Settings {
 
     public String getPreferredName() {
         return preferredName;
+    }
+
+    public String getIpAddress() {
+        return ipAddress;
+    }
+
+    public short getSocket() {
+        return socket;
     }
 
     public void validate() {
