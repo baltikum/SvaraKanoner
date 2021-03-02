@@ -65,8 +65,8 @@ public class Game implements ActionListener, WindowListener {
         setCurrentPhase(new MainMenu());
         // setCurrentPhase(new WinnerPhase(new Message(Message.Type.GOTO)));
         // setCurrentPhase(new DrawPhase());
-        setCurrentPhase(new WaitingPhase(new Message(Message.Type.GOTO)));
-        //setCurrentPhase(new GuessPhase(new Message(Message.Type.GOTO)));
+        // setCurrentPhase(new WaitingPhase(new Message(Message.Type.GOTO)));
+        // setCurrentPhase(new GuessPhase(new Message(Message.Type.GOTO)));
 
         // Move and show window
         if (windowBounds.x < 0 || windowBounds.y < 0)
@@ -242,7 +242,7 @@ public class Game implements ActionListener, WindowListener {
         } else if (msg.type == Message.Type.GOTO) {
             String targetPhase = (String) msg.data.get("phase");
             switch (targetPhase) {
-        //        case "PickWordPhase" -> setCurrentPhase(new PickWordPhase(msg));
+                case "PickWordPhase" -> setCurrentPhase(new PickWordPhase(msg));
                 case "DrawPhase" -> setCurrentPhase(new DrawPhase(msg));
                 case "GuessPhase" -> setCurrentPhase(new GuessPhase(msg));
                 case "RevealPhase" -> setCurrentPhase(new RevealPhase(msg));
