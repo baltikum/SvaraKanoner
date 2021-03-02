@@ -16,11 +16,8 @@ public class GuessPhase extends Phase {
 
     private final JPanel panel;
 
-    private final Map<Integer, AwesomeIconLabel> playerIdToLabel = new HashMap<>();
     private final Image wham;
 
-
-    private ArrayList<List<PaintPoint>> imageToGuess;
     private String guess;
 
     public GuessPhase(Message msg) {
@@ -39,7 +36,7 @@ public class GuessPhase extends Phase {
         AwesomeUtil.dynamicFont(guessMessage, 0.4f);
         panel.add(guessMessage);
 
-        DrawPanel image= new DrawPanel(imageToGuess);
+        DrawPanel image= new DrawPanel((ArrayList<List<PaintPoint>>) msg.data.get("image"));
         panel.add(image);
         layout.setConstraintsRatioByWidth(image, .5f, .5f, .75f, 0.75f);
 
