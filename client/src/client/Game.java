@@ -27,15 +27,17 @@ public class Game implements ActionListener, WindowListener {
     private Network network;
     private JLabel errorMsg;
 
+    private GameSettings gameSettings = new GameSettings();
     private String gameCode = "---";
     private final Player thisPlayer = new Player(-1, "Bengt", 0);
     private final List<Player> players = new ArrayList<>();
+
+    private PhaseUI phaseUI;
 
     Game() {
         game = this;
 
         try {
-            System.out.println("lowl");
             IniStream.read(settings, new File(Assets.getResourcesPath() + "settings.ini"));
             settings.validate();
         } catch (IOException e) {
@@ -65,6 +67,9 @@ public class Game implements ActionListener, WindowListener {
 
         // Start with
         setCurrentPhase(new MainMenu());
+        // Message msg = new Message(Message.Type.PICK_WORD);
+        // msg.addParameter("words", new String[]{"aaa", "aaa", "asd", "aasd"});
+        // setCurrentPhase(new PickWordPhase(msg));
         // setCurrentPhase(new WinnerPhase(new Message(Message.Type.GOTO)));
         // setCurrentPhase(new DrawPhase());
         // setCurrentPhase(new WaitingPhase(new Message(Message.Type.GOTO)));
@@ -251,6 +256,22 @@ public class Game implements ActionListener, WindowListener {
         } else {
             if (currentPhase != null) currentPhase.message(msg);
         }
+    }
+
+    public void setPhaseUI(PhaseUI phaseUI) {
+        this.phaseUI = phaseUI;
+    }
+
+    public PhaseUI getPhaseUI() {
+        return phaseUI;
+    }
+
+    public void setGameSettings(GameSettings settings) {
+        this.gameSettings = settings;
+    }
+
+    public GameSettings getGameSettings() {
+        return gameSettings;
     }
 
     @Override

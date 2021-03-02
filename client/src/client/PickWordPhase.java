@@ -23,12 +23,16 @@ public class PickWordPhase extends Phase {
     JPanel panel;
     JPanel wordsPanel;
     PercentLayout percentLayout;
-    AwesomeText header;
+    PhaseUI phaseUI;
 
     boolean pressedWord = false;
 
     public PickWordPhase(Message msg) {
-        PhaseUI phaseUI = new PhaseUI();
+        phaseUI = Game.game.getPhaseUI();
+        if (phaseUI == null) {
+            phaseUI = new PhaseUI();
+            Game.game.setPhaseUI(phaseUI);
+        }
 
         panel = new JPanel();
         panel.setOpaque(false);
@@ -37,16 +41,13 @@ public class PickWordPhase extends Phase {
 
         percentLayout = new PercentLayout(1.0f);
 
-        header = new AwesomeText("Pick a word!");
-        header.setTextColor(Color.black);
-        AwesomeUtil.dynamicFont(header, 0.2f);
-        percentLayout.setConstraintsRatioByWidth(header, 0.5f, 0.1f, 0.7f, 0.7f);
 
 
         wordsPanel = new JPanel(percentLayout);
         wordsPanel.setOpaque(false);
         wordsPanel.setBackground(new Color(0xe67e22));
 
+        phaseUI.setTitle("Pick a word!");
 
         String[] words = (String[])msg.data.get("words");
 
@@ -57,11 +58,13 @@ public class PickWordPhase extends Phase {
         addWordToList(words[3],3, 0.75f, 0.6f);
 
 
-        panel.add(header, BorderLayout.CENTER);
         panel.add(wordsPanel, BorderLayout.CENTER);
 
 
         phaseUI.setContent(panel);
+
+        // TODO START TIMER
+        //phaseUI.startTimer(Game.game.get);
 
     }
 
@@ -92,7 +95,8 @@ public class PickWordPhase extends Phase {
             Game.game.sendMessage(message);
 
             panel.remove(wordsPanel);
-            header.setText("Waiting on players...");
+            phaseUI.setTitle("Waiting on players...");
+
         });
 
     }

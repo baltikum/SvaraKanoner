@@ -104,6 +104,7 @@ public class JoinPhase extends Phase {
                 response.addParameter("playerAvatarId", joiner.getAvatarId());
                 response.addParameter("playerName", joiner.getName());
                 response.addParameter("playerId", joiner.getId());
+                response.addParameter("gameSettings", session.getGameSettings());
                 joiner.sendMessage(response);
             }
             case DISCONNECT -> {
@@ -123,7 +124,8 @@ public class JoinPhase extends Phase {
                     readyPlayers.add(player);
                     response.addParameter("status", true);
 
-                    if (readyPlayers.size() == session.getConnectedPlayers().size()) {
+                    if (readyPlayers.size() == session.getConnectedPlayers().size() &&
+                            readyPlayers.size() >= 2) {
                         session.setPhase(new PickWordPhase(session));
                         Main.removeSession(session);
                     } else {
