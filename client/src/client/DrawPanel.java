@@ -49,8 +49,12 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
         this.paintPoints = paintPoints;
     }
 
-    void setDrawData(ArrayList<List<PaintPoint>> paintPoints) {
+    public void setDrawData(ArrayList<List<PaintPoint>> paintPoints) {
         this.paintPoints = paintPoints;
+    }
+
+    public ArrayList<List<PaintPoint>> getDrawData() {
+        return paintPoints;
     }
 
     @Override
