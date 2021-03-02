@@ -44,7 +44,7 @@ public class Game implements ActionListener, WindowListener {
         audioPlayer = new AudioPlayer();
 
         // Start the network
-        network = new Network();
+        network = new Network(settings);
         network.start();
 
 
