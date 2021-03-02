@@ -55,12 +55,14 @@ public class PickWordPhase extends Phase {
 
 
 
-        for (ClientHandler client: session.getConnectedPlayers()) {
-            Message message = new Message(Message.Type.SEND_WORD_CHOICES);
-            message.addParameter("words", generatedWords.get(client.getId()));
-            client.sendMessage(message);
-        }
 
+
+        for (ClientHandler client: session.getConnectedPlayers()) {
+            Message gotoMessage = new Message(Message.Type.GOTO);
+            gotoMessage.addParameter("phase", "PickWordPhase");
+            gotoMessage.addParameter("words", generatedWords.get(client.getId()));
+            client.sendMessage(gotoMessage);
+        }
 
         timer = new Timer((int)settings.pickTimeMilliseconds, new ActionListener() {
             @Override

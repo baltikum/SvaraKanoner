@@ -27,7 +27,7 @@ public class PickWordPhase extends Phase {
 
     boolean pressedWord = false;
 
-    public PickWordPhase() {
+    public PickWordPhase(Message msg) {
         PhaseUI phaseUI = new PhaseUI();
 
         panel = new JPanel();
@@ -48,6 +48,13 @@ public class PickWordPhase extends Phase {
         wordsPanel.setBackground(new Color(0xe67e22));
 
 
+        String[] words = (String[])msg.data.get("words");
+
+        // fixa bättre grid layout eller alltid ha 4 valbara ord
+        addWordToList(words[0],0, 0.25f, 0.3f);
+        addWordToList(words[1],1, 0.75f, 0.3f);
+        addWordToList(words[2],2, 0.25f, 0.6f);
+        addWordToList(words[3],3, 0.75f, 0.6f);
 
 
         panel.add(header, BorderLayout.CENTER);
@@ -61,15 +68,7 @@ public class PickWordPhase extends Phase {
     @Override
     public void message(Message msg) {
         switch (msg.type) {
-            case SEND_WORD_CHOICES -> {
-                String[] words = (String[])msg.data.get("words");
 
-                // fixa bättre grid layout eller alltid ha 4 valbara ord
-                addWordToList(words[0],0, 0.25f, 0.3f);
-                addWordToList(words[1],1, 0.75f, 0.3f);
-                addWordToList(words[2],2, 0.25f, 0.6f);
-                addWordToList(words[3],3, 0.75f, 0.6f);
-            }
         }
 
     }

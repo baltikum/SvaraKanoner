@@ -82,7 +82,7 @@ public class PhaseUI {
 
 
         //timerPanel.add(timeLeftText, BorderLayout.LINE_START);
-        playersPanel.add(timeLeftText, BorderLayout.PAGE_END);
+        playersPanel.add(timeLeftText, BorderLayout.SOUTH);
 
 
 

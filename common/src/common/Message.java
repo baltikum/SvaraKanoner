@@ -21,8 +21,6 @@ public class Message implements Serializable {
         PLAYER_DISCONNECTED,   // JoinPhase -> JoinPhase
         PLAYER_READY_STATUS_CHANGED, // JoinPhase -> JoinPhase
         REVEAL_NEXT,                 // RevealPhase -> RevealPhase
-        GOTO_PICK_WORD_PHASE,          // JoinPhase -> JoinPhase
-        SEND_WORD_CHOICES,
 
 
 
