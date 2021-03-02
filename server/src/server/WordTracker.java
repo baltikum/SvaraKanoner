@@ -38,23 +38,27 @@ public class WordTracker {
      * Saves a drawing into its Wordtracker as a Pair.
      * @param id personal id or artist.
      * @param image The image.
-     * @return boolean
+     * @return True if the drawing was added.
      */
     public boolean saveDrawing(int id, ArrayList<List<PaintPoint>> image) {
-        int temp = images.size();
-        this.images.add(new Pair(id,image));
-        return (temp+1) == images.size();
+        if (images.size() <= guesses.size()) {
+            images.add(new Pair(id, image));
+            return true;
+        }
+        return false;
     }
     /**
      * Saves a guess into its Wordtracker as a Pair.
      * @param id tagging the guess with a personal id
      * @param guess the guess
-     * @return boolean
+     * @return True if the guess was added.
      */
     public boolean saveGuess(int id, String guess) {
-        int temp = guesses.size();
-        this.guesses.add(new Pair(id,guess));
-        return (temp+1) == images.size();
+        if (guesses.size() < images.size()) {
+            guesses.add(new Pair(id, guess));
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -92,6 +96,16 @@ public class WordTracker {
      * @return Pair id,Image
      */
     public Pair getDrawing(int i ) { return images.get(i); }
+
+    /**
+     *
+     */
+    public String getLatestGuess() {
+        if (guesses.isEmpty()) {
+            return word;
+        }
+        return guesses.get(guesses.size() - 1).getGuess();
+    }
 
     /**
      * Return this WordTracker as a simple String for debugging.

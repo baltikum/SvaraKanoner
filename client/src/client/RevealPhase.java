@@ -108,8 +108,8 @@ public class RevealPhase extends Phase {
 
         if (ownerComp.isVisible()) {
             effectBuilder
-                    .addScaleKey(1.0f, 1.0f, 500)
-                    .addScaleKey(0.0f, 0.0f, 1000)
+                    .addScaleKey(0.0f, 0.0f, 500)
+                    .addScaleKey(1.0f, 1.0f, 1000)
                     .addRotationKey(-360.0f, 500)
                     .addRotationKey(0.0f, 1000);
         } else {

@@ -54,18 +54,11 @@ public class RoundData {
      * Used to retrieve words to draw.
      * @return HashMap, playerId maps the Word.
      */
-    public HashMap<Integer,String> getWordsToDraw(){
-        HashMap<Integer,String> toReturn = new HashMap<>();
+    public HashMap<Integer, WordTracker> getWordsToDraw(){
+        HashMap<Integer, WordTracker> toReturn = new HashMap<>();
         for ( int i = 0; i < numberOfWords; i++ ) {
             WordTracker temp = wordMap.get(wordResolver.get(i));
-            if ( roundPartCount > 0) {
-                int index = (temp.getAllGuesses().size() - 1);
-                Pair tempPair = temp.getGuess(index);
-                String tempGuess = tempPair.getGuess();
-                toReturn.put(playerOrder.get(i), tempGuess);
-            } else {
-                toReturn.put(playerOrder.get(i),wordResolver.get(i));
-            }
+            toReturn.put(playerOrder.get(i), temp);
         }
         roundPartCount++;
         rotateOrder();
@@ -105,7 +98,7 @@ public class RoundData {
      * @param id personalId of the artist.
      * @param word The word drawn
      * @param image The image
-     * @return
+     * @return boolean
      */
     public boolean saveImage(int id, String word, ArrayList<List<PaintPoint>> image ) {
         return wordMap.get(word).saveDrawing(id,image);
@@ -120,8 +113,7 @@ public class RoundData {
         int index = playerOrder.indexOf(id);
 
         boolean toReturn = wordMap.get(wordResolver.get(index)).saveGuess(id,guess);
-
-        if ( checkAnswer(guess,wordResolver.get(index)) ) {
+        if (toReturn && checkAnswer(guess,wordResolver.get(index))) {
             gameSession.getConnectedPlayer(id).givePoints(1);
         }
         return toReturn;

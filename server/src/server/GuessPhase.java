@@ -58,6 +58,7 @@ public class GuessPhase extends Phase {
      * Used to advance to next phase, chooses between Draw and Reveal phases.
      */
     private void advancePhase(){
+        timeLeft.stop();
         gameSession.getCurrentRoundData().rotateOrder();
         if ( roundData.getRoundPartCount() == roundData.getNumberOfWords()) {
             gameSession.setPhase(new RevealPhase(gameSession));
@@ -79,9 +80,10 @@ public class GuessPhase extends Phase {
     public void message(Message msg) {
         switch (msg.type) {
             case SUBMIT_GUESS -> {
-                roundData.saveGuess(msg.player.getId(), (String) msg.data.get("guess"));
-                incrementSubmit();
-                if ( submits == roundData.getNumberOfWords() ) {
+                if (roundData.saveGuess(msg.player.getId(), (String) msg.data.get("guess"))) {
+                    incrementSubmit();
+                }
+                if (submits == roundData.getNumberOfWords() ) {
                     advancePhase();
                 }
             }

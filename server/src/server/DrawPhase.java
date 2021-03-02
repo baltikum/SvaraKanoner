@@ -24,7 +24,7 @@ public class DrawPhase extends Phase {
     private RoundData roundData;
     private GameSettings gameSettings;
     private final HashMap<Integer, ArrayList<List<PaintPoint>>> submitedDrawings = new HashMap<>();
-    private final HashMap<Integer, String> words;
+    private final HashMap<Integer, WordTracker> words;
 
     public DrawPhase(GameSession session){
         System.out.println("Wohoo! In draw phase!");
@@ -33,6 +33,7 @@ public class DrawPhase extends Phase {
         this.gameSettings = gameSession.getGameSettings();
 
         timeLeft = new Timer((int) gameSettings.getDrawTimeMilliseconds(), e -> gameSession.sendMessageToAll(new Message(Message.Type.TIMES_UP)));
+        timeLeft.start();
 
         words = roundData.getWordsToDraw();
         for (ClientHandler client: gameSession.getConnectedPlayers()) {
@@ -41,7 +42,7 @@ public class DrawPhase extends Phase {
                 message.addParameter("phase","WaitingPhase");
             } else {
                 message.addParameter("phase","DrawPhase");
-                message.addParameter("word", words.get(client.getId()));
+                message.addParameter("word", words.get(client.getId()).getLatestGuess());
             }
             client.sendMessage(message);
         }
@@ -55,7 +56,8 @@ public class DrawPhase extends Phase {
                 //gameSession.getCurrentRoundData().saveImage(msg.player.getId(), (String) msg.data.get("guess"), (PaintPoint) msg.data.get("image"));
                 int playerId = msg.player.getId();
                 if (words.containsKey(playerId)) {
-                    roundData.saveImage(playerId, words.remove(playerId),
+                    WordTracker tracker = words.remove(playerId);
+                    roundData.saveImage(playerId, tracker.getWord(),
                             (ArrayList<List<PaintPoint>>) msg.data.get("drawing"));
                     if (words.isEmpty()) {
                         advancePhase();

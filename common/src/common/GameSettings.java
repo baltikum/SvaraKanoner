@@ -29,9 +29,9 @@ public class GameSettings implements Serializable {
      * Default settings.
      */
     public GameSettings(){
-        this.pickTimeMilliseconds = 5L * 1000L;
+        this.pickTimeMilliseconds = 10L * 1000L;
         this.drawTimeMilliseconds = 60L * 1000L;
-        this.guessTimeMilliseconds = 5L * 1000L;
+        this.guessTimeMilliseconds = 20L * 1000L;
         this.revealTimeMilliseconds = 8L * 1000L;
         this.courtTimeMilliseconds = 15L * 1000L;
         this.keepScore = true;
