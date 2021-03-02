@@ -8,7 +8,6 @@ public class GameSession {
     public String sessionID;
     private ArrayList<ClientHandler> connectedClients;
     private ArrayList<RoundData> sessionRounds;
-    private ArrayList<Integer> points;
     private GameSettings gameSettings;
     private Phase currentPhase;
     private Timer timeLeft;
@@ -18,14 +17,13 @@ public class GameSession {
         this.gameSettings = settings;
         this.connectedClients = new ArrayList<>();
         this.sessionRounds = new ArrayList<>();
-        this.points = new ArrayList<>();
 
         JoinPhase joinPhase = new JoinPhase(this);
         setPhase(joinPhase);
         joinPhase.addClient(host);
     }
 
-    public void receiveMessage(Message msg) {
+    public synchronized void receiveMessage(Message msg) {
         if (currentPhase != null) {
             currentPhase.message(msg);
         }
@@ -82,6 +80,12 @@ public class GameSession {
      * @return This sessions GameSettings
      */
     public GameSettings getGameSettings() { return gameSettings; }
+
+    public void terminate() {
+        for (ClientHandler c : connectedClients) {
+            c.setGameSession(null);
+        }
+    }
 
 }
 

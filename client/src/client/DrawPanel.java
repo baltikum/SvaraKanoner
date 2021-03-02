@@ -1,14 +1,10 @@
 package client;
 
+import client.ui.AwesomeEffect;
+import client.ui.AwesomeUtil;
 import common.PaintPoint;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.RenderingHints;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -20,10 +16,11 @@ import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
-public class DrawPanel extends JPanel implements Serializable, MouseListener, MouseMotionListener {
+public class DrawPanel extends JPanel implements Serializable, MouseListener, MouseMotionListener, AwesomeEffect.User {
 
     private Color color;
     private double lastBrushSize;
+    private AwesomeEffect effect = null;
 
     private double brushSize;
     private double brushSizeSmall = 3.0;
@@ -52,33 +49,42 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
         this.paintPoints = paintPoints;
     }
 
-
+    void setDrawData(ArrayList<List<PaintPoint>> paintPoints) {
+        this.paintPoints = paintPoints;
+    }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        Graphics2D g2d = (Graphics2D) g.create();
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        if (paintPoints != null) {
+            Graphics2D g2d = (Graphics2D) g.create();
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        for (List<PaintPoint> path : paintPoints) {
-            for (int i = 1; i < path.size(); i++) {
-                PaintPoint pointStart = path.get(i - 1);
-                PaintPoint pointEnd = path.get(i);
-                Color color = path.get(i).getFarg();
-                double finalBrushSize = path.get(i).getbrushSize() * getWidth();
-                float finalBrushSizeFloat = (float) finalBrushSize;
-
-                g2d.setStroke(new BasicStroke(finalBrushSizeFloat, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-                g2d.setColor(color);
-
-                double pointStartX = pointStart.getX() * getWidth();
-                double pointStartY = pointStart.getY() * getHeight();
-                double pointEndX = pointEnd.getX() * getWidth();
-                double pointEndY = pointEnd.getY() * getHeight();
-                g2d.draw(new Line2D.Double(pointStartX, pointStartY, pointEndX, pointEndY));
+            if (effect != null) {
+                effect.transform(g2d, getSize());
             }
+
+            for (List<PaintPoint> path : paintPoints) {
+                for (int i = 1; i < path.size(); i++) {
+                    PaintPoint pointStart = path.get(i - 1);
+                    PaintPoint pointEnd = path.get(i);
+                    Color color = path.get(i).getFarg();
+                    double finalBrushSize = path.get(i).getbrushSize() * getWidth();
+                    float finalBrushSizeFloat = (float) finalBrushSize;
+
+                    g2d.setStroke(new BasicStroke(finalBrushSizeFloat, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+                    g2d.setColor(color);
+
+                    double pointStartX = pointStart.getX() * getWidth();
+                    double pointStartY = pointStart.getY() * getHeight();
+                    double pointEndX = pointEnd.getX() * getWidth();
+                    double pointEndY = pointEnd.getY() * getHeight();
+                    g2d.draw(new Line2D.Double(pointStartX, pointStartY, pointEndX, pointEndY));
+                }
+            }
+
+            g2d.dispose();
         }
-        g2d.dispose();
     }
 
     public void mouseDragged(MouseEvent e) {
@@ -236,6 +242,23 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
                     new Point(0, 0), "custom cursor"));
         } catch (Exception e) {
         }
+    }
+
+
+    @Override
+    public void setEffect(AwesomeEffect effect) {
+        AwesomeUtil.register(this, effect);
+        this.effect = effect;
+    }
+
+    @Override
+    public AwesomeEffect getEffect() {
+        return effect;
+    }
+
+    @Override
+    public Component getComponent() {
+        return this;
     }
 
 }

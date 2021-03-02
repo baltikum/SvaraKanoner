@@ -54,12 +54,13 @@ public class DrawPhase extends Phase {
         switch (msg.type) {
             case SUBMIT_PICTURE-> {	    //  Hur göra här med bild, ska alltid gå till guessPhase
                 // kolla medelandet
-                gameSession.getCurrentRoundData().saveImage(msg.player.getId(), (String) msg.data.get("guess"), (PaintPoint) msg.data.get("image"));
+                //gameSession.getCurrentRoundData().saveImage(msg.player.getId(), (String) msg.data.get("guess"), (PaintPoint) msg.data.get("image"));
                 this.submits++;
                 if ( submits == gameSession.getConnectedPlayers().size() ) {
-
-                        gameSession.sendMessageToAll(new Message(Message.Type.GOTO_GUESS_PHASE));
-                                    gameSession.setPhase(new GuessPhase(gameSession));
+                    Message msg2 = new Message(Message.Type.GOTO);
+                    msg2.addParameter("phase", "GuessPhase");
+                    gameSession.sendMessageToAll(new Message(Message.Type.GOTO));
+                    gameSession.setPhase(new GuessPhase(gameSession));
                 }
             }
             case WORD_DATA_RECEIVED -> {

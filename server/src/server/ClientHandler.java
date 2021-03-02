@@ -1,6 +1,7 @@
 package server;
 
 import common.Message;
+import common.MessageResponseListener;
 import common.Player;
 
 import java.awt.*;
@@ -8,12 +9,15 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayDeque;
+import java.util.Queue;
 
 public class ClientHandler extends Player implements Runnable {
 
     private final Socket socket;
     private ObjectOutputStream objectOutputStream;
     private GameSession gameSession;
+    private int points;
 
     public ClientHandler(Socket socket) {
         super(-1, "", -1);
@@ -31,7 +35,6 @@ public class ClientHandler extends Player implements Runnable {
     }
 
     public void run() {
-
         try {
             ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
             objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
@@ -64,7 +67,6 @@ public class ClientHandler extends Player implements Runnable {
                     break;
                 }
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         } finally { // Client left / disconnected
@@ -77,7 +79,16 @@ public class ClientHandler extends Player implements Runnable {
     }
 
     public void setGameSession(GameSession session) {
+        points = 0;
         gameSession = session;
+    }
+
+    public void givePoints(int amount) {
+        points += points;
+    }
+
+    public int getPoints() {
+        return points;
     }
 
     public GameSession getGameSession() {

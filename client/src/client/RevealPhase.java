@@ -2,11 +2,14 @@ package client;
 
 import client.ui.*;
 import common.Message;
+import common.PaintPoint;
 import common.Phase;
 import common.Player;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class RevealPhase extends Phase {
@@ -15,9 +18,9 @@ public class RevealPhase extends Phase {
     private final AwesomeIconLabel drawingOwnerLabel = new AwesomeIconLabel(null, "drew");
     private final AwesomeIconLabel guessOwnerLabel = new AwesomeIconLabel(null, "guessed");
     private final AwesomeText guessComp = new AwesomeText("");
-    private final AwesomeImage drawingComp = new AwesomeImage(null);
+    private final DrawPanel drawingComp = new DrawPanel(null);
 
-    public RevealPhase() {
+    public RevealPhase(Message gotoMessage) {
         currentWordOwner.setVisible(false);
         drawingOwnerLabel.setVisible(false);
         guessOwnerLabel.setVisible(false);
@@ -60,29 +63,22 @@ public class RevealPhase extends Phase {
         outerPanel.setBackground(new Color(0xe67e22));
         upperPanel.setBackground(new Color(0xe67e22));
         revealPanel.setBackground(new Color(0xe67e22));
+
+        revealNext(gotoMessage);
     }
 
     public void next() {
-        Message msg = new Message(Message.Type.REVEAL_NEXT_REQUEST);
-        Game.game.sendMessage(msg);
+        Game.game.sendMessage(new Message(Message.Type.REVEAL_NEXT_REQUEST));
     }
 
     public void revealNext(Message msg) {
         Player player = Game.game.getPlayer((int) msg.data.get("playerId"));
         if (msg.data.containsKey("drawing")) {
-            revealNextDrawing((Image) msg.data.get("drawing"), player);
+            revealNextDrawing((ArrayList<List<PaintPoint>>) msg.data.get("drawing"), player);
         } else if (msg.data.containsKey("guess")) {
             revealNextGuess((String) msg.data.get("guess"), player);
         } else if (msg.data.containsKey("word")) {
             revealNextWord((String) msg.data.get("word"), player);
-        } else {
-            String nextPhase = (String) msg.data.getOrDefault("goto", "PickWordPhase");
-            if (nextPhase.equals("PickWordPhase")) {
-                Game.game.setCurrentPhase(new PickWordPhase());
-            } else {
-                // TODO: Go to winner phase instead
-                Game.game.setCurrentPhase(new MainMenu());
-            }
         }
     }
 
@@ -93,9 +89,9 @@ public class RevealPhase extends Phase {
         currentWordOwner.setText(player.getName() + " picked the word " + word);
     }
 
-    public void revealNextDrawing(Image drawing, Player player) {
+    public void revealNextDrawing(ArrayList<List<PaintPoint>> drawing, Player player) {
         Image playerIcon = Assets.getPlayerIcons()[player.getAvatarId()];
-        drawingComp.setImage(drawing);
+        drawingComp.setDrawData(drawing);
         guessOwnerLabel.setIcon(playerIcon);
         reveal(drawingComp, drawingOwnerLabel);
     }

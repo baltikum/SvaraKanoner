@@ -108,6 +108,9 @@ public class JoinPhase extends Phase {
             }
             case DISCONNECT -> {
                 disconnectClient((ClientHandler) msg.player);
+                if (session.getConnectedPlayers().isEmpty()) {
+                    Main.removeSession(session);
+                }
             }
             case TOGGLE_READY_STATUS -> {
                 Message response = new Message(Message.Type.PLAYER_READY_STATUS_CHANGED);
@@ -121,9 +124,8 @@ public class JoinPhase extends Phase {
                     response.addParameter("status", true);
 
                     if (readyPlayers.size() == session.getConnectedPlayers().size()) {
-                        Message gotoWordPhaseMessage = new Message(Message.Type.GOTO_PICK_WORD_PHASE);
-                        session.sendMessageToAll(gotoWordPhaseMessage);
                         session.setPhase(new PickWordPhase(session));
+                        Main.removeSession(session);
                     } else {
                         session.sendMessageToAll(response);
                     }
@@ -133,7 +135,7 @@ public class JoinPhase extends Phase {
     }
 
 
-    private static final String[] defaultNames = { "Johnny Deep", "Icewallowcum", "Tiny cox", "Moe Lester", "Ben Dover" };
+    private static final String[] defaultNames = { "Emily", "Courtney", "Alexander", "James", "Tyler" };
     /**
      * Checks that the given name is valid and not taken.
      * @param requestedName

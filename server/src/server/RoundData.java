@@ -81,8 +81,8 @@ public class RoundData {
      * Used to retrieve images for guessing in guessPhase.
      * @return HashMap playerId maps Images.
      */
-    public HashMap<Integer,PaintPoint> getImagesToGuessOn(){
-        HashMap<Integer,PaintPoint> toReturn = new HashMap<>();
+    public HashMap<Integer,ArrayList<List<PaintPoint>>> getImagesToGuessOn(){
+        HashMap<Integer,ArrayList<List<PaintPoint>>> toReturn = new HashMap<>();
         for ( int i = 0; i < numberOfWords; i++ ) {
             WordTracker temp = wordMap.get(wordResolver.get(i));
             int index = (temp.getAllImages().size()-1);
@@ -111,7 +111,7 @@ public class RoundData {
      * @param image The image
      * @return
      */
-    public boolean saveImage(int id, String word, PaintPoint image ) {
+    public boolean saveImage(int id, String word, ArrayList<List<PaintPoint>> image ) {
         return wordMap.get(word).saveDrawing(id,image);
     }
     /**

@@ -1,13 +1,14 @@
 package common;
 
-import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Pair {
     private int id;
-    private PaintPoint image;
+    private ArrayList<List<PaintPoint>> image;
     private String word;
 
-    public Pair( int id, PaintPoint image ) {
+    public Pair( int id, ArrayList<List<PaintPoint>> image ) {
         this.id = id;
         this.image = image;
     }
@@ -17,6 +18,6 @@ public class Pair {
     }
 
     public int getPlayerId() { return id; }
-    public PaintPoint getImage(){ return image; }
+    public ArrayList<List<PaintPoint>> getImage(){ return image; }
     public String getGuess() { return word; }
 }

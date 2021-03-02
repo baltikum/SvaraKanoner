@@ -1,76 +1,74 @@
 package server;
 
-import common.*;
+import common.GameSettings;
+import common.Message;
+import common.PaintPoint;
+import common.Phase;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * The GuessPhase ServerSide
+ * Controls the phase, hands out image data to clients,
+ * Adds all the guesses from clients into rounddata wordtracker
+ *
+ * @author Mattias Davidsson 20210301
+ */
 
 public class GuessPhase extends Phase {
 
     private GameSession gameSession;
     private RoundData roundData;
     private GameSettings settings;
-    private HashMap<Integer, PaintPoint> guessImages;
+    private HashMap<Integer, ArrayList<java.util.List<PaintPoint>>> guessImages;
     private int submits;
 
-
+    /**
+     * Contructor takes a GameSession
+     * @param session
+     */
     public GuessPhase(GameSession session){
         this.gameSession = session;
         this.roundData = this.gameSession.getCurrentRoundData();
         this.guessImages = this.roundData.getImagesToGuessOn();
         this.settings = this.gameSession.getGameSettings();
         this.submits = 0;
-
-        timeLeft = new Timer((int) settings.getGuessTimeMilliseconds(), new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                advancePhase();
-            }
-        });
+        this.timeLeft = new Timer((int) settings.getGuessTimeMilliseconds(), timeOut -> advancePhase());
 
         for (ClientHandler client: gameSession.getConnectedPlayers()) {
             Message message;
-            if ( guessImages.containsKey(client.getId())) {
-                message = new Message(Message.Type.GOTO_GUESS_PHASE);
+            if ( !guessImages.containsKey(client.getId())) {
+                message = new Message(Message.Type.GOTO);
+                message.addParameter("phase","WaitingPhase");
             } else {
-                message = new Message(Message.Type.GOTO_WAIT_PHASE);
+                message = new Message(Message.Type.GOTO);
+                message.addParameter("phase","GuessPhase");
+                message.addParameter("image", guessImages.get(client.getId()));
             }
             client.sendMessage(message);
         }
 
-
-        for (ClientHandler client: gameSession.getConnectedPlayers()) {
-            Message message = new Message(Message.Type.IMAGE_DATA);
-      //      message.addParameter("image", guessImages.get(client.getId())); // Nån annan egen klass som är serializable
-            client.sendMessage(message);
-        }
-
-
+        timeLeft.start();
     }
 
     /**
-     * Sends messsage to all clients.
-     * @param msg
+     * Used to advance to next phase, chooses between Draw and Reveal phases.
      */
-    private void phaseMessage(Message msg){
-        for (ClientHandler client: gameSession.getConnectedPlayers()) {
-            client.sendMessage(msg);
-        }
-    }
-
     private void advancePhase(){
         if ( roundData.getRoundPartCount() == roundData.getNumberOfWords()) {
-            phaseMessage(new Message(Message.Type.GOTO_REVEAL_PHASE));
             gameSession.setPhase(new RevealPhase(gameSession));
         } else {
-            phaseMessage(new Message(Message.Type.GOTO_DRAW_PHASE));
             gameSession.setPhase(new DrawPhase(gameSession));
         }
     }
+
+    /**
+     * Increment submit by one.
+     */
+    private void incrementSubmit(){ this.submits++; };
 
     /**
      * Message handling of this phase, server side.
@@ -79,17 +77,13 @@ public class GuessPhase extends Phase {
     @Override
     public void message(Message msg) {
         switch (msg.type) {
-            case SUBMIT_GUESS-> {
+            case SUBMIT_GUESS -> {
                 gameSession.getCurrentRoundData().saveGuess(msg.player.getId(), (String) msg.data.get("guess"));
-                this.submits++;
+                incrementSubmit();
                 if ( submits == roundData.getNumberOfWords() ) {
                     advancePhase();
                 }
             }
-            case IMAGE_DATA_RECEIVED -> {
-                System.out.println("Image data received at clients side"); // Response ?
-            }
         }
-
     }
 }

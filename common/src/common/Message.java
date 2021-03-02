@@ -16,6 +16,7 @@ public class Message implements Serializable {
         CHAT_MESSAGE,
 
         // Server to client messages
+        GOTO,
         PLAYER_CONNECTED,      // JoinPhase -> JoinPhase
         PLAYER_DISCONNECTED,   // JoinPhase -> JoinPhase
         PLAYER_READY_STATUS_CHANGED, // JoinPhase -> JoinPhase
@@ -23,10 +24,6 @@ public class Message implements Serializable {
         GOTO_PICK_WORD_PHASE,          // JoinPhase -> JoinPhase
         SEND_WORD_CHOICES,
 
-        IMAGE_DATA,          // GuessPhase -> GuessPhase
-        GOTO_DRAW_PHASE,     // GuessPhase -> GuessPhase
-        GOTO_REVEAL_PHASE,   // GuessPhase -> GuessPhase
-        GOTO_WAIT_PHASE,     // GuessPhase -> GuessPhase
 
 
         WORD_DATA,     // DrawPhase -> DrawPhase
@@ -42,7 +39,6 @@ public class Message implements Serializable {
 
         PICK_WORD,             // PickWordPhase -> PickWordPhase
 
-        IMAGE_DATA_RECEIVED,    // GuessPhase -> GuessPhase
         SUBMIT_GUESS,            // GuessPhase -> GuessPhase
 
 

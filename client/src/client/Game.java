@@ -63,8 +63,10 @@ public class Game implements ActionListener, WindowListener {
 
         // Start with
         setCurrentPhase(new MainMenu());
-        //setCurrentPhase(new WaitingPhase());
-        //setCurrentPhase(new GuessPhase());
+        // setCurrentPhase(new WinnerPhase(new Message(Message.Type.GOTO)));
+        // setCurrentPhase(new DrawPhase());
+        setCurrentPhase(new WaitingPhase(new Message(Message.Type.GOTO)));
+        //setCurrentPhase(new GuessPhase(new Message(Message.Type.GOTO)));
 
         // Move and show window
         if (windowBounds.x < 0 || windowBounds.y < 0)
@@ -207,6 +209,10 @@ public class Game implements ActionListener, WindowListener {
         return settings;
     }
 
+    public AudioPlayer getAudioPlayer() {
+        return audioPlayer;
+    }
+
     public void updateUI() {
         frame.pack();
     }
@@ -233,6 +239,16 @@ public class Game implements ActionListener, WindowListener {
     public void receiveMessage(Message msg) {
         if (msg.type == Message.Type.CHAT_MESSAGE) {
             chat.message(msg);
+        } else if (msg.type == Message.Type.GOTO) {
+            String targetPhase = (String) msg.data.get("phase");
+            switch (targetPhase) {
+        //        case "PickWordPhase" -> setCurrentPhase(new PickWordPhase(msg));
+                case "DrawPhase" -> setCurrentPhase(new DrawPhase(msg));
+                case "GuessPhase" -> setCurrentPhase(new GuessPhase(msg));
+                case "RevealPhase" -> setCurrentPhase(new RevealPhase(msg));
+                case "WaitingPhase" -> setCurrentPhase(new WaitingPhase(msg));
+                case "WinnerPhase" -> setCurrentPhase(new WinnerPhase(msg));
+            }
         } else {
             if (currentPhase != null) currentPhase.message(msg);
         }
