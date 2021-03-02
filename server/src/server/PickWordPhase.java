@@ -85,7 +85,7 @@ public class PickWordPhase extends Phase {
 
 
     private void addPickedWords(int id, String word) {
-        addPickedWords(id, word);
+        pickedWords.put(id, word);
         if (pickedWords.size() == session.getConnectedPlayers().size()) {
             enterDrawPhase();
         }
