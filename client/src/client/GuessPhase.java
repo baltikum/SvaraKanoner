@@ -15,7 +15,7 @@ import java.util.List;
 public class GuessPhase extends Phase {
 
     private final JPanel panel;
-
+    private final JTextField guessField;
     private final Image wham;
 
     private String guess;
@@ -40,7 +40,7 @@ public class GuessPhase extends Phase {
         panel.add(image);
         layout.setConstraintsRatioByWidth(image, .5f, .5f, .75f, 0.75f);
 
-        JTextField guessField = new JTextField();
+        guessField = new JTextField();
         panel.add(guessField);
         layout.setConstraintsRatioByWidth(guessField, .33f, .1f, .41f, 0.15f);
 
@@ -71,10 +71,7 @@ public class GuessPhase extends Phase {
      * @param guessed
      * @return boolean
      */
-    private boolean checkAndSendGuess(String guessed ){
-        if ( guessed.equals("") ) {
-            return false;
-        }
+    private boolean checkAndSendGuess(String guessed) {
         boolean sent = false;
         String str = guessed.trim();
         str = str.toLowerCase(Locale.ROOT);
@@ -108,5 +105,8 @@ public class GuessPhase extends Phase {
 
     @Override
     public void message(Message msg) {
+        if (msg.type == Message.Type.TIMES_UP) {
+            checkAndSendGuess(guessField.getText());
+        }
     }
 }

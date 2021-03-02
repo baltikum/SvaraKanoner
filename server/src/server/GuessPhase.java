@@ -36,7 +36,8 @@ public class GuessPhase extends Phase {
         this.guessImages = this.roundData.getImagesToGuessOn();
         this.settings = this.gameSession.getGameSettings();
         this.submits = 0;
-        this.timeLeft = new Timer((int) settings.getGuessTimeMilliseconds(), timeOut -> advancePhase());
+        this.timeLeft = new Timer((int) settings.getGuessTimeMilliseconds(),
+                timeOut -> session.sendMessageToAll(new Message(Message.Type.TIMES_UP)));
 
         for (ClientHandler client: gameSession.getConnectedPlayers()) {
             Message message;
@@ -60,6 +61,7 @@ public class GuessPhase extends Phase {
     private void advancePhase(){
         timeLeft.stop();
         gameSession.getCurrentRoundData().rotateOrder();
+
         if ( roundData.getRoundPartCount() == roundData.getNumberOfWords()) {
             gameSession.setPhase(new RevealPhase(gameSession));
         } else {
