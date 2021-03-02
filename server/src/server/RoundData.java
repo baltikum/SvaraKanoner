@@ -125,7 +125,7 @@ public class RoundData {
         boolean toReturn = wordMap.get(wordResolver.get(index)).saveGuess(id,guess);
 
         if ( checkAnswer(guess,wordResolver.get(index)) ) {
-            //gameSession.givePoint(id); funktionen existerar ej än
+            gameSession.getConnectedPlayer(id).givePoints(1);
         }
         rotateOrder();
         roundPartCount++;
