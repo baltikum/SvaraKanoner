@@ -28,7 +28,11 @@ public class PickWordPhase extends Phase {
     boolean pressedWord = false;
 
     public PickWordPhase(Message msg) {
-        phaseUI = new PhaseUI();
+        phaseUI = Game.game.getPhaseUI();
+        if (phaseUI == null) {
+            phaseUI = new PhaseUI();
+            Game.game.setPhaseUI(phaseUI);
+        }
 
         panel = new JPanel();
         panel.setOpaque(false);

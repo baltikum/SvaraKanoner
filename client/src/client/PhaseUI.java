@@ -84,9 +84,6 @@ public class PhaseUI {
             }
         });
 
-
-
-
         timeLeftText = new AwesomeText("");
 
         title = new AwesomeText("Pick a woprd!1!!");
@@ -106,24 +103,17 @@ public class PhaseUI {
 
         AwesomeUtil.dynamicFont(title, 0.8f);
 
-
         panel.add(playersPanel, BorderLayout.LINE_START);
         panel.add(titlePanel, BorderLayout.NORTH);
-
-
-
         panel.add(phaseContent, BorderLayout.CENTER);
-
-        Game.game.setContentPanel(panel);
     }
 
     public void setContent(JPanel content) {
+        Game.game.setContentPanel(panel);
         panel.remove(phaseContent);
         panel.add(content, BorderLayout.CENTER);
         phaseContent = content;
         phaseContent.revalidate();
-
-
     }
 
     public void setTitle(String text) {

@@ -133,8 +133,6 @@ public class JoinPhase extends Phase {
                 AwesomeIconLabel label = playerIdToLabel.get(playerId);
                 if (label != null) label.setTextColor(status ? Color.GREEN : Color.BLACK);
             }
-
-
         }
     }
 
