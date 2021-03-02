@@ -254,6 +254,7 @@ public class DrawPhase extends Phase implements ActionListener {
 
         this.wordToDraw = (String) msg.data.get("word");
         addWord(wordToDraw);
+        panel.dispatchEvent(new ComponentEvent(panel, ComponentEvent.COMPONENT_RESIZED));
     }
 
     //   public static void main(String[] args) {
