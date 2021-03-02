@@ -25,7 +25,6 @@ public class RoundData {
     private int numberOfWords;
     private GameSession gameSession;
     private final ArrayList<Integer> playerOrder = new ArrayList<>();
-    private final ArrayList<Integer> lastOrder = new ArrayList<>();
     private final ArrayList<String> wordResolver = new ArrayList<>();
     private final HashMap<String,WordTracker> wordMap = new HashMap<>();
     private int roundPartCount = 0;
@@ -111,7 +110,6 @@ public class RoundData {
      */
     public boolean saveGuess(int id, String guess ) {
         int index = playerOrder.indexOf(id);
-
         boolean toReturn = wordMap.get(wordResolver.get(index)).saveGuess(id,guess);
         if (toReturn && checkAnswer(guess,wordResolver.get(index))) {
             gameSession.getConnectedPlayer(id).givePoints(1);
@@ -127,7 +125,9 @@ public class RoundData {
      * @return boolean
      */
     private boolean checkAnswer(String guess, String answer) {
-        return guess.trim().toLowerCase(Locale.ROOT).equals(answer.toLowerCase());
+        guess = guess.trim().toLowerCase(Locale.ROOT);
+        answer = answer.toLowerCase(Locale.ROOT);
+        return guess.equals(answer);
     }
 
     /**
@@ -135,13 +135,7 @@ public class RoundData {
      * Also stores lastOrder for easier finding of personal ids of who draw or guessed.
      */
     public void rotateOrder() {
-        int temp = playerOrder.get(0);
-        Iterator<Integer> playerIter = playerOrder.iterator();
-        while(playerIter.hasNext()) {
-            lastOrder.add(playerIter.next());
-        }
-        playerOrder.remove(0);
-        playerOrder.add(temp);
+        playerOrder.add(playerOrder.remove(0));
     }
 
     public int getRoundPartCount(){ return roundPartCount; }
@@ -162,9 +156,9 @@ public class RoundData {
      */
     public String toString() {
         StringBuilder words = new StringBuilder();
-            for ( int i = 0; i < wordResolver.size(); i++ ) {
-                words.append(i + wordResolver.get(i)+"\n");
-            }
+        for ( int i = 0; i < wordResolver.size(); i++ ) {
+            words.append(i).append(wordResolver.get(i)).append("\n");
+        }
         return words.toString();
     }
 
