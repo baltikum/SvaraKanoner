@@ -11,6 +11,9 @@ import common.Player;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 
 
 /**
@@ -24,7 +27,13 @@ public class PhaseUI {
     JPanel panel;
     JPanel playersPanel;
     JPanel phaseContent;
-    JPanel timerPanel;
+    JPanel titlePanel;
+    AwesomeText timeLeftText;
+    AwesomeText title;
+
+    int secondsLeft;
+
+    Timer timer;
 
     public PhaseUI() {
 
@@ -46,52 +55,62 @@ public class PhaseUI {
         }
 
 
+        SpringLayout layout = new SpringLayout();
 
-/*
-        AwesomeText header = new AwesomeText("Header Test!");
-        header.setTextColor(Color.black);
-        AwesomeUtil.dynamicFont(header, 0.2f);
+        titlePanel = new JPanel();
+        titlePanel.setLayout(layout);
+        titlePanel.setOpaque(true);
+        titlePanel.setBackground(new Color(0xe67e22));
 
-        PercentLayout percentLayout = new PercentLayout(1.0f);
-        percentLayout.setConstraintsRatioByWidth(header, 0.0f, -0.4f, 0.7f, 0.7f);
-        //percentLayout.setConstraintsRatioByWidth(header, 0.5f, 0.1f, 0.7f, 0.7f);
-*/
+        panel.addComponentListener(new ComponentListener() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                titlePanel.setPreferredSize((new Dimension(0, (int)(panel.getHeight() * 0.1f))));
+            }
 
-        timerPanel = new JPanel();
-        timerPanel.setLayout(new BoxLayout(timerPanel, BoxLayout.Y_AXIS));
-        timerPanel.setOpaque(false);
-        timerPanel.setBackground(new Color(0xe67e22));
+            @Override
+            public void componentMoved(ComponentEvent e) {
 
-/*
-        PercentLayout percentLayout = new PercentLayout(1.0f);
+            }
 
-        AwesomeText header = new AwesomeText("Pick a word!");
-        header.setTextColor(Color.black);
-        AwesomeUtil.dynamicFont(header, 0.2f);
-        percentLayout.setConstraintsRatioByWidth(header, 0.5f, 0.1f, 0.7f, 0.7f);*/
+            @Override
+            public void componentShown(ComponentEvent e) {
 
-        //PercentLayout percentLayout = new PercentLayout(1.0f);
-        AwesomeText timeLeftText = new AwesomeText("Time left 10");
-        timeLeftText.setPreferredSize(new Dimension(200, 20));
-        timeLeftText.setMaximumSize(new Dimension(200, 20));
+            }
 
-        //timeLeftText.setPreferredSize(new Dimension(10, 10));
+            @Override
+            public void componentHidden(ComponentEvent e) {
 
-        //percentLayout.setConstraintsRatioByWidth(timeLeftText, -0.5f, -0.1f, 0.7f, 0.7f);
-        //panel.add(timeLeftText, BorderLayout.SOUTH);
+            }
+        });
 
 
-        //timerPanel.add(timeLeftText, BorderLayout.LINE_START);
-        playersPanel.add(timeLeftText, BorderLayout.SOUTH);
 
+
+        timeLeftText = new AwesomeText("");
+
+        title = new AwesomeText("Pick a woprd!1!!");
+        titlePanel.add(timeLeftText);
+        titlePanel.add(title);
+        layout.putConstraint(SpringLayout.WEST, timeLeftText, 30, SpringLayout.WEST, titlePanel);
+        layout.putConstraint(SpringLayout.EAST, timeLeftText, 50, SpringLayout.WEST, titlePanel);
+        layout.putConstraint(SpringLayout.NORTH, timeLeftText, 0, SpringLayout.NORTH, titlePanel);
+        layout.putConstraint(SpringLayout.SOUTH, timeLeftText, 0, SpringLayout.SOUTH, titlePanel);
+
+        AwesomeUtil.dynamicFont(timeLeftText, 0.8f);
+
+        layout.putConstraint(SpringLayout.WEST, title, 0, SpringLayout.WEST, titlePanel);
+        layout.putConstraint(SpringLayout.EAST, title, 0, SpringLayout.EAST, titlePanel);
+        layout.putConstraint(SpringLayout.NORTH, title, 0, SpringLayout.NORTH, titlePanel);
+        layout.putConstraint(SpringLayout.SOUTH, title, 0, SpringLayout.SOUTH, titlePanel);
+
+        AwesomeUtil.dynamicFont(title, 0.8f);
 
 
         panel.add(playersPanel, BorderLayout.LINE_START);
+        panel.add(titlePanel, BorderLayout.NORTH);
 
 
-        //panel.add(timerPanel, BorderLayout.AFTER_LAST_LINE);
-
-        //panel.add(header, BorderLayout.NORTH);
 
         panel.add(phaseContent, BorderLayout.CENTER);
 
@@ -105,6 +124,26 @@ public class PhaseUI {
         phaseContent.revalidate();
 
 
+    }
+
+    public void setTitle(String text) {
+        title.setText(text);
+    }
+    public void startTimer(int seconds) {
+        secondsLeft = seconds;
+        timeLeftText.setText(String.valueOf(secondsLeft));
+        timer = new Timer(1000, e ->  {
+            timeLeftText.setText(String.valueOf(--secondsLeft));
+            if (secondsLeft <= 0) {
+                timer.stop();
+            }
+        });
+        timer.setRepeats(true);
+    }
+
+    public void stopTimer() {
+        if (timer != null)
+            timer.stop();
     }
 
     private void addPlayerToList(Player player) {
