@@ -62,7 +62,11 @@ public class GuessPhase extends Phase {
             panel.remove(text);
             panel.add(text);
         });
-        Game.game.setContentPanel(panel);
+
+        PhaseUI phaseUI = Game.game.getPhaseUI();
+        phaseUI.setTitle("");
+        phaseUI.startTimer((int) (Game.game.getGameSettings().getGuessTimeMilliseconds() / 1000));
+        phaseUI.setContent(panel);
     }
 
 

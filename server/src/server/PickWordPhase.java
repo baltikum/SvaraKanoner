@@ -70,7 +70,7 @@ public class PickWordPhase extends Phase {
                 for (int i = 0; i < numWordsToPick; i++) {
                     ClientHandler client = clients.get(i);
                     if (!pickedWords.containsKey(client.getId())) {
-                        String randomWord = generatedWords.get(client.getId())[random.nextInt() % 4];
+                        String randomWord = generatedWords.get(client.getId())[random.nextInt(4)];
                         addPickedWords(client.getId(), randomWord);
                     }
                 }

@@ -313,6 +313,7 @@ public class DrawPhase extends Phase implements ActionListener {
         //  Game.game.setContentPanel(panel);      //  korrekt?
 
         Game.game.getPhaseUI().setContent(panel);
+        Game.game.getPhaseUI().startTimer((int)(Game.game.getGameSettings().getDrawTimeMilliseconds() / 1000));
 
         this.wordToDraw = (String) msg.data.get("word");
         addWord(wordToDraw);
@@ -342,7 +343,7 @@ public class DrawPhase extends Phase implements ActionListener {
     }
 
     private void addWord(String word) {
-        Game.game.getPhaseUI().setTitle("Word to draw: " + word);
+        Game.game.getPhaseUI().setTitle("Draw " + word);
     }
 
     private void submitPicture() {
