@@ -134,10 +134,7 @@ public class JoinPhase extends Phase {
                 if (label != null) label.setTextColor(status ? Color.GREEN : Color.BLACK);
             }
 
-            case GOTO_PICK_WORD_PHASE -> {
-                PickWordPhase pickWordPhase = new PickWordPhase();
-                Game.game.setCurrentPhase(pickWordPhase);
-            }
+
         }
     }
 
