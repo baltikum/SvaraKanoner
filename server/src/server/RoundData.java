@@ -84,6 +84,8 @@ public class RoundData {
             Pair tempPair = temp.getDrawing(index);
             toReturn.put(playerOrder.get(i),tempPair.getImage());
         }
+        roundPartCount++;
+        rotateOrder();
         return toReturn;
     }
 
@@ -117,13 +119,12 @@ public class RoundData {
      */
     public boolean saveGuess(int id, String guess ) {
         int index = playerOrder.indexOf(id);
+
         boolean toReturn = wordMap.get(wordResolver.get(index)).saveGuess(id,guess);
 
         if ( checkAnswer(guess,wordResolver.get(index)) ) {
             gameSession.getConnectedPlayer(id).givePoints(1);
         }
-        rotateOrder();
-        roundPartCount++;
         return toReturn;
     }
 
