@@ -44,10 +44,6 @@ public class Game implements ActionListener, WindowListener {
 
         audioPlayer = new AudioPlayer();
 
-        // Start the network
-        network = new Network(settings);
-        network.start();
-
 
         // Initiate the window
         Rectangle windowBounds = settings.getWindowBounds();
@@ -62,6 +58,10 @@ public class Game implements ActionListener, WindowListener {
         // Initiate the LayeredPane
         frame.setContentPane(new JLayeredPane());
         initTopLayer();
+
+        // Start the network
+        network = new Network(settings);
+        network.start();
 
         // Start with
         setCurrentPhase(new MainMenu());
@@ -82,9 +82,6 @@ public class Game implements ActionListener, WindowListener {
         timer.setInitialDelay(1000 / 30);
         timer.start();
 
-        // test a phase
-        //setCurrentPhase(new PickWordPhase());
-        //setCurrentPhase(new );
     }
 
     private void initTopLayer() {

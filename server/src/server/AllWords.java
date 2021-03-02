@@ -35,7 +35,9 @@ public class AllWords {
 
             String line;
             while((line = bufferedReader.readLine()) != null) {
-                allWords.add(line);
+                if (!checkForExistingWord(line)) {
+                    allWords.add(line);
+                }
             }
         } catch (Exception ex ){
             System.out.println("allWords not loaded" + ex );
