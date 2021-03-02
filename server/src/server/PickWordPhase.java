@@ -41,7 +41,7 @@ public class PickWordPhase extends Phase {
 
 
 
-        ArrayList<String> allGenerateWords = allwords.getWords(session.getConnectedPlayers().size()*settings.getNumberOfWords());
+        ArrayList<String> allGenerateWords = allwords.getWords(session.getConnectedPlayers().size() * settings.getNumberOfWords());
 
         for (ClientHandler client : session.getConnectedPlayers()) {
             String[] words = new String[settings.getNumberOfWords()];

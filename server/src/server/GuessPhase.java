@@ -30,7 +30,7 @@ public class GuessPhase extends Phase {
      * Contructor takes a GameSession
      * @param session
      */
-    public GuessPhase(GameSession session){
+    public GuessPhase(GameSession session) {
         this.gameSession = session;
         this.roundData = this.gameSession.getCurrentRoundData();
         this.guessImages = this.roundData.getImagesToGuessOn();
@@ -58,7 +58,7 @@ public class GuessPhase extends Phase {
     /**
      * Used to advance to next phase, chooses between Draw and Reveal phases.
      */
-    private void advancePhase(){
+    private void advancePhase() {
         timeLeft.stop();
         gameSession.getCurrentRoundData().rotateOrder();
 
@@ -72,7 +72,7 @@ public class GuessPhase extends Phase {
     /**
      * Increment submit by one.
      */
-    private void incrementSubmit(){ this.submits++; };
+    private void incrementSubmit() { this.submits++; };
 
     /**
      * Message handling of this phase, server side.

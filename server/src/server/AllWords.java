@@ -55,8 +55,7 @@ public class AllWords {
         int index;
         for ( int i = 0; i<amount; i++ ) {
             index = random.nextInt(allWords.size()-1);
-            gameWords.add(allWords.get(index));
-            allWords.remove(index);
+            gameWords.add(allWords.remove(index));
         }
         return gameWords;
     }

@@ -190,5 +190,4 @@ Glass
 Garage
 Ghost
 Chain
-Banana
 Sharks
