@@ -39,6 +39,7 @@ public class IniStream {
 
                     Class<?> type = field.getType();
 
+                    field.setAccessible(true);
                     if (type.isPrimitive()) {
                         if (type.isAssignableFrom(boolean.class))
                             field.set(obj, Boolean.valueOf(value));
