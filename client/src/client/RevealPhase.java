@@ -13,58 +13,48 @@ import java.util.List;
 
 
 public class RevealPhase extends Phase {
-    private final AwesomeIconLabel currentWordOwner = new AwesomeIconLabel(null, null);
-
-    private final AwesomeIconLabel drawingOwnerLabel = new AwesomeIconLabel(null, "drew");
-    private final AwesomeIconLabel guessOwnerLabel = new AwesomeIconLabel(null, "guessed");
+    private final AwesomeIconLabel drawingOwnerLabel = new AwesomeIconLabel(null, "DREW");
+    private final AwesomeIconLabel guessOwnerLabel = new AwesomeIconLabel(null, "GUESSED");
     private final AwesomeText guessComp = new AwesomeText("");
     private final DrawPanel drawingComp = new DrawPanel(null);
 
     public RevealPhase(Message gotoMessage) {
-        currentWordOwner.setVisible(false);
         drawingOwnerLabel.setVisible(false);
         guessOwnerLabel.setVisible(false);
         guessComp.setVisible(false);
         drawingComp.setVisible(false);
 
-        // Upper panel
-        JPanel upperPanel = new JPanel();
-        upperPanel.setLayout(new BoxLayout(upperPanel, BoxLayout.X_AXIS));
-        upperPanel.add(currentWordOwner);
-        currentWordOwner.setAlignmentX(JComponent.CENTER_ALIGNMENT);
-
         // The incredible next btn
-        AwesomeButton nextBtn = new AwesomeButton("next");
+        AwesomeButton nextBtn = new AwesomeButton("NEXT");
         nextBtn.setAlignmentX(JComponent.RIGHT_ALIGNMENT);
         nextBtn.addActionListener( e -> next() );
-        AwesomeUtil.dynamicFont(nextBtn, 1.0f);
         AwesomeUtil.wiggleOnHover(nextBtn, 30.0f);
+
+        // Dynamic fonts
+        AwesomeUtil.dynamicFont(drawingOwnerLabel, 1.0f);
+        AwesomeUtil.dynamicFont(guessOwnerLabel, 1.0f);
+        AwesomeUtil.dynamicFont(nextBtn, 1.0f);
 
         // Reveal panel
         PercentLayout revealLayout = new PercentLayout(1.0f);
-        JPanel revealPanel = new JPanel(revealLayout);
-        revealPanel.add(drawingOwnerLabel);
-        revealPanel.add(guessOwnerLabel);
-        revealPanel.add(guessComp);
-        revealPanel.add(drawingComp);
-        revealPanel.add(nextBtn);
-        revealLayout.setConstraintsRatioByWidth(drawingOwnerLabel, 0.25f, 0.1f, 0.4f, 1.0f);
-        revealLayout.setConstraintsRatioByWidth(drawingComp, 0.25f, 0.6f, 0.4f, 1.0f);
-        revealLayout.setConstraintsRatioByWidth(guessOwnerLabel, 0.75f, 0.1f, 0.4f, 1.0f);
+        JPanel panel = new JPanel(revealLayout);
+        panel.setBackground(new Color(0xe67e22));
+        panel.add(drawingOwnerLabel);
+        panel.add(guessOwnerLabel);
+        panel.add(guessComp);
+        panel.add(drawingComp);
+        panel.add(nextBtn);
+        revealLayout.setConstraintsRatioByWidth(drawingOwnerLabel, 0.25f, 0.1f, 0.4f, .2f);
+        revealLayout.setConstraintsRatioByWidth(drawingComp, 0.25f, 0.6f, 0.4f, .4f);
+        revealLayout.setConstraintsRatioByWidth(guessOwnerLabel, 0.75f, 0.1f, 0.4f, .2f);
         revealLayout.setConstraintsRatioByWidth(guessComp, 0.75f, 0.6f, 0.4f, 1.0f);
         revealLayout.setConstraintsRatioByWidth(nextBtn, 0.5f, 0.9f, 0.4f, .25f);
 
-        // Outer panel
-        JPanel outerPanel = new JPanel(new BorderLayout());
-        outerPanel.add(upperPanel, BorderLayout.NORTH);
-        outerPanel.add(revealPanel, BorderLayout.CENTER);
-        Game.game.setContentPanel(outerPanel);
-
-        outerPanel.setBackground(new Color(0xe67e22));
-        upperPanel.setBackground(new Color(0xe67e22));
-        revealPanel.setBackground(new Color(0xe67e22));
-
         revealNext(gotoMessage);
+
+        PhaseUI phaseUI = Game.game.getPhaseUI();
+        phaseUI.hideTimer();
+        phaseUI.setContent(panel);
     }
 
     public void next() {
@@ -78,21 +68,22 @@ public class RevealPhase extends Phase {
         } else if (msg.data.containsKey("guess")) {
             revealNextGuess((String) msg.data.get("guess"), player);
         } else if (msg.data.containsKey("word")) {
-            revealNextWord((String) msg.data.get("word"), player);
+            revealNextWord((String) msg.data.get("word"));
         }
     }
 
-    public void revealNextWord(String word, Player player) {
-        Image playerIcon = Assets.getPlayerIcons()[player.getAvatarId()];
-        currentWordOwner.setVisible(true);
-        currentWordOwner.setIcon(playerIcon);
-        currentWordOwner.setText(player.getName() + " picked the word " + word);
+    public void revealNextWord(String word) {
+        Game.game.getPhaseUI().setTitle(word);
+        drawingOwnerLabel.setVisible(false);
+        drawingComp.setVisible(false);
+        guessOwnerLabel.setVisible(false);
+        guessComp.setVisible(false);
     }
 
     public void revealNextDrawing(ArrayList<List<PaintPoint>> drawing, Player player) {
         Image playerIcon = Assets.getPlayerIcons()[player.getAvatarId()];
         drawingComp.setDrawData(drawing);
-        guessOwnerLabel.setIcon(playerIcon);
+        drawingOwnerLabel.setIcon(playerIcon);
         reveal(drawingComp, drawingOwnerLabel);
     }
 
@@ -106,20 +97,12 @@ public class RevealPhase extends Phase {
     private void reveal(JComponent ownerComp, JComponent revealComp) {
         AwesomeEffect.Builder effectBuilder = AwesomeEffect.create();
 
-        if (ownerComp.isVisible()) {
-            effectBuilder
-                    .addScaleKey(0.0f, 0.0f, 500)
-                    .addScaleKey(1.0f, 1.0f, 1000)
-                    .addRotationKey(-360.0f, 500)
-                    .addRotationKey(0.0f, 1000);
-        } else {
-            effectBuilder
-                    .addScaleKey(0.0f, 0.0f, 0)
-                    .addScaleKey(1.0f, 1.0f, 500)
-                    .addRotationKey(360.0f, 500);
-            ownerComp.setVisible(true);
-            revealComp.setVisible(true);
-        }
+        effectBuilder
+                .addScaleKey(0.0f, 0.0f, 0)
+                .addScaleKey(1.0f, 1.0f, 500)
+                .addRotationKey(360.0f, 500);
+        ownerComp.setVisible(true);
+        revealComp.setVisible(true);
 
         effectBuilder.animate((AwesomeEffect.User) ownerComp, AwesomeEffect.COMPONENT);
         effectBuilder.animate((AwesomeEffect.User) revealComp, AwesomeEffect.COMPONENT);

@@ -134,6 +134,11 @@ public class PhaseUI {
             timer.stop();
     }
 
+    public void hideTimer() {
+        stopTimer();
+        timeLeftText.setText("");
+    }
+
     private void addPlayerToList(Player player) {
         AwesomeIconLabel playerLabel = new AwesomeIconLabel(Assets.getPlayerIcons()[player.getAvatarId()], player.getName());
         playerLabel.setPreferredSize(new Dimension(175, 40));

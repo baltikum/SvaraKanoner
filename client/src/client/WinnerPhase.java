@@ -6,12 +6,14 @@ import common.Phase;
 import common.Player;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class WinnerPhase extends Phase {
 
     public WinnerPhase(Message gotoMessage) {
         PercentLayout layout = new PercentLayout(1.0f);
         JPanel panel = new JPanel(layout);
+        panel.setBackground(new Color(0xe67e22));
 
         int[] placements = (int[]) gotoMessage.data.getOrDefault("placements", null);
         int[] playerIds = (int[]) gotoMessage.data.getOrDefault("playerIds", null);
