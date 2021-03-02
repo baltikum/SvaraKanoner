@@ -116,6 +116,7 @@ public class PhaseUI {
         title.setText(text);
     }
     public void startTimer(int seconds) {
+        stopTimer();
         secondsLeft = seconds;
         timeLeftText.setText(String.valueOf(secondsLeft));
         timer = new Timer(1000, e ->  {
@@ -125,6 +126,7 @@ public class PhaseUI {
             }
         });
         timer.setRepeats(true);
+        timer.start();
     }
 
     public void stopTimer() {
