@@ -123,7 +123,8 @@ public class JoinPhase extends Phase {
                     readyPlayers.add(player);
                     response.addParameter("status", true);
 
-                    if (readyPlayers.size() == session.getConnectedPlayers().size()) {
+                    if (readyPlayers.size() == session.getConnectedPlayers().size() &&
+                            readyPlayers.size() >= 2) {
                         session.setPhase(new PickWordPhase(session));
                         Main.removeSession(session);
                     } else {

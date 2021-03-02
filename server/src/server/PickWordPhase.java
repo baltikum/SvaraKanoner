@@ -19,15 +19,12 @@ import java.util.*;
  * @author Lukas Magnusson
  */
 public class PickWordPhase extends Phase {
-
-
-
-
     private GameSession session;
     private GameSettings settings;
 
     private Map<Integer, String[]> generatedWords = new HashMap<>();
     private HashMap<Integer,String> pickedWords = new HashMap<>();
+    private int numWordsToPick;
 
     private Timer timer;
 
@@ -38,11 +35,12 @@ public class PickWordPhase extends Phase {
 
 
         int numPlayers = session.getConnectedPlayers().size();
-        if (numPlayers % 2 != 0) --numPlayers;
+        boolean unevenPlayerCount = numPlayers % 2 != 0;
+        numWordsToPick = unevenPlayerCount ? numPlayers - 1 : numPlayers;
 
         ArrayList<String> allGenerateWords = allwords.getWords(numPlayers * settings.getNumberOfWords());
 
-        for (int index = 0; index < numPlayers; index++) {
+        for (int index = 0; index < numWordsToPick; index++) {
             ClientHandler client = session.getConnectedPlayers().get(index);
             String[] words = new String[settings.getNumberOfWords()];
             for (int i = 0; i < settings.getNumberOfWords(); i++) {
@@ -50,13 +48,17 @@ public class PickWordPhase extends Phase {
                 allGenerateWords.remove(0);
             }
             generatedWords.put(client.getId(), words);
-        }
 
-        for (ClientHandler client: session.getConnectedPlayers()) {
             Message gotoMessage = new Message(Message.Type.GOTO);
             gotoMessage.addParameter("phase", "PickWordPhase");
-            gotoMessage.addParameter("words", generatedWords.get(client.getId()));
+            gotoMessage.addParameter("words", words);
             client.sendMessage(gotoMessage);
+        }
+
+        if (unevenPlayerCount) {
+            Message gotoMsg = new Message(Message.Type.GOTO);
+            gotoMsg.addParameter("phase", "WaitingPhase");
+            session.getConnectedPlayers().get(numWordsToPick).sendMessage(gotoMsg);
         }
 
         timer = new Timer((int)settings.pickTimeMilliseconds, new ActionListener() {
@@ -65,11 +67,10 @@ public class PickWordPhase extends Phase {
                 Random random = new Random();
                 // time is up
                 List<ClientHandler> clients = session.getConnectedPlayers();
-                int numClients = clients.size() % 2 == 0 ? clients.size() : clients.size() - 1;
-                for (int i = 0; i < numClients; i++) {
+                for (int i = 0; i < numWordsToPick; i++) {
                     ClientHandler client = clients.get(i);
                     if (!pickedWords.containsKey(client.getId())) {
-                        String randomWord = generatedWords.get(client.getId())[random.nextInt()%4];
+                        String randomWord = generatedWords.get(client.getId())[random.nextInt() % 4];
                         addPickedWords(client.getId(), randomWord);
                     }
                 }
@@ -80,7 +81,7 @@ public class PickWordPhase extends Phase {
 
     private void addPickedWords(int id, String word) {
         pickedWords.put(id, word);
-        if (pickedWords.size() == session.getConnectedPlayers().size()) {
+        if (pickedWords.size() == numWordsToPick) {
             enterDrawPhase();
         }
     }
