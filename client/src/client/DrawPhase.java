@@ -22,6 +22,7 @@ public class DrawPhase extends Phase implements ActionListener {
     private String wordToDraw;
     private JPanel panelTop;
     private final DrawPanel drawPanel;
+    //private Object AwesomeText;
 
 
     //  public DrawPhase( ) {    //  ?
@@ -69,6 +70,12 @@ public class DrawPhase extends Phase implements ActionListener {
 
         drawPanel.setOpaque(true);
         panelCenter.setOpaque(true);
+
+
+        panelRight.setBackground(new Color(0xe67e22));
+        panelTop.setBackground(new Color(0xe67e22));
+        panelBottom.setBackground(new Color(0xe67e22));
+        panelCenter.setBackground(new Color(0xe67e22));
 
         drawPanel.setBackground(Color.WHITE);
 
@@ -243,7 +250,12 @@ public class DrawPhase extends Phase implements ActionListener {
 
         AwesomeButton done = new AwesomeButton("Done!");
         panelBottom.add(done);
-        done.addActionListener(e -> submitPicture());
+        done.addActionListener(e -> {
+            submitPicture();
+             //     panel.remove(drawPanel);
+            panel.remove(panelCenter);
+
+                });
 
 
         // mainFrame.pack();
@@ -273,7 +285,8 @@ public class DrawPhase extends Phase implements ActionListener {
     }
 
     private void addWord(String word) {
-        JLabel jlabelWord = new JLabel("Word to draw: "+word);
+       JLabel jlabelWord = new JLabel("Word to draw: "+word);
+     //   AwesomeText jlabelWord = new AwesomeText("Word to draw: "+word);
         panelTop.add(jlabelWord);
     }
 

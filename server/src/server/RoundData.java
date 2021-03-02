@@ -84,6 +84,7 @@ public class RoundData {
             Pair tempPair = temp.getDrawing(index);
             toReturn.put(playerOrder.get(i),tempPair.getImage());
         }
+        roundPartCount++;
         return toReturn;
     }
 
@@ -117,13 +118,12 @@ public class RoundData {
      */
     public boolean saveGuess(int id, String guess ) {
         int index = playerOrder.indexOf(id);
+
         boolean toReturn = wordMap.get(wordResolver.get(index)).saveGuess(id,guess);
 
         if ( checkAnswer(guess,wordResolver.get(index)) ) {
             gameSession.getConnectedPlayer(id).givePoints(1);
         }
-        rotateOrder();
-        roundPartCount++;
         return toReturn;
     }
 
@@ -136,14 +136,15 @@ public class RoundData {
      */
     private boolean checkAnswer(String guess ,String answer) {
         String str = guess.trim();
+        String str2 = answer.toLowerCase();
         str = str.toLowerCase(Locale.ROOT);
-        return str.equals(answer);
+        return str.equals(str);
     }
     /**
      * Used to rotate the order of players such that the right players get the correct data on requests.
      * Also stores lastOrder for easier finding of personal ids of who draw or guessed.
      */
-    private void rotateOrder() {
+    public void rotateOrder() {
         int temp = playerOrder.get(0);
         Iterator<Integer> playerIter = playerOrder.iterator();
         while(playerIter.hasNext()) {
