@@ -24,7 +24,6 @@ public class WinnerPhase extends Phase {
             int[] playerIds = new int[players.size()];
             int[] points = new int[players.size()];
 
-
             int placement = 1;
             int previousScore = -1;
             for (int i = 0; i < players.size(); i++) {
@@ -34,6 +33,7 @@ public class WinnerPhase extends Phase {
                     previousScore = player.getPoints();
                 }
 
+                System.out.println(player.getName() + " " + player.getPoints());
                 playerIds[i] = player.getId();
                 points[i] = player.getPoints();
                 placements[i] = placement;

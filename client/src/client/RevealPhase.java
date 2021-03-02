@@ -33,6 +33,7 @@ public class RevealPhase extends Phase {
         // Dynamic fonts
         AwesomeUtil.dynamicFont(drawingOwnerLabel, 1.0f);
         AwesomeUtil.dynamicFont(guessOwnerLabel, 1.0f);
+        AwesomeUtil.dynamicFont(guessComp, 1.0f);
         AwesomeUtil.dynamicFont(nextBtn, 1.0f);
 
         // Reveal panel
@@ -44,10 +45,10 @@ public class RevealPhase extends Phase {
         panel.add(guessComp);
         panel.add(drawingComp);
         panel.add(nextBtn);
-        revealLayout.setConstraintsRatioByWidth(drawingOwnerLabel, 0.25f, 0.1f, 0.4f, .2f);
-        revealLayout.setConstraintsRatioByWidth(drawingComp, 0.25f, 0.6f, 0.4f, .4f);
-        revealLayout.setConstraintsRatioByWidth(guessOwnerLabel, 0.75f, 0.1f, 0.4f, .2f);
-        revealLayout.setConstraintsRatioByWidth(guessComp, 0.75f, 0.6f, 0.4f, 1.0f);
+        revealLayout.setConstraintsRatioByWidth(drawingOwnerLabel, 0.25f, 0.3f, 0.4f, .2f);
+        revealLayout.setConstraintsRatioByWidth(drawingComp, 0.25f, 0.6f, 0.4f, 1.0f);
+        revealLayout.setConstraintsRatioByWidth(guessOwnerLabel, 0.75f, 0.3f, 0.4f, .2f);
+        revealLayout.setConstraintsRatioByWidth(guessComp, 0.75f, 0.6f, 0.4f, .4f);
         revealLayout.setConstraintsRatioByWidth(nextBtn, 0.5f, 0.9f, 0.4f, .25f);
 
         revealNext(gotoMessage);

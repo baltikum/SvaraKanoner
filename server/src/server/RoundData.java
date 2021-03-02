@@ -126,12 +126,10 @@ public class RoundData {
      * @param answer correct answer
      * @return boolean
      */
-    private boolean checkAnswer(String guess ,String answer) {
-        String str = guess.trim();
-        String str2 = answer.toLowerCase();
-        str = str.toLowerCase(Locale.ROOT);
-        return str.equals(str);
+    private boolean checkAnswer(String guess, String answer) {
+        return guess.trim().toLowerCase(Locale.ROOT).equals(answer.toLowerCase());
     }
+
     /**
      * Used to rotate the order of players such that the right players get the correct data on requests.
      * Also stores lastOrder for easier finding of personal ids of who draw or guessed.
@@ -145,8 +143,7 @@ public class RoundData {
         playerOrder.remove(0);
         playerOrder.add(temp);
     }
-
-
+    
     public int getRoundPartCount(){ return roundPartCount; }
     /**
      * Used to check if rounds are the same as number of words. ( round over )
