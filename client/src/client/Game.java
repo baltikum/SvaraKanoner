@@ -35,6 +35,7 @@ public class Game implements ActionListener, WindowListener {
         game = this;
 
         try {
+            System.out.println("lowl");
             IniStream.read(settings, new File(Assets.getResourcesPath() + "settings.ini"));
             settings.validate();
         } catch (IOException e) {

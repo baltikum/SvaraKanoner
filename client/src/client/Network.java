@@ -21,6 +21,7 @@ public class Network extends Thread {
 
     public Network(Settings settings) {
         ipAddress = settings.getIpAddress();
+        //ipAddress = "localhost";
         portNumber = settings.getSocket();
     }
 
