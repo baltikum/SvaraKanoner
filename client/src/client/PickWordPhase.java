@@ -63,8 +63,7 @@ public class PickWordPhase extends Phase {
 
         phaseUI.setContent(panel);
 
-        // TODO START TIMER
-        //phaseUI.startTimer(Game.game.get);
+        phaseUI.startTimer((int)Game.game.getGameSettings().getPickTimeMilliseconds() / 1000);
 
     }
 

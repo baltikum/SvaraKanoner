@@ -20,7 +20,6 @@ public class DrawPhase extends Phase implements ActionListener {
 
 
     private String wordToDraw;
-    private JPanel panelTop;
     private final DrawPanel drawPanel;
     //private Object AwesomeText;
 
@@ -38,19 +37,15 @@ public class DrawPhase extends Phase implements ActionListener {
 
 
         //mainFrame.add(panel);
-        Game.game.setContentPanel(panel);
 
 
-        panelTop = new JPanel();
         GridBagConstraints c = new GridBagConstraints();
         c.gridwidth = 1;
         c.gridheight = 1;
         c.weightx = 0.5;
         c.weighty = 0.5;
 
-        panelTop.setLayout(new GridBagLayout());
 
-        panel.add(panelTop, BorderLayout.NORTH);
 
         JPanel panelBottom = new JPanel();
         panel.add(panelBottom, BorderLayout.SOUTH);
@@ -73,7 +68,6 @@ public class DrawPhase extends Phase implements ActionListener {
 
 
         panelRight.setBackground(new Color(0xe67e22));
-        panelTop.setBackground(new Color(0xe67e22));
         panelBottom.setBackground(new Color(0xe67e22));
         panelCenter.setBackground(new Color(0xe67e22));
 
@@ -264,6 +258,8 @@ public class DrawPhase extends Phase implements ActionListener {
 
         //  Game.game.setContentPanel(panel);      //  korrekt?
 
+        Game.game.getPhaseUI().setContent(panel);
+
         this.wordToDraw = (String) msg.data.get("word");
         addWord(wordToDraw);
         panel.revalidate();
@@ -285,9 +281,7 @@ public class DrawPhase extends Phase implements ActionListener {
     }
 
     private void addWord(String word) {
-       JLabel jlabelWord = new JLabel("Word to draw: "+word);
-     //   AwesomeText jlabelWord = new AwesomeText("Word to draw: "+word);
-        panelTop.add(jlabelWord);
+        Game.game.getPhaseUI().setTitle("Word to draw: " + word);
     }
 
     private void submitPicture() {
