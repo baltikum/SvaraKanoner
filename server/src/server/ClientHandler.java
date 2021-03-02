@@ -85,7 +85,7 @@ public class ClientHandler extends Player implements Runnable {
     }
 
     public void givePoints(int amount) {
-        points += points;
+        points += amount;
     }
 
     public int getPoints() {

@@ -5,13 +5,10 @@ import common.Message;
 import common.Phase;
 
 import javax.swing.*;
+import javax.swing.Timer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.HashMap;
-import java.util.Map;
-
-import java.util.ArrayList;
-import java.util.Random;
+import java.util.*;
 
 
 /**
@@ -40,22 +37,20 @@ public class PickWordPhase extends Phase {
         AllWords allwords = new AllWords();
 
 
+        int numPlayers = session.getConnectedPlayers().size();
+        if (numPlayers % 2 != 0) --numPlayers;
 
-        ArrayList<String> allGenerateWords = allwords.getWords(session.getConnectedPlayers().size() * settings.getNumberOfWords());
+        ArrayList<String> allGenerateWords = allwords.getWords(numPlayers * settings.getNumberOfWords());
 
-        for (ClientHandler client : session.getConnectedPlayers()) {
+        for (int index = 0; index < numPlayers; index++) {
+            ClientHandler client = session.getConnectedPlayers().get(index);
             String[] words = new String[settings.getNumberOfWords()];
             for (int i = 0; i < settings.getNumberOfWords(); i++) {
                 words[i] = allGenerateWords.get(0);
                 allGenerateWords.remove(0);
             }
             generatedWords.put(client.getId(), words);
-
         }
-
-
-
-
 
         for (ClientHandler client: session.getConnectedPlayers()) {
             Message gotoMessage = new Message(Message.Type.GOTO);
@@ -69,7 +64,10 @@ public class PickWordPhase extends Phase {
             public void actionPerformed(ActionEvent e) {
                 Random random = new Random();
                 // time is up
-                for (ClientHandler client: session.getConnectedPlayers()) {
+                List<ClientHandler> clients = session.getConnectedPlayers();
+                int numClients = clients.size() % 2 == 0 ? clients.size() : clients.size() - 1;
+                for (int i = 0; i < numClients; i++) {
+                    ClientHandler client = clients.get(i);
                     if (!pickedWords.containsKey(client.getId())) {
                         String randomWord = generatedWords.get(client.getId())[random.nextInt()%4];
                         addPickedWords(client.getId(), randomWord);
@@ -77,24 +75,15 @@ public class PickWordPhase extends Phase {
                 }
             }
         });
-
-
-
+        timer.start();
     }
-
-
 
     private void addPickedWords(int id, String word) {
         pickedWords.put(id, word);
-        System.out.println("num submits = " + pickedWords.size());
-        System.out.println("num players = " + session.getConnectedPlayers().size());
         if (pickedWords.size() == session.getConnectedPlayers().size()) {
             enterDrawPhase();
         }
     }
-
-
-
 
     @Override
     public void message(Message msg) {
@@ -106,17 +95,13 @@ public class PickWordPhase extends Phase {
                 String word = generatedWords.get(msg.player.getId())[wordIndex];
                 System.out.println("Picked word: " + word);
                 addPickedWords(msg.player.getId(), word);
-
-
             }
         }
     }
 
     private void enterDrawPhase() {
+        timer.stop();
         session.createRoundData(pickedWords);
         session.setPhase(new DrawPhase(session));
     }
-
-
-
 }

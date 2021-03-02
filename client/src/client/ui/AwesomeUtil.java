@@ -51,7 +51,7 @@ public class AwesomeUtil {
 
         boolean isTransformed = false;
         if (effect != null) {
-            effect.transform(g, dimension);
+            effect.transform(g, dimension, true);
             isTransformed = true;
         }
 
@@ -89,7 +89,7 @@ public class AwesomeUtil {
         if (img == null) return false;
         boolean isTransformed = false;
         if (effect != null) {
-            effect.transform(g, dim);
+            effect.transform(g, dim, false);
             isTransformed = true;
         }
         Image sprite = effect != null ? effect.getSprite() : null;
