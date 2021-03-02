@@ -259,7 +259,9 @@ public class Game implements ActionListener, WindowListener {
         try {
             IniStream.write(settings, new File(Assets.getResourcesPath() + "settings.ini"));
         } catch (IOException ignored) {}
-        network.closeConnection();
+        try {
+            network.closeConnection();
+        } catch (Exception ignored) {}
     }
 
     @Override public void windowOpened(WindowEvent e) { }
