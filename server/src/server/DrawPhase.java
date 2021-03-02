@@ -67,6 +67,7 @@ public class DrawPhase extends Phase {
     }
 
     private void advancePhase() {
+        timeLeft.stop();
         gameSession.setPhase(new GuessPhase(gameSession));
     }
 }

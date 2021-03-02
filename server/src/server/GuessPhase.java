@@ -78,7 +78,7 @@ public class GuessPhase extends Phase {
     public void message(Message msg) {
         switch (msg.type) {
             case SUBMIT_GUESS -> {
-                gameSession.getCurrentRoundData().saveGuess(msg.player.getId(), (String) msg.data.get("guess"));
+                roundData.saveGuess(msg.player.getId(), (String) msg.data.get("guess"));
                 incrementSubmit();
                 if ( submits == roundData.getNumberOfWords() ) {
                     advancePhase();

@@ -51,7 +51,7 @@ public class WordTracker {
      * @param guess the guess
      * @return boolean
      */
-    public boolean saveGuess(int id, String guess ) {
+    public boolean saveGuess(int id, String guess) {
         int temp = guesses.size();
         this.guesses.add(new Pair(id,guess));
         return (temp+1) == images.size();
