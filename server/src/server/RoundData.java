@@ -85,7 +85,6 @@ public class RoundData {
             toReturn.put(playerOrder.get(i),tempPair.getImage());
         }
         roundPartCount++;
-        rotateOrder();
         return toReturn;
     }
 
@@ -145,7 +144,7 @@ public class RoundData {
      * Used to rotate the order of players such that the right players get the correct data on requests.
      * Also stores lastOrder for easier finding of personal ids of who draw or guessed.
      */
-    private void rotateOrder() {
+    public void rotateOrder() {
         int temp = playerOrder.get(0);
         Iterator<Integer> playerIter = playerOrder.iterator();
         while(playerIter.hasNext()) {
