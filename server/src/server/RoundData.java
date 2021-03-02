@@ -137,8 +137,9 @@ public class RoundData {
      */
     private boolean checkAnswer(String guess ,String answer) {
         String str = guess.trim();
+        String str2 = answer.toLowerCase();
         str = str.toLowerCase(Locale.ROOT);
-        return str.equals(answer);
+        return str.equals(str);
     }
     /**
      * Used to rotate the order of players such that the right players get the correct data on requests.
