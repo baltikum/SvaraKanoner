@@ -34,17 +34,18 @@ public class RevealPhase extends Phase {
             } else {
                 Pair pair = shouldRevealDrawing ? tracker.getDrawing(currentRevealIndex) :
                                                   tracker.getGuess(currentRevealIndex);
-                shouldRevealDrawing = !shouldRevealDrawing;
+                revealNextMsg.addParameter("playerId", pair.getPlayerId());
                 if (shouldRevealDrawing) {
                     revealNextMsg.addParameter("drawing", pair.getImage());
                 } else {
                     revealNextMsg.addParameter("guess", pair.getGuess());
                     if (++currentRevealIndex == tracker.getAllGuesses().size()) {
                         ++currentWordIndex;
+                        currentRevealIndex = 0;
                         tracker = null;
                     }
                 }
-                revealNextMsg.addParameter("playerId", pair.getPlayerId());
+                shouldRevealDrawing = !shouldRevealDrawing;
             }
             session.sendMessageToAll(revealNextMsg);
         } else {

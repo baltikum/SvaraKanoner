@@ -23,7 +23,7 @@ public class Network extends Thread {
             objectOutputStream.writeObject(message);
             objectOutputStream.flush();
         } catch (Exception ignore) {
-
+            Game.game.setErrorMsg("Could not send to the server");
         }
     }
 
@@ -33,14 +33,13 @@ public class Network extends Thread {
             objectOutputStream.flush();
             responseListeners.add(responseListener);
         } catch (Exception ignore) {
-
+            Game.game.setErrorMsg("Could not send to the server");
         }
     }
 
     public void run() {
         try {
             socket = new Socket("localhost", 12345);
-            System.out.println("Connected to server");
 
             objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
             objectInputStream = new ObjectInputStream(socket.getInputStream());
@@ -59,14 +58,14 @@ public class Network extends Thread {
                         Game.game.receiveMessage(message);
                     }
                 } catch (Exception e) {
-                    break;
+                    Game.game.setErrorMsg("Received invalid message");
                 }
             }
 
         } catch(Exception e) {
-            System.out.println("Can't connect to server " + e);
+            Game.game.setErrorMsg("Can't connect to the server: " + e.getMessage());
         } finally {
-            System.out.println("Lost connection to server");
+            Game.game.setErrorMsg("Lost connection to the server");
             try {
                 socket.close();
                 objectOutputStream.close();

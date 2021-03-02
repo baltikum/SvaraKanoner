@@ -65,8 +65,8 @@ public class Game implements ActionListener, WindowListener {
         setCurrentPhase(new MainMenu());
         // setCurrentPhase(new WinnerPhase(new Message(Message.Type.GOTO)));
         // setCurrentPhase(new DrawPhase());
-        //setCurrentPhase(new WaitingPhase(new Message(Message.Type.GOTO)));
-        //setCurrentPhase(new GuessPhase(new Message(Message.Type.GOTO)));
+        // setCurrentPhase(new WaitingPhase(new Message(Message.Type.GOTO)));
+        // setCurrentPhase(new GuessPhase(new Message(Message.Type.GOTO)));
 
         // Move and show window
         if (windowBounds.x < 0 || windowBounds.y < 0)
