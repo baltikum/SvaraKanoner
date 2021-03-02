@@ -21,7 +21,7 @@ public class DrawPhase extends Phase implements ActionListener {
 
     private String wordToDraw;
     private JPanel panelTop;
-    private final DrawPanel drawPanel;
+    private DrawPanel drawPanel;      // var private final innan, tog bort för att testa
     //private Object AwesomeText;
 
 
@@ -191,6 +191,51 @@ public class DrawPhase extends Phase implements ActionListener {
             }
         });
 
+
+        JButton btnPink = new JButton(new ImageIcon("client\\assets\\pinkColor.png"));
+        btnPink.setContentAreaFilled(false);
+        btnPink.setBorderPainted(false);
+        c.gridx = 0;
+        c.gridy = 8;
+        panelRight.add(btnPink, c);
+
+        btnPink.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                drawPanel.setColorPink();
+            }
+        });
+
+
+        JButton btnOrange = new JButton(new ImageIcon("client\\assets\\orangeColor.png"));
+        btnOrange.setContentAreaFilled(false);
+        btnOrange.setBorderPainted(false);
+        c.gridx = 0;
+        c.gridy = 9;
+        panelRight.add(btnOrange, c);
+
+        btnOrange.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                drawPanel.setColorOrange();
+            }
+        });
+
+
+        JButton btnGrey = new JButton(new ImageIcon("client\\assets\\greyColor.png"));
+        btnGrey.setContentAreaFilled(false);
+        btnGrey.setBorderPainted(false);
+        c.gridx = 0;
+        c.gridy = 10;
+        panelRight.add(btnGrey, c);
+
+        btnGrey.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                drawPanel.setColorGrey();
+            }
+        });
+
         JButton smallBrushSize = new JButton(new ImageIcon("client\\assets\\smallBrush.png"));
         smallBrushSize.setContentAreaFilled(false);
         smallBrushSize.setBorderPainted(false);
@@ -248,14 +293,21 @@ public class DrawPhase extends Phase implements ActionListener {
         });
 
 
+
+
+
         AwesomeButton done = new AwesomeButton("Done!");
         panelBottom.add(done);
         done.addActionListener(e -> {
             submitPicture();
-             //     panel.remove(drawPanel);
-            panel.remove(panelCenter);
-
-                });
+            panelCenter.remove(drawPanel);
+            panelBottom.remove(done);
+            AwesomeText pictureSent = new AwesomeText("Picture sent!! Waiting for others.. ");
+            pictureSent.setBounds(400,200,200,30);
+            pictureSent.setFont(Assets.getFont().deriveFont(40.0f));
+            panelCenter.add(pictureSent);
+            panel.revalidate();
+        });
 
 
         // mainFrame.pack();
@@ -272,6 +324,13 @@ public class DrawPhase extends Phase implements ActionListener {
     //   public static void main(String[] args) {
     //     new DrawPhase();
     //   }
+
+
+
+    public void clearPaintArea(){
+
+    }
+
 
     @Override
     public void actionPerformed(ActionEvent e) {

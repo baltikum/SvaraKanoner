@@ -27,6 +27,7 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
     private double brushSizeNormal = 6.0;
     private double brushSizeBig = 10.0;
     private double brushSizeEraser = 30.0;
+    private Color lastColor;
     private String selectedBrushSize ="normal";
     private String lastSelectedBrushSize;
     private ArrayList<List<PaintPoint>> paintPoints;
@@ -46,6 +47,7 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
 
     public DrawPanel(ArrayList<List<PaintPoint>> paintPoints) {
         super();
+        setBackground(Color.WHITE);
         this.paintPoints = paintPoints;
     }
 
@@ -181,7 +183,24 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
         colorSetup();
     }
 
+
+    public void setColorPink() {
+        color = Color.PINK;
+        colorSetup();
+    }
+
+    public void setColorOrange() {
+        color = Color.ORANGE;
+        colorSetup();
+    }
+
+    public void setColorGrey() {
+        color = Color.GRAY;
+        colorSetup();
+    }
+
     public void setSmallBrush() {
+        brushSetup();
         selectedBrushSize = "small";
         double width = getWidth();
         double rescaledSize = width / 878;
@@ -189,6 +208,7 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
     }
 
     public void setNormalBrush() {
+        brushSetup();
         selectedBrushSize = "normal";
         double width = getWidth();
         double rescaledSize = width / 878;
@@ -196,6 +216,7 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
     }
 
     public void setBigBrush() {
+        brushSetup();
         selectedBrushSize = "big";
         double width = getWidth();
         double rescaledSize = width / 878;
@@ -241,6 +262,17 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
             brushSize = lastBrushSize;
             selectedBrushSize = lastSelectedBrushSize;
         }
+        lastColor = color;
+        try {
+            setCursor(Toolkit.getDefaultToolkit().createCustomCursor(new ImageIcon("client\\assets\\paintbrush.png").getImage(),
+                    new Point(0, 0), "custom cursor"));
+        } catch (Exception e) {
+        }
+    }
+
+
+    public void brushSetup(){
+        color = lastColor;
         try {
             setCursor(Toolkit.getDefaultToolkit().createCustomCursor(new ImageIcon("client\\assets\\paintbrush.png").getImage(),
                     new Point(0, 0), "custom cursor"));
