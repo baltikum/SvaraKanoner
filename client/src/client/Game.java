@@ -57,6 +57,7 @@ public class Game implements ActionListener, WindowListener {
         frame.setBackground(new Color(0xe67e22));
         frame.setPreferredSize(new Dimension(windowBounds.width, windowBounds.height));
         frame.setMinimumSize(new Dimension(500, 500));
+        frame.setPreferredSize(new Dimension(800, 800));
 
         // Initiate the LayeredPane
         frame.setContentPane(new JLayeredPane());
@@ -261,6 +262,7 @@ public class Game implements ActionListener, WindowListener {
         try {
             IniStream.write(settings, new File(Assets.getResourcesPath() + "settings.ini"));
         } catch (IOException ignored) {}
+        network.closeConnection();
     }
 
     @Override public void windowOpened(WindowEvent e) { }

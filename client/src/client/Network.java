@@ -4,6 +4,7 @@ import common.GameSettings;
 import common.Message;
 import common.MessageResponseListener;
 
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -69,12 +70,12 @@ public class Network extends Thread {
                         Game.game.receiveMessage(message);
                     }
                 } catch (Exception e) {
-                    Game.game.setErrorMsg("Received invalid message");
+                    Game.game.setErrorMsg("Received invalid message: " + e.toString());
                 }
             }
 
         } catch(Exception e) {
-            Game.game.setErrorMsg("Can't connect to the server: " + e.getMessage());
+            Game.game.setErrorMsg("Can't connect to the server: " + e.toString());
         } finally {
             Game.game.setErrorMsg("Lost connection to the server");
             try {
@@ -87,4 +88,11 @@ public class Network extends Thread {
         }
     }
 
+    public void closeConnection() {
+        try {
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
