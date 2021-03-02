@@ -4,6 +4,7 @@ import client.Assets;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.font.FontRenderContext;
 
 /**
  * A component that renders text only in the bouncy format.
@@ -26,6 +27,8 @@ public class AwesomeText extends JComponent implements AwesomeEffect.User {
         this.text = text;
         setFont(Assets.getFont());
     }
+
+
 
     /**
      *
