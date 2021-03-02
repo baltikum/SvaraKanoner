@@ -32,7 +32,7 @@ public class Game implements ActionListener, WindowListener {
     private final Player thisPlayer = new Player(-1, "Bengt", 0);
     private final List<Player> players = new ArrayList<>();
 
-    private PhaseUI phaseUI;
+    private final PhaseUI phaseUI = new PhaseUI();
 
     Game() {
         game = this;
@@ -256,10 +256,6 @@ public class Game implements ActionListener, WindowListener {
         } else {
             if (currentPhase != null) currentPhase.message(msg);
         }
-    }
-
-    public void setPhaseUI(PhaseUI phaseUI) {
-        this.phaseUI = phaseUI;
     }
 
     public PhaseUI getPhaseUI() {

@@ -10,6 +10,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.util.HashMap;
 
 
 /**
@@ -26,6 +27,7 @@ public class PhaseUI {
     JPanel titlePanel;
     AwesomeText timeLeftText;
     AwesomeText title;
+    final HashMap<Integer, AwesomeIconLabel> playerIdToLabel = new HashMap<>();
 
     int secondsLeft;
 
@@ -44,12 +46,6 @@ public class PhaseUI {
         playersPanel.setLayout(new BoxLayout(playersPanel, BoxLayout.Y_AXIS));
         playersPanel.setOpaque(false);
         playersPanel.setBackground(new Color(0xe67e22));
-
-
-        for(Player player : Game.game.getPlayers()) {
-            addPlayerToList(player);
-        }
-
 
         SpringLayout layout = new SpringLayout();
 
@@ -139,15 +135,22 @@ public class PhaseUI {
         timeLeftText.setText("");
     }
 
-    private void addPlayerToList(Player player) {
+    public void addPlayerToList(Player player) {
+        if (playerIdToLabel.containsKey(player.getId())) return;
+
         AwesomeIconLabel playerLabel = new AwesomeIconLabel(Assets.getPlayerIcons()[player.getAvatarId()], player.getName());
         playerLabel.setPreferredSize(new Dimension(175, 40));
         playerLabel.setMaximumSize(new Dimension(175, 40));
 
-
         playersPanel.add(Box.createVerticalStrut(10));
-
-
         playersPanel.add(playerLabel, BorderLayout.AFTER_LAST_LINE);
+        playerIdToLabel.put(player.getId(), playerLabel);
+    }
+
+    public void removePlayerFromList(Player player) {
+        AwesomeIconLabel playerLabel = playerIdToLabel.get(player.getId());
+        if (playerLabel != null) {
+            playersPanel.remove(playerLabel);
+        }
     }
 }

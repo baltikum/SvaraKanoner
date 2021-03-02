@@ -143,7 +143,7 @@ public class RoundData {
         playerOrder.remove(0);
         playerOrder.add(temp);
     }
-    
+
     public int getRoundPartCount(){ return roundPartCount; }
     /**
      * Used to check if rounds are the same as number of words. ( round over )

@@ -91,6 +91,7 @@ public class JoinPhase extends Phase {
     public void addPlayer(Player player) {
         List<Player> players = Game.game.getPlayers();
         players.add(player);
+        Game.game.getPhaseUI().addPlayerToList(player);
 
         int positionIndex = players.size() < 8 ?
                 freePositions.remove(Game.game.random.nextInt(8 - players.size())) :
@@ -126,6 +127,7 @@ public class JoinPhase extends Phase {
                 int playerId = (int) msg.data.getOrDefault("playerId", -1);
                 AwesomeIconLabel label = playerIdToLabel.get(playerId);
                 if (label != null) panel.remove(label);
+                Game.game.getPhaseUI().removePlayerFromList(Game.game.getPlayer(playerId));
             }
             case PLAYER_READY_STATUS_CHANGED -> {
                 int playerId = (int) msg.data.getOrDefault("playerId", -1);

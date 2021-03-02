@@ -23,16 +23,11 @@ public class PickWordPhase extends Phase {
     JPanel panel;
     JPanel wordsPanel;
     PercentLayout percentLayout;
-    PhaseUI phaseUI;
 
     boolean pressedWord = false;
 
     public PickWordPhase(Message msg) {
-        phaseUI = Game.game.getPhaseUI();
-        if (phaseUI == null) {
-            phaseUI = new PhaseUI();
-            Game.game.setPhaseUI(phaseUI);
-        }
+        PhaseUI phaseUI = Game.game.getPhaseUI();
 
         panel = new JPanel();
         panel.setOpaque(false);
@@ -80,8 +75,7 @@ public class PickWordPhase extends Phase {
             Game.game.sendMessage(message);
 
             panel.remove(wordsPanel);
-            phaseUI.setTitle("Waiting on players...");
-
+            Game.game.getPhaseUI().setTitle("Waiting on players...");
         });
     }
 }
