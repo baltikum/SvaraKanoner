@@ -11,6 +11,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.geom.Line2D;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -153,51 +154,40 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
         repaint();
     }
 
-    public void setColorGreen() {
-        color = new Color(0, 204, 0);
+    public void setColor(String colorToSet){
+        switch(colorToSet)
+        {
+            case "GREEN":
+                color = new Color(0, 204, 0);
+                break;
+            case "BLUE":
+                color = Color.BLUE;
+                break;
+            case "BLACK":
+                color = Color.BLACK;
+                break;
+            case "RED":
+                color = Color.RED;
+                break;
+            case "YELLOW":
+                color = Color.YELLOW;
+                break;
+            case "BROWN":
+                color = new Color(153, 102, 0);
+                break;
+            case "PINK":
+                color = Color.PINK;
+                break;
+            case "ORANGE":
+                color = Color.ORANGE;
+                break;
+            case "GRAY":
+                color = Color.GRAY;
+                break;
+        }
         colorSetup();
     }
 
-    public void setColorBlue() {
-        color = Color.BLUE;
-        colorSetup();
-    }
-
-    public void setColorBlack() {
-        color = Color.BLACK;
-        colorSetup();
-    }
-
-    public void setColorRed() {
-        color = Color.RED;
-        colorSetup();
-    }
-
-    public void setColorYellow() {
-        color = Color.YELLOW;
-        colorSetup();
-    }
-
-    public void setColorBrown() {
-        color = new Color(153, 102, 0);
-        colorSetup();
-    }
-
-
-    public void setColorPink() {
-        color = Color.PINK;
-        colorSetup();
-    }
-
-    public void setColorOrange() {
-        color = Color.ORANGE;
-        colorSetup();
-    }
-
-    public void setColorGrey() {
-        color = Color.GRAY;
-        colorSetup();
-    }
 
     public void setSmallBrush() {
         brushSetup();

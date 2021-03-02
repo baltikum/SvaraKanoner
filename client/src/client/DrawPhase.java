@@ -7,6 +7,7 @@ import common.Phase;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 
 /**
  *
@@ -22,7 +23,7 @@ public class DrawPhase extends Phase implements ActionListener {
     private String wordToDraw;
 
     private final DrawPanel drawPanel;
-
+    private final Image wham;
     //private Object AwesomeText;
 
 
@@ -31,8 +32,8 @@ public class DrawPhase extends Phase implements ActionListener {
         super();
 
         // JFrame mainFrame = new JFrame("Ryktet går!");
-
-
+        BufferedImage tileMap = Assets.loadImage("mainmenu.png");
+       wham = Assets.getTile(tileMap, 0, 0, 3, 1, 8);
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
 
@@ -119,7 +120,7 @@ public class DrawPhase extends Phase implements ActionListener {
         btnGreen.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                drawPanel.setColorGreen();
+                drawPanel.setColor("GREEN");
             }
         });
 
@@ -132,7 +133,7 @@ public class DrawPhase extends Phase implements ActionListener {
         btnBlue.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                drawPanel.setColorBlue();
+                drawPanel.setColor("BLUE");
             }
         });
 
@@ -146,7 +147,7 @@ public class DrawPhase extends Phase implements ActionListener {
         btnBlack.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                drawPanel.setColorBlack();
+                drawPanel.setColor("BLACK");
             }
         });
 
@@ -157,7 +158,7 @@ public class DrawPhase extends Phase implements ActionListener {
         c.gridy = 6;
         panelRight.add(btnRed, c);
 
-        btnRed.addActionListener(e -> drawPanel.setColorRed());
+        btnRed.addActionListener(e -> drawPanel.setColor("RED"));
 
         JButton btnYellow = new JButton(new ImageIcon("client\\assets\\yellowColor.png"));
         btnYellow.setContentAreaFilled(false);
@@ -169,7 +170,7 @@ public class DrawPhase extends Phase implements ActionListener {
         btnYellow.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                drawPanel.setColorYellow();
+                drawPanel.setColor("YELLOW");
             }
         });
 
@@ -183,7 +184,7 @@ public class DrawPhase extends Phase implements ActionListener {
         btnBrown.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                drawPanel.setColorBrown();
+                drawPanel.setColor("BROWN");
             }
         });
 
@@ -198,7 +199,7 @@ public class DrawPhase extends Phase implements ActionListener {
         btnPink.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                drawPanel.setColorPink();
+                drawPanel.setColor("PINK");
             }
         });
 
@@ -213,7 +214,7 @@ public class DrawPhase extends Phase implements ActionListener {
         btnOrange.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                drawPanel.setColorOrange();
+                drawPanel.setColor("ORANGE");
             }
         });
 
@@ -228,13 +229,14 @@ public class DrawPhase extends Phase implements ActionListener {
         btnGrey.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                drawPanel.setColorGrey();
+                drawPanel.setColor("GRAY");
             }
         });
 
         JButton smallBrushSize = new JButton(new ImageIcon("client\\assets\\smallBrush.png"));
-        smallBrushSize.setContentAreaFilled(false);
-        smallBrushSize.setBorderPainted(false);
+       smallBrushSize.setContentAreaFilled(false);
+        smallBrushSize.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        smallBrushSize.setBorderPainted(true);
         panelBottom.add(smallBrushSize);
         smallBrushSize.addActionListener(new ActionListener() {
             @Override
@@ -245,7 +247,8 @@ public class DrawPhase extends Phase implements ActionListener {
 
         JButton mediumBrushSize = new JButton(new ImageIcon("client\\assets\\mediumBrush.png"));
         mediumBrushSize.setContentAreaFilled(false);
-        mediumBrushSize.setBorderPainted(false);
+        mediumBrushSize.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+       // mediumBrushSize.setBorderPainted(true);
         panelBottom.add(mediumBrushSize);
         mediumBrushSize.addActionListener(new ActionListener() {
             @Override
@@ -257,7 +260,7 @@ public class DrawPhase extends Phase implements ActionListener {
 
         JButton bigBrushSize = new JButton(new ImageIcon("client\\assets\\bigBrush.png"));
         bigBrushSize.setContentAreaFilled(false);
-        bigBrushSize.setBorderPainted(false);
+        bigBrushSize.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         panelBottom.add(bigBrushSize);
         bigBrushSize.addActionListener(new ActionListener() {
             @Override
@@ -268,7 +271,7 @@ public class DrawPhase extends Phase implements ActionListener {
 
         JButton eraserBtn = new JButton(new ImageIcon("client\\assets\\eraser2.png"));
         eraserBtn.setContentAreaFilled(false);
-        eraserBtn.setBorderPainted(false);
+        eraserBtn.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         panelBottom.add(eraserBtn);
         eraserBtn.addActionListener(new ActionListener() {
             @Override
@@ -279,7 +282,7 @@ public class DrawPhase extends Phase implements ActionListener {
 
         JButton clearBTN = new JButton(new ImageIcon("client\\assets\\trashcan.png"));
         clearBTN.setContentAreaFilled(false);
-        clearBTN.setBorderPainted(false);
+        clearBTN.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         panelBottom.add(clearBTN);
         clearBTN.addActionListener(new ActionListener() {
             @Override
@@ -292,7 +295,8 @@ public class DrawPhase extends Phase implements ActionListener {
 
 
 
-        AwesomeButton done = new AwesomeButton("Done!");
+        AwesomeButton done = new AwesomeButton("Done!", wham);
+     //   AwesomeButton done = new AwesomeButton("Done!", wham);
         panelBottom.add(done);
         done.addActionListener(e -> {
             submitPicture();
