@@ -112,8 +112,7 @@ public class PickWordPhase extends Phase {
 
     private void enterDrawPhase() {
         session.createRoundData(pickedWords);
-
-        // TODO send go to draw phase msg to all players, create new drawPhase send over phase UI + session
+        session.setPhase(new DrawPhase(session));
     }
 
 

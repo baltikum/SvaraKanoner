@@ -21,10 +21,11 @@ public class DrawPhase extends Phase implements ActionListener {
 
     private String wordToDraw;
     private JPanel panelTop;
+    private final DrawPanel drawPanel;
 
 
-       //  public DrawPhase( ) {    //  ?
-       public DrawPhase(Message msg) {    //  ?
+    //  public DrawPhase( ) {    //  ?
+    public DrawPhase(Message msg) {    //  ?
         super();
 
         // JFrame mainFrame = new JFrame("Ryktet går!");
@@ -48,17 +49,13 @@ public class DrawPhase extends Phase implements ActionListener {
 
         panelTop.setLayout(new GridBagLayout());
 
-
         panel.add(panelTop, BorderLayout.NORTH);
-
-
-        addWord("hej");
 
         JPanel panelBottom = new JPanel();
         panel.add(panelBottom, BorderLayout.SOUTH);
         ///   panelBottom.setLayout(new BorderLayout());
 
-        DrawPanel drawPanel = new DrawPanel();
+        drawPanel = new DrawPanel();
 
         JPanel panelRight = new JPanel();
         panel.add(panelRight, BorderLayout.EAST);
@@ -157,12 +154,7 @@ public class DrawPhase extends Phase implements ActionListener {
         c.gridy = 6;
         panelRight.add(btnRed, c);
 
-        btnRed.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                drawPanel.setColorRed();
-            }
-        });
+        btnRed.addActionListener(e -> drawPanel.setColorRed());
 
         JButton btnYellow = new JButton(new ImageIcon("client\\assets\\yellowColor.png"));
         btnYellow.setContentAreaFilled(false);
@@ -251,9 +243,7 @@ public class DrawPhase extends Phase implements ActionListener {
 
         AwesomeButton done = new AwesomeButton("Done!");
         panelBottom.add(done);
-        done.addActionListener(e -> {
-            Game.game.sendMessage(new Message(Message.Type.SUBMIT_PICTURE));
-        });
+        done.addActionListener(e -> submitPicture());
 
 
         // mainFrame.pack();
@@ -262,6 +252,8 @@ public class DrawPhase extends Phase implements ActionListener {
 
         //  Game.game.setContentPanel(panel);      //  korrekt?
 
+        this.wordToDraw = (String) msg.data.get("word");
+        addWord(wordToDraw);
     }
 
     //   public static void main(String[] args) {
@@ -274,12 +266,8 @@ public class DrawPhase extends Phase implements ActionListener {
 
     @Override
     public void message(Message msg) {
-        switch (msg.type) {
-            case WORD_DATA -> {
-                this.wordToDraw = (String) msg.data.get("word");
-                addWord(wordToDraw);
-                //      Game.game.sendMessage(new Message(Message.Type.WORD_DATA_RECEIVED));
-            }
+        if (msg.type == Message.Type.TIMES_UP) {
+            submitPicture();
         }
     }
 
@@ -288,7 +276,9 @@ public class DrawPhase extends Phase implements ActionListener {
         panelTop.add(jlabelWord);
     }
 
-
-
-
+    private void submitPicture() {
+        Message msg = new Message(Message.Type.SUBMIT_PICTURE);
+        msg.addParameter("drawing", drawPanel.getDrawData());
+        Game.game.sendMessage(new Message(Message.Type.SUBMIT_PICTURE));
+    }
 }

@@ -45,6 +45,8 @@ public class Network extends Thread {
 
     public void run() {
         try {
+            System.out.println(ipAddress);
+            System.out.println(portNumber);
             socket = new Socket(ipAddress, portNumber);
 
             objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
