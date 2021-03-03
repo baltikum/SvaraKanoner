@@ -7,7 +7,7 @@ import java.io.*;
 /**
  *
  * Class to hold all the settings of a hosted game.
- * 20210212 baltikum
+ * @author 20210212 Mattias Davidsson
  */
 
 public class GameSettings implements Serializable {
@@ -19,7 +19,6 @@ public class GameSettings implements Serializable {
     public long courtTimeMilliseconds;
     public boolean keepScore;
     public boolean chooseWords;
-    public boolean shakyHands;
     public int maxPlayers;
     public int numRounds;
     public int numberOfWordsToPickFrom;
@@ -36,7 +35,6 @@ public class GameSettings implements Serializable {
         this.courtTimeMilliseconds = 15L * 1000L;
         this.keepScore = true;
         this.chooseWords = true;
-        this.shakyHands = false;
         this.maxPlayers = 4;
         this.numRounds = 5;
         this.numberOfWordsToPickFrom = 4;
@@ -50,9 +48,6 @@ public class GameSettings implements Serializable {
     }
     public void toggleChooseWords() {
         chooseWords = !chooseWords;
-    }
-    public void toggleShakyHands() {
-        shakyHands = !shakyHands;
     }
 
     /**
@@ -136,7 +131,6 @@ public class GameSettings implements Serializable {
      */
     public boolean getKeepScore(){ return keepScore; }
     public boolean getChooseWords(){ return chooseWords; }
-    public boolean getShakyHands(){ return shakyHands; }
     public int getMaxPlayers(){ return maxPlayers; }
     public int getNumRounds(){ return numRounds; }
     public int getNumberOfWords() { return numberOfWordsToPickFrom; }
@@ -183,7 +177,6 @@ public class GameSettings implements Serializable {
         this.courtTimeMilliseconds = checkLongValue(loadedSettings.getCourtTimeMilliseconds());
         this.keepScore = loadedSettings.getKeepScore();
         this.chooseWords = loadedSettings.getChooseWords();
-        this.shakyHands = loadedSettings.getShakyHands();
         this.maxPlayers = checkIntValue(loadedSettings.getMaxPlayers());
         this.numRounds = checkIntValue(loadedSettings.getNumRounds());
         this.numberOfWordsToPickFrom = checkIntValue(loadedSettings.getNumberOfWords());

@@ -10,8 +10,12 @@ public class GameSession {
     private ArrayList<RoundData> sessionRounds;
     private GameSettings gameSettings;
     private Phase currentPhase;
-    private Timer timeLeft;
 
+    /**
+     * Constructor
+     * @param host ClientHandler
+     * @param settings GameSettings
+     */
     public GameSession(ClientHandler host, GameSettings settings ) {
         this.sessionID = generateSessionID();
         this.gameSettings = settings;
@@ -23,21 +27,38 @@ public class GameSession {
         joinPhase.addClient(host);
     }
 
+    /**
+     * Passes a recieved message toward respective active phase.
+     * @param msg the message
+     */
     public synchronized void receiveMessage(Message msg) {
         if (currentPhase != null) {
             currentPhase.message(msg);
         }
     }
 
+    /**
+     * Send message to all connected clients.
+     * @param msg the message.
+     */
     public void sendMessageToAll(Message msg) {
         for (ClientHandler handle : connectedClients)
             handle.sendMessage(msg);
     }
 
+    /**
+     * Returns a list of the connected clients in this session.
+     * @return ClientHandlers
+     */
     public List<ClientHandler> getConnectedPlayers() {
         return connectedClients;
     }
 
+    /**
+     * Retrieves a clients ClientHandler from this session via its player id.
+     * @param playerId
+     * @return ClientHandler
+     */
     public ClientHandler getConnectedPlayer(int playerId) {
         for (ClientHandler c : connectedClients) {
             if (c.getId() == playerId) {
@@ -47,12 +68,17 @@ public class GameSession {
         return null;
     }
 
+    /**
+     * Retrieves all the played RoundDatas for this session.
+     * @return
+     */
     public List<RoundData> getSessionRounds() {
         return sessionRounds;
     }
 
     /**
-     * Generates a sessionID
+     * Generates a sessionID  ex. LXL123
+     * Used by players to identify joining this session.
      * @return String
      */
     private String generateSessionID(){
@@ -63,6 +89,10 @@ public class GameSession {
         return sessionIdBuilder.toString();
     }
 
+    /**
+     * Use to set the current serverside phase.
+     * @param newPhase
+     */
     public void setPhase(Phase newPhase ) { currentPhase = newPhase; }
 
     /**
@@ -71,6 +101,10 @@ public class GameSession {
      */
     public RoundData getCurrentRoundData(){ return sessionRounds.get((sessionRounds.size()-1));}
 
+    /**
+     * Used to create a new RoundData inside this Gamesession.
+     * @param pickedWords
+     */
     public void createRoundData(HashMap<Integer,String> pickedWords) {
         sessionRounds.add(new RoundData(this, pickedWords));
     }
@@ -81,6 +115,9 @@ public class GameSession {
      */
     public GameSettings getGameSettings() { return gameSettings; }
 
+    /**
+     * Use to terminate this gamesession when game is over.
+     */
     public void terminate() {
         for (ClientHandler c : connectedClients) {
             c.setGameSession(null);

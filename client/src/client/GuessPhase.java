@@ -21,8 +21,11 @@ public class GuessPhase extends Phase {
     private AwesomeText text1;
     private AwesomeText text2;
 
-    private String guess;
-
+    /**
+     * Constructor GuessPhase Client side.
+     *
+     * @param msg Message containing the image to guess on.
+     */
     public GuessPhase(Message msg) {
 
         PercentLayout layout = new PercentLayout(1.0f);
@@ -96,7 +99,8 @@ public class GuessPhase extends Phase {
     }
 
     /**
-     *
+     * Sends the entered guess back to the server.
+     * @param guess
      */
     private void sendGuess(String guess) {
         if (!checkAndSendGuess(guess)) {
@@ -122,11 +126,15 @@ public class GuessPhase extends Phase {
         return true;
     }
 
-
+    /**
+     * Handles messages recieved, TIMES UP triggers a submit.
+     * @param msg
+     */
     @Override
     public void message(Message msg) {
         if (msg.type == Message.Type.TIMES_UP) {
             sendGuess(guessField.getText());
         }
     }
+    
 }
