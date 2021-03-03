@@ -20,9 +20,9 @@ public class MainMenu extends JPanel {
     private boolean hasPlayedQuitAnimation = false;
     private final Image wham, leftArrow, rightArrow;
     private final Image rocket, flame0, flame1, block;
+    private Settings.Listener settingsListener;
     private final Game game;
     private final GameSettings gameSettings = new GameSettings();
-    private Settings.Listener settingsListener;
 
     /**
      * Initiates a MainMenu phase and sets up the ui.
@@ -58,6 +58,8 @@ public class MainMenu extends JPanel {
         this.add(panel);
 
         AwesomeText title = new AwesomeText("Hello!");
+        JTextField ip = new JTextField("Enter IP Address of Host");
+        AwesomeButton setIPButton = new AwesomeButton("Set IP",wham);
         AwesomeButton joinGameButton = new AwesomeButton("Join Game", wham);
         AwesomeButton createGameButton = new AwesomeButton("Create Game", wham);
         AwesomeButton quitButton = new AwesomeButton("Quit", rocket);
@@ -67,13 +69,16 @@ public class MainMenu extends JPanel {
         title.setTextColor(Color.RED);
 
         AwesomeUtil.dynamicFont(title, 1.0f);
+        AwesomeUtil.dynamicFont(setIPButton, .2f);
         AwesomeUtil.dynamicFont(joinGameButton, .2f);
         AwesomeUtil.dynamicFont(createGameButton, .2f);
         AwesomeUtil.dynamicFont(quitButton, .3f);
 
+        AwesomeUtil.wiggleOnHover(setIPButton, 10.0f);
         AwesomeUtil.wiggleOnHover(joinGameButton, 10.0f);
         AwesomeUtil.scaleOnHover(createGameButton, 1.3f);
 
+        setIPButton.addActionListener(e -> Settings.getSettings().setIpAddress(ip.getText()));
         joinGameButton.addActionListener(e -> ((CardLayout)this.getLayout()).next(this) );
         createGameButton.addActionListener(e -> ((CardLayout)this.getLayout()).last(this) );
 
@@ -112,12 +117,16 @@ public class MainMenu extends JPanel {
         settings.addListener(settingsListener);
 
         panel.add(title);
+        panel.add(ip);
+        panel.add(setIPButton);
         panel.add(joinGameButton);
         panel.add(createGameButton);
         panel.add(quitButton);
         panel.add(rocketFlame);
 
         layout.setConstraintsRatioByWidth(title, 0.5f, 0.10f, .5f, .2f);
+        layout.setConstraintsRatioByWidth(ip, 0.4f, 0.20f, .5f, .1f);
+        layout.setConstraintsRatioByWidth(setIPButton, 0.8f, 0.20f, .3f, .5f);
         layout.setConstraintsRatioByWidth(joinGameButton, 0.25f, 0.4f, .4f, .5f);
         layout.setConstraintsRatioByWidth(createGameButton, 0.75f, 0.4f, .4f, .5f);
         layout.setConstraintsRatioByWidth(quitButton, 0.5f, 0.7f, .6f, .5f);

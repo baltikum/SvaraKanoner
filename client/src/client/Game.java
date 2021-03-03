@@ -25,7 +25,7 @@ public class Game implements ActionListener, WindowListener {
     private final JFrame frame;
 
     private GameSession session;
-    private Network network;
+    private final Network network;
     private JLabel errorMsg;
     private Chat chat;
 
