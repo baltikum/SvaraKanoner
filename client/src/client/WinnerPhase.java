@@ -1,17 +1,21 @@
 package client;
 
 import client.ui.*;
-import common.Message;
-import common.Phase;
-import common.Player;
-
+import common.*;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Handles the ui during the winner phase.
+ */
 public class WinnerPhase extends Phase {
 
     private final GameSession session;
 
+    /**
+     * Constructs the ui for the winner phase and sets the games content panel to it.
+     * @param gotoMessage The goto message from the server expects placements,playerIds and points if scores are enabled.
+     */
     public WinnerPhase(Message gotoMessage) {
         session = Game.getInstance().getSession();
 
@@ -53,12 +57,22 @@ public class WinnerPhase extends Phase {
         Game.getInstance().setContentPanel(panel);
     }
 
+    /**
+     * Add a player to the podium.
+     * @param panel The panel to add to.
+     * @param placement The placement number of the player.
+     * @param playerId The id of the player.
+     * @param points How many points the player got.
+     * @param x The x location of the player between 0 and 1.
+     * @param y The y location of the player between 0 and 1.
+     * @param width The width the player can take on the podium.
+     */
     private void addPlayerToPodium(JPanel panel, int placement, int playerId, int points, float x, float y, float width) {
         Player player = session.getPlayerById(playerId);
         if (player == null) return;
 
         AwesomeText placementLabel = new AwesomeText(placement + " (" + points + ")");
-        AwesomeImage playerIcon = new AwesomeImage(Assets.getPlayerIcons()[player.getAvatarId()]);
+        AwesomeImage playerIcon = new AwesomeImage(Assets.getAvatarImage(player.getAvatarId()));
 
         PercentLayout layout = (PercentLayout) panel.getLayout();
         panel.add(placementLabel);
@@ -69,8 +83,5 @@ public class WinnerPhase extends Phase {
     }
 
     @Override
-    public void message(Message msg) {
-
-    }
-
+    public void message(Message msg) { }
 }

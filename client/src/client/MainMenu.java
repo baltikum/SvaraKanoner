@@ -103,7 +103,7 @@ public class MainMenu extends JPanel {
         Settings settings = Settings.getSettings();
         AwesomeButton nextIcon = new AwesomeButton(rightArrow);
         AwesomeButton prevIcon = new AwesomeButton(leftArrow);
-        AwesomeImage playerIcon = new AwesomeImage(Assets.getPlayerIcons()[settings.getPreferredAvatarId()]);
+        AwesomeImage playerIcon = new AwesomeImage(Assets.getAvatarImage(settings.getPreferredAvatarId()));
         nextIcon.addActionListener( e -> settings.nextPreferredIcon());
         prevIcon.addActionListener( e -> settings.prevPreferredIcon());
 
@@ -113,7 +113,7 @@ public class MainMenu extends JPanel {
         layout.setConstraintsRatioByWidth(prevIcon, 0.1f, 0.1f, 0.05f, 1.0f);
         layout.setConstraintsRatioByWidth(playerIcon, 0.15f, 0.1f, 0.05f, 1.0f);
         layout.setConstraintsRatioByWidth(nextIcon, 0.2f, 0.1f, 0.05f, 1.0f);
-        settingsListener = (property, clientSettings) -> playerIcon.setImage(Assets.getPlayerIcons()[clientSettings.getPreferredAvatarId()]);
+        settingsListener = (property, clientSettings) -> playerIcon.setImage(Assets.getAvatarImage(clientSettings.getPreferredAvatarId()));
         settings.addListener(settingsListener);
 
         panel.add(title);

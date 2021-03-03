@@ -4,7 +4,11 @@ import common.Message;
 import common.Phase;
 
 /**
+ * Takes care of the server side responsibilities for the RevealPhase.
+ * Comes after the guess phase.
  *
+ * @author Jesper Jansson
+ * @version 04/03/21
  */
 public class RevealPhase extends Phase {
 
@@ -16,6 +20,10 @@ public class RevealPhase extends Phase {
     private boolean shouldRevealDrawing = true;
     private final boolean keepScores;
 
+    /**
+     * Constructs a reveal phase and tells all clients to goto it.
+     * @param session The game session that should go to reveal phase.
+     */
     public RevealPhase(GameSession session) {
         this.session = session;
         this.round = session.getCurrentRoundData();
@@ -27,6 +35,10 @@ public class RevealPhase extends Phase {
         session.sendMessageToAll(gotoRevealPhase);
     }
 
+    /**
+     * Reveals the next in order word/drawing/guess and sends it to all the clients and lastly changes phase.
+     * For example 2 players will result in word, drawing, guess, word, drawing, guess and then pick word or winner phase.
+     */
     public void revealNext() {
         if (currentWordIndex < round.getNumberOfWords()) {
             Message revealNextMsg = new Message(Message.Type.REVEAL_NEXT);
@@ -59,6 +71,10 @@ public class RevealPhase extends Phase {
         }
     }
 
+    /**
+     * Fills out the parameters of the current word reveal message.
+     * @param msg The message to fill out.
+     */
     private void fillRevealWordMessage(Message msg) {
         tracker = round.getWordTracker(currentWordIndex);
         msg.addParameter("word", tracker.getPickedWord());

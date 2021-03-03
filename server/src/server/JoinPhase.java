@@ -32,7 +32,6 @@ public class JoinPhase extends Phase {
     public void addClient(ClientHandler client) {
         // Resolve potential conflicts
         client.setName(resolvePlayerName(client.getName()));
-        client.setId(nextPlayerId++);
         if ((takenAvatarIds & (0x1 << client.getAvatarId())) != 0) {
             int avatarId = 0;
             while ((takenAvatarIds & (0x1 << avatarId)) != 0)

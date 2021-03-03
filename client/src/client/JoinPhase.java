@@ -99,7 +99,7 @@ public class JoinPhase extends Phase {
         int positionIndex = players.size() < 8 ?
                 freePositions.remove(random.nextInt(8 - players.size())) :
                 freePositions.remove(random.nextInt(freePositions.size()));
-        AwesomeIconLabel playerLabel = new AwesomeIconLabel(Assets.getPlayerIcons()[player.getAvatarId()], player.getName());
+        AwesomeIconLabel playerLabel = new AwesomeIconLabel(Assets.getAvatarImage(player.getAvatarId()), player.getName());
         panel.add(playerLabel);
         ((PercentLayout)panel.getLayout()).setConstraintsRatioByWidth(playerLabel,
                 positionData[positionIndex * POSITION_DATA_COMPONENTS],

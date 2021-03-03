@@ -151,7 +151,7 @@ public class PhaseUI {
     public void addPlayerToList(Player player) {
         if (playerIdToLabel.containsKey(player.getId())) return;
 
-        AwesomeIconLabel playerLabel = new AwesomeIconLabel(Assets.getPlayerIcons()[player.getAvatarId()], player.getName());
+        AwesomeIconLabel playerLabel = new AwesomeIconLabel(Assets.getAvatarImage(player.getAvatarId()), player.getName());
         playerLabel.setPreferredSize(new Dimension(175, 40));
         playerLabel.setMaximumSize(new Dimension(175, 40));
 

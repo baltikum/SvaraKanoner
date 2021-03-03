@@ -1,18 +1,8 @@
 package server;
 
-import common.Message;
-import common.MessageResponseListener;
-import common.Player;
-
-import java.awt.*;
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
-import java.net.SocketException;
-import java.util.ArrayDeque;
-import java.util.Queue;
+import common.*;
+import java.io.*;
+import java.net.*;
 
 public class ClientHandler extends Player implements Runnable {
 
@@ -21,8 +11,8 @@ public class ClientHandler extends Player implements Runnable {
     private GameSession gameSession;
     private int points;
 
-    public ClientHandler(Socket socket) {
-        super(-1, "", -1);
+    public ClientHandler(Socket socket, int id) {
+        super(id, "", -1);
         this.socket = socket;
     }
 

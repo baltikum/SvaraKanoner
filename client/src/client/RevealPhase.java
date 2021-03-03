@@ -89,14 +89,14 @@ public class RevealPhase extends Phase {
     }
 
     public void revealNextDrawing(ArrayList<List<PaintPoint>> drawing, Player player) {
-        Image playerIcon = Assets.getPlayerIcons()[player.getAvatarId()];
+        Image playerIcon = Assets.getAvatarImage(player.getAvatarId());
         drawingComp.setDrawData(drawing);
         drawingOwnerLabel.setIcon(playerIcon);
         reveal(drawingComp, drawingOwnerLabel);
     }
 
     public void revealNextGuess(String guess, Player player, Player imagePlayerId, boolean receivesPoints) {
-        Image playerIcon = Assets.getPlayerIcons()[player.getAvatarId()];
+        Image playerIcon = Assets.getAvatarImage(player.getAvatarId());
         guessComp.setText(guess);
         guessOwnerLabel.setIcon(playerIcon);
         reveal(guessComp, guessOwnerLabel);

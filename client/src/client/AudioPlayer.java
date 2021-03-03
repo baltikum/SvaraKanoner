@@ -11,6 +11,8 @@ import java.util.ArrayList;
 /**
  * Handles all audio inside the game.
  *
+ * This is a singleton and can be retrieved from getInstance.
+ *
  * @author Jesper Jansson
  * @version 03/03/21
  */
@@ -82,6 +84,10 @@ public class AudioPlayer {
         }
     }
 
+    /**
+     * Play a given effect.
+     * @param effect A path to the effect to play.
+     */
     public void playEffect(String effect) {
         try {
             URL url = new URL(effect);
@@ -113,6 +119,10 @@ public class AudioPlayer {
         }
     }
 
+    /**
+     *
+     * @param song Can be PickWord, Draw, Guess, Waiting, Reveal, Winner
+     */
     public void changeSongAudioPlayer(String song) {
         InputStream audioFile = Main.class.getResourceAsStream("/lat1.wav");;
         switch (song) {

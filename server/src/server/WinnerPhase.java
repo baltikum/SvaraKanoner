@@ -4,16 +4,24 @@ import common.Message;
 import common.Phase;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
+/**
+ * Keeps track of the winner phase responsibilities of the winner phase.
+ *
+ * @author Jesper Jansson
+ * @version 04/03/21
+ */
 public class WinnerPhase extends Phase {
 
-    private final GameSession session;
-
+    /**
+     * Constructs a winner phase.
+     * Calculates the placement of all players and sends out the playerIds, placements, scores for each player.
+     * If scores is disabled it only tells the players to go to the winner phase.
+     * Then disconnects all players from the game session.
+     * @param session The game session that should be finished.
+     */
     public WinnerPhase(GameSession session) {
-        this.session = session;
-
         Message msg = new Message(Message.Type.GOTO);
         msg.addParameter("phase", "WinnerPhase");
         if (session.getGameSettings().keepScore) {

@@ -20,9 +20,10 @@ public class Main {
     public static void main(String[] args) throws IOException {
         System.out.println("Server is running");
         var pool = Executors.newFixedThreadPool(100);
+        int playerIds = 1;
         try (ServerSocket listener = new ServerSocket(PORT)) {
             while (true) {
-                ClientHandler client = new ClientHandler(listener.accept());
+                ClientHandler client = new ClientHandler(listener.accept(), playerIds++);
                 pool.execute(client); // wait for new connection -> create new thread for it
             }
         }

@@ -11,6 +11,9 @@ import java.awt.image.BufferedImage;
 
 /**
  * Handles all permanent ui/data from when the game is started until the user closes it.
+ * It's a singleton and can be retrieved with getInstance after constructed.
+ *
+ * It owns the window, network and game session if one has been joined/created.
  *
  * @author Jesper Jansson
  * @version 03/03/21
@@ -29,7 +32,11 @@ public class Game implements ActionListener, WindowListener {
     private JLabel errorMsg;
     private Chat chat;
 
-    Game() {
+    /**
+     * Constructs the singleton game instance.
+     * And the window for the game and any permanent ui.
+     */
+    public Game() {
         Settings settings = Settings.getSettings();
         Rectangle windowBounds = settings.getWindowBounds();
 
@@ -67,6 +74,9 @@ public class Game implements ActionListener, WindowListener {
         instance = this;
     }
 
+    /**
+     * Initiate the ui to be displayed above everything else.
+     */
     private void initTopLayer() {
         Settings settings = Settings.getSettings();
         SpringLayout layout = new SpringLayout();
@@ -138,56 +148,79 @@ public class Game implements ActionListener, WindowListener {
         layout.putConstraint(SpringLayout.SOUTH, chat, -10, SpringLayout.SOUTH, panel);
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        AwesomeUtil.increaseDelta();
-        frame.repaint();
-    }
-
+    /**
+     * Sets the content panel of the window.
+     * @param panel The new content panel.
+     */
     public void setContentPanel(Container panel) {
         frame.setContentPane(panel);
         frame.revalidate();
     }
 
-    public Container getContentPanel() {
-        return frame.getContentPane();
-    }
-
+    /**
+     * Sets a error message to be displayed to the player.
+     * @param msg The message to display.
+     */
     public void setErrorMsg(String msg) {
         errorMsg.setText(msg);
         errorMsg.setVisible(true);
     }
 
-    public void hideErrorMsg(String msg) {
-        if (errorMsg.getText().equals(msg)) {
-            errorMsg.setVisible(false);
-        }
-    }
-
+    /**
+     * Sends a message to the server.
+     * @param message The message to send.
+     */
     public void sendMessage(Message message) {
         network.sendMessage(message);
     }
 
+    /**
+     * Sends a message to the server and registers a response listener.
+     * @param message The message to send.
+     * @param responseListener The response listener to register.
+     */
     public void sendMessage(Message message, MessageResponseListener responseListener) {
         network.sendMessage(message, responseListener);
     }
 
+    /**
+     *
+     * @return The chat.
+     */
     public Chat getChat() {
         return chat;
     }
 
+    /**
+     * @return The session if one has been joined/created else null.
+     */
     public GameSession getSession() {
         return session;
     }
 
+    /**
+     * Starts a new session.
+     * @param thisPlayer The player data of this client.
+     * @param gameSettings The game settings for the session.
+     * @param sessionId The id of the session.
+     */
     public void startSession(Player thisPlayer, GameSettings gameSettings, String sessionId) {
         session = new GameSession(thisPlayer, gameSettings, sessionId);
     }
 
+    /**
+     * Leaves the current session resulting in getSession returning null until a new i started.
+     */
     public void leaveSession() {
         chat.clear();
         session = null;
         setContentPanel(new MainMenu(this));
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        AwesomeUtil.increaseDelta();
+        frame.repaint();
     }
 
     @Override

@@ -124,13 +124,17 @@ public class Assets {
         return result;
     }
 
-    public static Image[] getPlayerIcons() {
+    /**
+     * Return an array of the player icons
+     * @return
+     */
+    public static Image getAvatarImage(int avatarId) {
         if (playerIcons == null) {
             BufferedImage tileMap = Assets.loadImage("player-icons.png");
             playerIcons = Assets.getTiles(tileMap, 0, 0, 1, 1, 8, 4, 1, 16);
         }
-
-        return playerIcons;
+        avatarId = Math.max(Math.min(avatarId, playerIcons.length - 1), 0);
+        return playerIcons[avatarId];
     }
 
     public static BufferedImage getButtonIcon() {
