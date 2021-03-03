@@ -81,30 +81,36 @@ public class JoinPhase extends Phase {
             case JOIN_GAME -> {
                 ClientHandler joiner = (ClientHandler) msg.player;
                 Message response = new Message(Message.Type.RESPONSE);
-                joiner.setName((String) msg.data.getOrDefault("requestedName", ""));
-                joiner.setAvatarId((int) msg.data.getOrDefault("requestedAvatarId", 0));
 
-                // Add the existing players to the response message before adding the new player
-                List<ClientHandler> existingPlayers = session.getConnectedPlayers();
-                int[] existingPlayerIds = new int[existingPlayers.size()];
-                String[] existingPlayerNames = new String[existingPlayers.size()];
-                int[] existingPlayerAvatarIds = new int[existingPlayers.size()];
-                for (int i = 0; i < existingPlayers.size(); i++) {
-                    ClientHandler player = existingPlayers.get(i);
-                    existingPlayerIds[i] = player.getId();
-                    existingPlayerAvatarIds[i] = player.getAvatarId();
-                    existingPlayerNames[i] = player.getName();
+                if (session.getConnectedPlayers().size() >= session.getGameSettings().getMaxPlayers()) {
+                    response.error = "The server is full. ";
+                } else {
+                    joiner.setName((String) msg.data.getOrDefault("requestedName", ""));
+                    joiner.setAvatarId((int) msg.data.getOrDefault("requestedAvatarId", 0));
+
+                    // Add the existing players to the response message before adding the new player
+                    List<ClientHandler> existingPlayers = session.getConnectedPlayers();
+                    int[] existingPlayerIds = new int[existingPlayers.size()];
+                    String[] existingPlayerNames = new String[existingPlayers.size()];
+                    int[] existingPlayerAvatarIds = new int[existingPlayers.size()];
+                    for (int i = 0; i < existingPlayers.size(); i++) {
+                        ClientHandler player = existingPlayers.get(i);
+                        existingPlayerIds[i] = player.getId();
+                        existingPlayerAvatarIds[i] = player.getAvatarId();
+                        existingPlayerNames[i] = player.getName();
+                    }
+                    response.addParameter("existingPlayerIds", existingPlayerIds);
+                    response.addParameter("existingPlayerNames", existingPlayerNames);
+                    response.addParameter("existingPlayerAvatarIds", existingPlayerAvatarIds);
+
+                    addClient(joiner);
+                    response.addParameter("sessionId", session.sessionID);
+                    response.addParameter("playerAvatarId", joiner.getAvatarId());
+                    response.addParameter("playerName", joiner.getName());
+                    response.addParameter("playerId", joiner.getId());
+                    response.addParameter("gameSettings", session.getGameSettings());
                 }
-                response.addParameter("existingPlayerIds", existingPlayerIds);
-                response.addParameter("existingPlayerNames", existingPlayerNames);
-                response.addParameter("existingPlayerAvatarIds", existingPlayerAvatarIds);
 
-                addClient(joiner);
-                response.addParameter("sessionId", session.sessionID);
-                response.addParameter("playerAvatarId", joiner.getAvatarId());
-                response.addParameter("playerName", joiner.getName());
-                response.addParameter("playerId", joiner.getId());
-                response.addParameter("gameSettings", session.getGameSettings());
                 joiner.sendMessage(response);
             }
             case DISCONNECT -> {
