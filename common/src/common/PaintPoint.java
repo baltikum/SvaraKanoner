@@ -27,7 +27,7 @@ public class PaintPoint implements Serializable {
         return y;
     }
 
-    public Color getFarg() {
+    public Color getColor() {
         return color;
     }
 

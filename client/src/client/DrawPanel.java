@@ -14,8 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.swing.ImageIcon;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 public class DrawPanel extends JPanel implements Serializable, MouseListener, MouseMotionListener, AwesomeEffect.User {
 
@@ -72,7 +71,7 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
                 for (int i = 1; i < path.size(); i++) {
                     PaintPoint pointStart = path.get(i - 1);
                     PaintPoint pointEnd = path.get(i);
-                    Color color = path.get(i).getFarg();
+                    Color color = path.get(i).getColor();
                     double finalBrushSize = path.get(i).getbrushSize() * getWidth();
                     float finalBrushSizeFloat = (float) finalBrushSize;
 
@@ -92,20 +91,24 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
     }
 
     public synchronized void mouseDragged(MouseEvent e) {
-        if (canEdit && paintPoints != null) {
-            double xValue = e.getX();
-            double xValueAdjusted = xValue / getWidth();
-            double yValue = e.getY();
-            double yValueAdjusted = yValue / getHeight();
 
-            PaintPoint dragPoint = new PaintPoint(xValueAdjusted, yValueAdjusted, color, brushSize / getWidth());
-            currentPath.add(dragPoint);
-            repaint();
-        }
+
+
+            if (canEdit && paintPoints != null && (SwingUtilities.isLeftMouseButton(e)) ) {
+                double xValue = e.getX();
+                double xValueAdjusted = xValue / getWidth();
+                double yValue = e.getY();
+                double yValueAdjusted = yValue / getHeight();
+
+                PaintPoint dragPoint = new PaintPoint(xValueAdjusted, yValueAdjusted, color, brushSize / getWidth());
+                currentPath.add(dragPoint);
+                repaint();
+            }
+
     }
 
     public synchronized void mouseClicked(MouseEvent e) {
-        if (canEdit && e.getButton() == MouseEvent.BUTTON1) {
+        if (canEdit && (SwingUtilities.isLeftMouseButton(e))) {
             currentPath = new ArrayList<>();
             double xValue = e.getX();
             double xValueAdjusted = xValue / getWidth();
@@ -123,7 +126,7 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
     }
 
     public synchronized void mousePressed(MouseEvent e) {
-        if (canEdit && e.getButton() == MouseEvent.BUTTON1) {
+        if (canEdit && (SwingUtilities.isLeftMouseButton(e))) {
             currentPath = new ArrayList<>();
             double xValue = e.getX();
             double xValueAdjusted = xValue / getWidth();
@@ -136,7 +139,7 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
     }
 
     public synchronized void mouseReleased(MouseEvent e) {
-        if (e.getButton() == MouseEvent.BUTTON1) {
+        if (SwingUtilities.isLeftMouseButton(e)) {
             currentPath = null;
         }
     }
