@@ -22,6 +22,7 @@ public class MainMenu extends JPanel {
     private final Image rocket, flame0, flame1, block;
     private final Game game;
     private final GameSettings gameSettings = new GameSettings();
+    private Settings.Listener settingsListener;
 
     /**
      * Initiates a MainMenu phase and sets up the ui.
@@ -107,7 +108,8 @@ public class MainMenu extends JPanel {
         layout.setConstraintsRatioByWidth(prevIcon, 0.1f, 0.1f, 0.05f, 1.0f);
         layout.setConstraintsRatioByWidth(playerIcon, 0.15f, 0.1f, 0.05f, 1.0f);
         layout.setConstraintsRatioByWidth(nextIcon, 0.2f, 0.1f, 0.05f, 1.0f);
-        settings.addListener((property, clientSettings) -> playerIcon.setImage(Assets.getPlayerIcons()[clientSettings.getPreferredAvatarId()]));
+        settingsListener = (property, clientSettings) -> playerIcon.setImage(Assets.getPlayerIcons()[clientSettings.getPreferredAvatarId()]);
+        settings.addListener(settingsListener);
 
         panel.add(title);
         panel.add(joinGameButton);
