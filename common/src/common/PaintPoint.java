@@ -1,10 +1,17 @@
 package common;
-
 import java.awt.Color;
 import java.io.Serializable;
 
-public class PaintPoint implements Serializable {
 
+    /**
+     * A class for saving the X and Y values,
+     * the color and the brushSize for each point.
+     *
+     * @author Johnny Larsson
+     */
+
+
+public class PaintPoint implements Serializable {
     private double x;
     private double y;
     private Color color;
@@ -16,7 +23,6 @@ public class PaintPoint implements Serializable {
         this.y = y;
         this.color = color;
         this.brushSize = brushSize;
-
     }
 
     public double getX() {
@@ -31,7 +37,7 @@ public class PaintPoint implements Serializable {
         return color;
     }
 
-    public double getbrushSize() {
+    public double getBrushSize() {
         return brushSize;
     }
 

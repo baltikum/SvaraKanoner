@@ -42,9 +42,7 @@ public class DrawPhase extends Phase {
 
     @Override
     public void message(Message msg) {
-        if (msg.type == Message.Type.SUBMIT_PICTURE) {        //  Hur göra här med bild, ska alltid gå till guessPhase
-            // kolla medelandet
-            //gameSession.getCurrentRoundData().saveImage(msg.player.getId(), (String) msg.data.get("guess"), (PaintPoint) msg.data.get("image"));
+        if (msg.type == Message.Type.SUBMIT_PICTURE) {
             int playerId = msg.player.getId();
             if (words.containsKey(playerId)) {
                 WordTracker tracker = words.remove(playerId);
