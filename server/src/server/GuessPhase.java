@@ -6,7 +6,6 @@ import common.PaintPoint;
 import common.Phase;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -51,7 +50,6 @@ public class GuessPhase extends Phase {
             }
             client.sendMessage(message);
         }
-
         timeLeft.start();
     }
 
@@ -70,7 +68,7 @@ public class GuessPhase extends Phase {
     }
 
     /**
-     * Increment submit by one.
+     * Increments submit by one.
      */
     private void incrementSubmit() { this.submits++; };
 

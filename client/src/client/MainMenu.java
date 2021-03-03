@@ -20,7 +20,6 @@ public class MainMenu extends JPanel {
     private boolean hasPlayedQuitAnimation = false;
     private final Image wham, leftArrow, rightArrow;
     private final Image rocket, flame0, flame1, block;
-    private Settings.Listener settingsListener;
     private final Game game;
     private final GameSettings gameSettings = new GameSettings();
 
@@ -116,7 +115,7 @@ public class MainMenu extends JPanel {
         panel.add(quitButton);
         panel.add(rocketFlame);
 
-        layout.setConstraintsRatioByWidth(title, 0.5f, 0.15f, .5f, .2f);
+        layout.setConstraintsRatioByWidth(title, 0.5f, 0.10f, .5f, .2f);
         layout.setConstraintsRatioByWidth(joinGameButton, 0.25f, 0.4f, .4f, .5f);
         layout.setConstraintsRatioByWidth(createGameButton, 0.75f, 0.4f, .4f, .5f);
         layout.setConstraintsRatioByWidth(quitButton, 0.5f, 0.7f, .6f, .5f);

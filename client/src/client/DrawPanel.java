@@ -11,10 +11,19 @@ import java.awt.event.MouseMotionListener;
 import java.awt.geom.Line2D;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-
 import javax.swing.*;
+
+
+
+    /**
+     * A class for with a JPanel for drawing.
+     *
+     *
+     * @author Johnny Larsson
+     */
+
+
 
 public class DrawPanel extends JPanel implements Serializable, MouseListener, MouseMotionListener, AwesomeEffect.User {
 
@@ -72,7 +81,7 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
                     PaintPoint pointStart = path.get(i - 1);
                     PaintPoint pointEnd = path.get(i);
                     Color color = path.get(i).getColor();
-                    double finalBrushSize = path.get(i).getbrushSize() * getWidth();
+                    double finalBrushSize = path.get(i).getBrushSize() * getWidth();
                     float finalBrushSizeFloat = (float) finalBrushSize;
 
                     g2d.setStroke(new BasicStroke(finalBrushSizeFloat, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
@@ -85,15 +94,11 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
                     g2d.draw(new Line2D.Double(pointStartX, pointStartY, pointEndX, pointEndY));
                 }
             }
-
             g2d.dispose();
         }
     }
 
     public synchronized void mouseDragged(MouseEvent e) {
-
-
-
             if (canEdit && paintPoints != null && (SwingUtilities.isLeftMouseButton(e)) ) {
                 double xValue = e.getX();
                 double xValueAdjusted = xValue / getWidth();
@@ -104,7 +109,6 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
                 currentPath.add(dragPoint);
                 repaint();
             }
-
     }
 
     public synchronized void mouseClicked(MouseEvent e) {
@@ -166,33 +170,24 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
     public void setColor(String colorToSet){
         switch(colorToSet)
         {
-            case "GREEN":
-                color = new Color(0, 204, 0);
-                break;
-            case "BLUE":
-                color = Color.BLUE;
-                break;
-            case "BLACK":
-                color = Color.BLACK;
-                break;
-            case "RED":
-                color = Color.RED;
-                break;
-            case "YELLOW":
-                color = Color.YELLOW;
-                break;
-            case "BROWN":
-                color = new Color(153, 102, 0);
-                break;
-            case "PINK":
-                color = Color.PINK;
-                break;
-            case "ORANGE":
-                color = Color.ORANGE;
-                break;
-            case "GRAY":
-                color = Color.GRAY;
-                break;
+            case "GREEN" -> { color = new Color(0, 204, 0);
+            }
+            case "BLUE"-> { color = Color.BLUE;
+            }
+            case "BLACK"-> { color = Color.BLACK;
+            }
+            case "RED"-> { color = Color.RED;
+            }
+            case "YELLOW"-> { color = Color.YELLOW;
+            }
+            case "BROWN"-> { color = new Color(153, 102, 0);
+            }
+            case "PINK"-> { color = Color.PINK;
+            }
+            case "ORANGE"-> { color = Color.ORANGE;
+            }
+            case "GRAY"->{ color = Color.GRAY;
+            }
         }
         colorSetup();
     }
