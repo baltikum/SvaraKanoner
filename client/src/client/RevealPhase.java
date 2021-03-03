@@ -71,7 +71,8 @@ public class RevealPhase extends Phase {
         if (msg.data.containsKey("drawing")) {
             revealNextDrawing((ArrayList<List<PaintPoint>>) msg.data.get("drawing"), player);
         } else if (msg.data.containsKey("guess")) {
-            revealNextGuess((String) msg.data.get("guess"), player);
+            Player drawingPlayer = session.getPlayerById((int) msg.data.get("imagePlayerId"));
+            revealNextGuess((String) msg.data.get("guess"), player, drawingPlayer, (boolean) msg.data.get("receivesPoints"));
         } else if (msg.data.containsKey("word")) {
             revealNextWord((String) msg.data.get("word"));
         }
@@ -83,6 +84,8 @@ public class RevealPhase extends Phase {
         drawingComp.setVisible(false);
         guessOwnerLabel.setVisible(false);
         guessComp.setVisible(false);
+
+        session.getPhaseUI().resetPlayerColors();
     }
 
     public void revealNextDrawing(ArrayList<List<PaintPoint>> drawing, Player player) {
@@ -92,11 +95,16 @@ public class RevealPhase extends Phase {
         reveal(drawingComp, drawingOwnerLabel);
     }
 
-    public void revealNextGuess(String guess, Player player) {
+    public void revealNextGuess(String guess, Player player, Player imagePlayerId, boolean receivesPoints) {
         Image playerIcon = Assets.getPlayerIcons()[player.getAvatarId()];
         guessComp.setText(guess);
         guessOwnerLabel.setIcon(playerIcon);
         reveal(guessComp, guessOwnerLabel);
+
+        if (receivesPoints) {
+            session.getPhaseUI().setColorOfPlayer(player.getId(), Color.GREEN);
+            session.getPhaseUI().setColorOfPlayer(imagePlayerId.getId(), Color.GREEN);
+        }
     }
 
     private void reveal(JComponent ownerComp, JComponent revealComp) {

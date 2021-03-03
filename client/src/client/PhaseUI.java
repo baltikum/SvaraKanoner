@@ -135,6 +135,19 @@ public class PhaseUI {
         timeLeftText.setText("");
     }
 
+    public void setColorOfPlayer(int playerId, Color color) {
+        AwesomeIconLabel label = playerIdToLabel.get(playerId);
+        if (label != null) {
+            label.setTextColor(color);
+        }
+    }
+
+    public void resetPlayerColors() {
+        for (AwesomeIconLabel label : playerIdToLabel.values()) {
+            label.setTextColor(Color.BLACK);
+        }
+    }
+
     public void addPlayerToList(Player player) {
         if (playerIdToLabel.containsKey(player.getId())) return;
 

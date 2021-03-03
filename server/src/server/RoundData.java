@@ -33,7 +33,9 @@ public class RoundData {
     public RoundData(GameSession session, HashMap<Integer,String> pickedWords ){
         this.gameSession = session;
 
-        for ( ClientHandler client : session.getConnectedPlayers()) {
+        List<ClientHandler> clients = new ArrayList<>(session.getConnectedPlayers());
+        Collections.shuffle(clients);
+        for ( ClientHandler client : clients) {
             playerOrder.add(client.getId());
         }
         for ( int i = 0; i < pickedWords.size(); i++ ) {
@@ -90,6 +92,7 @@ public class RoundData {
             this.saved++;
             if ( this.saved == wordTrackers.size() ) {
                 saved = 0;
+                rotateOrder();
                 return true;
             }
         }

@@ -14,10 +14,12 @@ public class RevealPhase extends Phase {
     private int currentWordIndex = 0;
     private int currentRevealIndex = 0;
     private boolean shouldRevealDrawing = true;
+    private final boolean keepScores;
 
     public RevealPhase(GameSession session) {
         this.session = session;
         this.round = session.getCurrentRoundData();
+        keepScores = session.getGameSettings().getKeepScore();
 
         Message gotoRevealPhase = new Message(Message.Type.GOTO);
         gotoRevealPhase.addParameter("phase", "RevealPhase");
@@ -37,8 +39,9 @@ public class RevealPhase extends Phase {
                     revealNextMsg.addParameter("drawing", entry.getImage());
                 } else {
                     revealNextMsg.addParameter("playerId", entry.getGuessSubmitterId());
+                    revealNextMsg.addParameter("imagePlayerId", entry.getImageSubmitterId());
                     revealNextMsg.addParameter("guess", entry.getGuess());
-                    revealNextMsg.addParameter("correct", entry.isCorrect());
+                    revealNextMsg.addParameter("receivesPoints", keepScores && entry.isCorrect());
                     if (entry == tracker.getLatestEntry()) {
                         ++currentWordIndex;
                         currentRevealIndex = 0;
