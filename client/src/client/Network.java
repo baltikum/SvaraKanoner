@@ -40,7 +40,7 @@ public class Network extends Thread {
             objectOutputStream.writeObject(message);
             objectOutputStream.flush();
             responseListeners.add(responseListener);
-        } catch (Exception ignore) {
+        } catch (Exception e) {
             Game.game.setErrorMsg("Could not send to the server: " + e.getMessage());
         }
     }
