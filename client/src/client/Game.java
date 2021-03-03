@@ -67,12 +67,12 @@ public class Game implements ActionListener, WindowListener {
         network.start();
 
         // Start with
-        setCurrentPhase(new MainMenu());
+        //setCurrentPhase(new MainMenu());
         // Message msg = new Message(Message.Type.PICK_WORD);
         // msg.addParameter("words", new String[]{"aaa", "aaa", "asd", "aasd"});
         // setCurrentPhase(new PickWordPhase(msg));
         // setCurrentPhase(new WinnerPhase(new Message(Message.Type.GOTO)));
-        // setCurrentPhase(new DrawPhase());
+         setCurrentPhase(new DrawPhase(new Message(Message.Type.GOTO)));
         // setCurrentPhase(new WaitingPhase(new Message(Message.Type.GOTO)));
         // setCurrentPhase(new GuessPhase(new Message(Message.Type.GOTO)));
 
