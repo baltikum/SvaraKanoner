@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayDeque;
 import java.util.Queue;
 
@@ -66,7 +67,7 @@ public class ClientHandler extends Player implements Runnable {
                             gameSession.receiveMessage(message);
                         }
                     }
-                } catch (EOFException ignore) {
+                } catch (EOFException | SocketException ignore) {
                     break;
                 } catch (Exception e) {
                     e.printStackTrace();

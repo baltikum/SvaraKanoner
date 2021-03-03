@@ -73,7 +73,7 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
             if (effect != null) {
-                effect.transform(g2d, getSize(), false);
+                effect.transform(g2d, getSize(), true);
             }
 
             for (List<PaintPoint> path : paintPoints) {

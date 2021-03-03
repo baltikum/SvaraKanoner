@@ -4,10 +4,13 @@ import client.ui.AwesomeButton;
 import common.Message;
 
 import javax.swing.*;
+import javax.swing.event.MouseInputAdapter;
 import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 /**
  * A panel for the chat input and displaying.
@@ -17,10 +20,10 @@ import java.awt.image.BufferedImage;
  */
 public class Chat extends JPanel {
     private boolean isOpen = false;
-    private JButton closeChat;
-    private JTextField inputField;
-    private JTextArea messageData;
-    private JScrollPane messageScrollPane;
+    private final JButton closeChat;
+    private final JTextField inputField;
+    private final ArrayList<String> lines = new ArrayList<>();
+    private int scrolledLines = 0;
 
     /**
      * Initiates the panel.
@@ -30,6 +33,7 @@ public class Chat extends JPanel {
         super(new BorderLayout());
         setPreferredSize(new Dimension(400, 32 * 3));
         setOpaque(false);
+        setFont(getFont().deriveFont(17.0f));
 
         Image upIcon = Assets.getTile(icons, 2, 0, 1, 1, 4);
         Image downIcon = Assets.getTile(icons, 3, 0, 1, 1, 4);
@@ -42,19 +46,6 @@ public class Chat extends JPanel {
         buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.Y_AXIS));
         buttonsPanel.setOpaque(false);
         inputPanel.setOpaque(false);
-
-        messageData = new JTextArea();
-        messageData.setOpaque(false);
-        messageData.setFont(messageData.getFont().deriveFont(20.0f));
-        messageData.setLineWrap(true);
-        messageData.setEditable(false);
-        messageData.setFocusable(false);
-        messageScrollPane = new JScrollPane(messageData);
-        messageScrollPane.setOpaque(false);
-        messageScrollPane.getViewport().setOpaque(false);
-        messageScrollPane.setBorder(null);
-        messageScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
-        messageScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
         inputField = new JTextField();
         closeChat = new AwesomeButton(closeIcon);
@@ -75,7 +66,6 @@ public class Chat extends JPanel {
         inputPanel.add(sendChat);
 
         add(inputPanel, BorderLayout.PAGE_END);
-        add(messageScrollPane, BorderLayout.CENTER);
         add(buttonsPanel, BorderLayout.LINE_END);
 
         closeChat.setVisible(false);
@@ -122,14 +112,14 @@ public class Chat extends JPanel {
      * Scroll up a little bit.
      */
     public void scrollUp() {
-        messageScrollPane.getVerticalScrollBar().setValue(messageScrollPane.getVerticalScrollBar().getValue() - 30);
+        scrolledLines = Math.max(Math.min(scrolledLines + 3, lines.size() - 4), 0);
     }
 
     /**
      * Scroll down a little bit.
      */
     public void scrollDown() {
-        messageScrollPane.getVerticalScrollBar().setValue(messageScrollPane.getVerticalScrollBar().getValue() + 30);
+        scrolledLines = Math.max(scrolledLines - 3, 0);
     }
 
     /**
@@ -141,8 +131,9 @@ public class Chat extends JPanel {
         String msg = inputField.getText();
         if (!msg.isEmpty()) {
             msg = Game.game.getThisPlayer().getName() + ": " + msg + "\n";
-            messageData.append(msg);
+            lines.add(msg);
             inputField.setText("");
+            if (scrolledLines != 0) ++scrolledLines;
 
             Message serverMsg = new Message(Message.Type.CHAT_MESSAGE);
             serverMsg.addParameter("message", msg);
@@ -155,6 +146,20 @@ public class Chat extends JPanel {
      * @param msg The server message
      */
     public void message(Message msg) {
-        messageData.append((String) msg.data.get("message"));
+        lines.add((String) msg.data.get("message"));
+        if (scrolledLines != 0) ++scrolledLines;
+    }
+
+    @Override
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        g.setFont(this.getFont());
+        FontMetrics metrics = g.getFontMetrics();
+        int y = getHeight() - metrics.getHeight() - 32;
+        for (int i = lines.size() - 1 - scrolledLines; i >= 0; i--) {
+            g.drawString(lines.get(i), 5, y);
+            y -= metrics.getHeight();
+            if (y <= 0) break;
+        }
     }
 }

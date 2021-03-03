@@ -59,7 +59,6 @@ public class Game implements ActionListener, WindowListener {
         frame.setPreferredSize(new Dimension(800, 800));
 
         // Initiate the LayeredPane
-        frame.setContentPane(new JLayeredPane());
         initTopLayer();
 
         // Start the network
@@ -67,12 +66,12 @@ public class Game implements ActionListener, WindowListener {
         network.start();
 
         // Start with
-        //setCurrentPhase(new MainMenu());
+        setCurrentPhase(new MainMenu());
         // Message msg = new Message(Message.Type.PICK_WORD);
         // msg.addParameter("words", new String[]{"aaa", "aaa", "asd", "aasd"});
         // setCurrentPhase(new PickWordPhase(msg));
         // setCurrentPhase(new WinnerPhase(new Message(Message.Type.GOTO)));
-         setCurrentPhase(new DrawPhase(new Message(Message.Type.GOTO)));
+        // setCurrentPhase(new DrawPhase(new Message(Message.Type.GOTO)));
         // setCurrentPhase(new WaitingPhase(new Message(Message.Type.GOTO)));
         // setCurrentPhase(new GuessPhase(new Message(Message.Type.GOTO)));
 
@@ -92,8 +91,15 @@ public class Game implements ActionListener, WindowListener {
 
     private void initTopLayer() {
         SpringLayout layout = new SpringLayout();
-        JLayeredPane parent = (JLayeredPane) frame.getContentPane();
-        parent.setLayout(layout);
+        JPanel panel = new JPanel(layout) {
+            @Override
+            public void paintComponent(Graphics g) {}
+        };
+        // panel.setPreferredSize(new Dimension(500, 500));
+        frame.setGlassPane(panel);
+        panel.setVisible(true);
+        panel.setOpaque(false);
+        panel.setBackground(new Color(0, 0, 0, 0));
 
         // Icons
         BufferedImage icons = Assets.loadImage("ui-icons.png");
@@ -107,12 +113,12 @@ public class Game implements ActionListener, WindowListener {
         AwesomeButton muteEffects = new AwesomeButton(settings.isEffectsMuted() ? unmuteEffectsIcon : muteEffectsIcon);
         muteMusic.setPreferredSize(new Dimension(32, 32));
         muteEffects.setPreferredSize(new Dimension(32, 32));
-        parent.add(muteMusic, JLayeredPane.POPUP_LAYER);
-        parent.add(muteEffects, JLayeredPane.POPUP_LAYER);
-        layout.putConstraint(SpringLayout.NORTH, muteMusic, 5, SpringLayout.NORTH, parent);
-        layout.putConstraint(SpringLayout.EAST, muteMusic, -10, SpringLayout.EAST, parent);
+        panel.add(muteMusic);
+        panel.add(muteEffects);
+        layout.putConstraint(SpringLayout.NORTH, muteMusic, 5, SpringLayout.NORTH, panel);
+        layout.putConstraint(SpringLayout.EAST, muteMusic, -10, SpringLayout.EAST, panel);
         layout.putConstraint(SpringLayout.NORTH, muteEffects, 5, SpringLayout.SOUTH, muteMusic);
-        layout.putConstraint(SpringLayout.EAST, muteEffects, -10, SpringLayout.EAST, parent);
+        layout.putConstraint(SpringLayout.EAST, muteEffects, -10, SpringLayout.EAST, panel);
 
         AwesomeEffect.Builder effect = AwesomeEffect.create()
                 .addRotationKey(20.0f, 400)
@@ -141,16 +147,16 @@ public class Game implements ActionListener, WindowListener {
         errorMsg.setVisible(false);
         errorMsg.setHorizontalAlignment(SwingConstants.CENTER);
         errorMsg.setFont(errorMsg.getFont().deriveFont(20.0f));
-        parent.add(errorMsg, JLayeredPane.POPUP_LAYER);
-        layout.putConstraint(SpringLayout.WEST, errorMsg, 10, SpringLayout.WEST, parent);
-        layout.putConstraint(SpringLayout.EAST, errorMsg, -10, SpringLayout.EAST, parent);
-        layout.putConstraint(SpringLayout.SOUTH, errorMsg, -100, SpringLayout.SOUTH, parent);
+        panel.add(errorMsg);
+        layout.putConstraint(SpringLayout.WEST, errorMsg, 10, SpringLayout.WEST, panel);
+        layout.putConstraint(SpringLayout.EAST, errorMsg, -10, SpringLayout.EAST, panel);
+        layout.putConstraint(SpringLayout.SOUTH, errorMsg, -100, SpringLayout.SOUTH, panel);
 
         // Chat
         chat = new Chat(icons);
-        parent.add(chat, JLayeredPane.POPUP_LAYER);
-        layout.putConstraint(SpringLayout.EAST, chat, -10, SpringLayout.EAST, parent);
-        layout.putConstraint(SpringLayout.SOUTH, chat, -10, SpringLayout.SOUTH, parent);
+        panel.add(chat);
+        layout.putConstraint(SpringLayout.EAST, chat, -10, SpringLayout.EAST, panel);
+        layout.putConstraint(SpringLayout.SOUTH, chat, -10, SpringLayout.SOUTH, panel);
     }
 
     @Override
@@ -164,22 +170,13 @@ public class Game implements ActionListener, WindowListener {
     }
 
     public void setContentPanel(Container panel) {
-        JLayeredPane layeredPane = (JLayeredPane) frame.getContentPane();
-        SpringLayout layout = (SpringLayout) layeredPane.getLayout();
-
-        Component[] components = layeredPane.getComponentsInLayer(JLayeredPane.DEFAULT_LAYER);
-        for (Component comp : components) {
-            layeredPane.remove(comp);
-        }
-        layeredPane.add(panel, JLayeredPane.DEFAULT_LAYER);
-
-        layout.putConstraint(SpringLayout.WEST, panel, 0, SpringLayout.WEST, layeredPane);
-        layout.putConstraint(SpringLayout.EAST, panel, 0, SpringLayout.EAST, layeredPane);
-        layout.putConstraint(SpringLayout.NORTH, panel, 0, SpringLayout.NORTH, layeredPane);
-        layout.putConstraint(SpringLayout.SOUTH, panel, 0, SpringLayout.SOUTH, layeredPane);
-
+        frame.setContentPane(panel);
         frame.dispatchEvent(new ComponentEvent(frame, ComponentEvent.COMPONENT_RESIZED));
         frame.doLayout();
+    }
+
+    public Container getContentPanel() {
+        return frame.getContentPane();
     }
 
     public void setGameCode(String code) {

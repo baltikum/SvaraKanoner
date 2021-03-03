@@ -3,7 +3,6 @@ package server;
 import common.PaintPoint;
 import common.Pair;
 
-import java.awt.Image;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,6 +46,7 @@ public class WordTracker {
         }
         return false;
     }
+
     /**
      * Saves a guess into its Wordtracker as a Pair.
      * @param id tagging the guess with a personal id
@@ -66,11 +66,13 @@ public class WordTracker {
      * @return integer id
      */
     public int getWordOwnerId(){ return wordOwnerId; }
+
     /**
      * Returns the word of this WordTracker.
      * @return word
      */
     public String getWord() { return word; }
+
     /**
      * Gets one guess from the WordTracker based on id.
      * @param i , The index of the guess, see roundpartCount in RoundData.
@@ -98,7 +100,8 @@ public class WordTracker {
     public Pair getDrawing(int i ) { return images.get(i); }
 
     /**
-     *
+     * Used to retrieve the latest guess on a word.
+     * @return String
      */
     public String getLatestGuess() {
         if (guesses.isEmpty()) {

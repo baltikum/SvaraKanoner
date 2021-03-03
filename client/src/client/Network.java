@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayDeque;
 import java.util.Queue;
 
@@ -19,7 +20,6 @@ public class Network extends Thread {
     private final Queue<MessageResponseListener> responseListeners = new ArrayDeque<>();
     private final String ipAddress;
     private final short portNumber;
-    private boolean shouldContinue = true;
 
     public Network(Settings settings) {
         ipAddress = settings.getIpAddress();
@@ -61,7 +61,7 @@ public class Network extends Thread {
             objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
             objectInputStream = new ObjectInputStream(socket.getInputStream());
 
-            while (shouldContinue) { // listen to messages from server
+            while (true) { // listen to messages from server
                 try {
                     Message message = (Message) objectInputStream.readObject();
                     System.out.println("Received message: " + message.toString());
@@ -74,6 +74,8 @@ public class Network extends Thread {
                     } else {
                         Game.game.receiveMessage(message);
                     }
+                } catch(SocketException ignored) {
+                    break;
                 } catch (Exception e) {
                     Game.game.setErrorMsg("Received invalid message: " + e.toString());
                     e.printStackTrace();
@@ -97,12 +99,6 @@ public class Network extends Thread {
 
     public void closeConnection() {
         try {
-            try
-            {
-                shouldContinue = false;
-                this.join(1000);
-            } catch(Exception ignored){}
-
             socket.close();
         } catch (IOException e) {
             e.printStackTrace();

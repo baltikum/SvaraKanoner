@@ -182,8 +182,7 @@ public class AwesomeEffect {
     public void transform(Graphics2D g, Dimension dimension, boolean shouldClip) {
         float originX = this.originX * dimension.width;
         float originY = this.originY * dimension.height;
-        if (shouldClip)
-            g.setClip(null);
+        if (!shouldClip) g.setClip(null);
         g.translate(x + originX, y + originY);
         g.rotate(rotation);
         g.scale(scaleX, scaleY);

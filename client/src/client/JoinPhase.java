@@ -65,27 +65,26 @@ public class JoinPhase extends Phase {
         layout.setConstraintsRatioByWidth(gameCode, 0.5f, .167f * 2, .35f, 0.25f);
         AwesomeUtil.dynamicFont(gameCode, 1.0f);
 
+        AwesomeButton leave = new AwesomeButton("Leave");
         AwesomeButton ready = new AwesomeButton("Ready!");
         panel.add(ready);
+        panel.add(leave);
         layout.setConstraintsRatioByWidth(ready, .75f, .167f * 5, .3f, 0.25f);
-
+        layout.setConstraintsRatioByWidth(leave, .25f, .167f * 5, .3f, 0.25f);
         ready.addActionListener(e -> {
             Game.game.sendMessage(new Message(Message.Type.TOGGLE_READY_STATUS));
         });
-        AwesomeUtil.dynamicFont(ready, 1.0f);
-
-        AwesomeButton leave = new AwesomeButton("Leave");
-        panel.add(leave);
-        layout.setConstraintsRatioByWidth(leave, .25f, .167f * 5, .3f, 0.25f);
         leave.addActionListener(e -> {
             Game.game.sendMessage(new Message(Message.Type.DISCONNECT));
             Game.game.setCurrentPhase(new MainMenu());
         });
+        AwesomeUtil.dynamicFont(ready, 1.0f);
         AwesomeUtil.dynamicFont(leave, 1.0f);
-
-        Game.game.setContentPanel(panel);
+        AwesomeUtil.wiggleOnHover(ready, 20.0f);
+        AwesomeUtil.wiggleOnHover(leave, 20.0f);
 
         addPlayer(Game.game.getThisPlayer());
+        Game.game.setContentPanel(panel);
     }
 
     public void addPlayer(Player player) {

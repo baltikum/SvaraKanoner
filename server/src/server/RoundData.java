@@ -2,7 +2,7 @@ package server;
 
 import common.Pair;
 
-import java.awt.Image;
+
 import java.util.ArrayList;
 import java.util.*;
 import common.PaintPoint;
@@ -31,7 +31,7 @@ public class RoundData {
 
     /**
      * Constructor
-     * @param session the gamesession
+     * @param session the gamesession,
      * @param pickedWords pickedword mapped on playerIds
      */
     public RoundData(GameSession session, HashMap<Integer,String> pickedWords ){
@@ -82,7 +82,7 @@ public class RoundData {
 
     /**
      * Used to retrieve a list of all the words used in this round.
-     * @return
+     * @return ArrayList of strings
      */
     public ArrayList<String> getRoundWords() { return wordResolver; }
 
@@ -93,7 +93,7 @@ public class RoundData {
     public WordTracker getWordTracker(String word){ return wordMap.get(word); }
 
     /**
-     * Used to save a drawn image to the wordtracker.-
+     * Used to save a drawn image to the wordTracker.
      * @param id personalId of the artist.
      * @param word The word drawn
      * @param image The image
@@ -102,6 +102,7 @@ public class RoundData {
     public boolean saveImage(int id, String word, ArrayList<List<PaintPoint>> image ) {
         return wordMap.get(word).saveDrawing(id,image);
     }
+
     /**
      * Used to save a guess on a image.
      * @param id guesser ID
@@ -138,18 +139,18 @@ public class RoundData {
         playerOrder.add(playerOrder.remove(0));
     }
 
-    public int getRoundPartCount(){ return roundPartCount; }
     /**
-     * Used to check if rounds are the same as number of words. ( round over )
-     *
-     * @return boolean
+     * Used to retrieve this roundDatas round count.
+     * @return integer
      */
-    public boolean checkRoundCount() { return roundPartCount == numberOfWords; }
+    public int getRoundPartCount(){ return roundPartCount; }
+
     /**
      * Used to retrieve the number of words used in this round.
      * @return integer, numberOfWords
      */
     public int getNumberOfWords(){ return numberOfWords; }
+
     /**
      * Displays a RoundData as String.
      * @return String
