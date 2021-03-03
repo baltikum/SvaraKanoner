@@ -125,6 +125,43 @@ public class Settings {
         return ipAddress;
     }
 
+    /**
+     * Used to set preferred host IP address.
+     * @param ip the ip.
+     */
+    public void setIpAddress(String ip ) {
+        if (validateIP(ip)) {
+            this.ipAddress = ip;
+        }
+    }
+
+    /**
+     * Helper to check if IP is valid.
+     * @param ip
+     * @return
+     */
+    private boolean validateIP(String ip ) {
+        String[] temp = ip.split("[.]");
+
+        if ( !(temp.length == 4) ) {
+            return false;
+        }
+
+        int[] temp2 = {
+                Integer.parseInt(temp[0]),
+                Integer.parseInt(temp[1]),
+                Integer.parseInt(temp[2]),
+                Integer.parseInt(temp[3])
+        };
+
+        for ( int i = 0; i<4; i++ ) {
+            if ( ((temp2[i] - 255) > 0) || (temp2[i] < 0) ) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public short getSocket() {
         return socket;
     }

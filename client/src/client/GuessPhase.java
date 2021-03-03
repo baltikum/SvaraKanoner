@@ -136,5 +136,5 @@ public class GuessPhase extends Phase {
             sendGuess(guessField.getText());
         }
     }
-    
+
 }
