@@ -18,7 +18,8 @@ public class GuessPhase extends Phase {
     private final JTextField guessField;
     private final Image wham;
 
-    private AwesomeText text;
+    private AwesomeText text1;
+    private AwesomeText text2;
 
     private String guess;
 
@@ -51,22 +52,21 @@ public class GuessPhase extends Phase {
         layout.setConstraintsRatioByWidth(submit, .73f, .1f, .3f, 0.35f);
         panel.add(submit);
 
-        text.setTextColor(Color.BLUE);
-        layout.setConstraintsRatioByWidth(text, .5f, .17f, .8f, 0.25f);
-        AwesomeUtil.dynamicFont(text, 0.25f);
-
         submit.addActionListener(e -> {
             if ( checkAndSendGuess(guessField.getText())) {
-                layout.setConstraintsRatioByWidth(text, .5f, .5f, .8f, 0.25f);
-                text = new AwesomeText("Guess sent!! Waiting for others..");
+                this.text1 = new AwesomeText("Guess sent!! Waiting for others..");
+                layout.setConstraintsRatioByWidth(this.text1, .5f, .5f, .8f, 0.25f);
+                panel.remove(this.text2);
                 panel.remove(guessField);
                 panel.remove(submit);
                 panel.remove(image);
+                panel.remove(guessMessage);
+                panel.add(text1);
             } else {
-                text = new AwesomeText("Only characters allowed a-z");
+                this.text2 = new AwesomeText("Only characters allowed a-z");
+                layout.setConstraintsRatioByWidth(this.text2, .5f, .17f, .8f, 0.25f);
+                panel.add(text2);
             }
-            panel.remove(text);
-            panel.add(text);
         });
 
         PhaseUI phaseUI = Game.game.getPhaseUI();

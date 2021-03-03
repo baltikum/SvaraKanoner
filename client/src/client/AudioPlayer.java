@@ -16,37 +16,20 @@ public class AudioPlayer {
 
     private Clip musicClip;
     private final ArrayList<Clip> effectClips = new ArrayList<>();
+    private Settings settings;
 
     /**
      * Constructs an audio playe.
      * The background music plays directly if Settings muteMusic is not true.
      */
     public AudioPlayer() {
-        File audioFile = Assets.getResourceFile("bensound-funnysong.wav");
-        Settings settings = Game.game.getSettings();
-        try {
-            AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
-            AudioFormat format = audioStream.getFormat();
-            DataLine.Info info = new DataLine.Info(Clip.class, format);
+        File audioFile = Assets.getResourceFile("lat1.wav");
+        this.settings = Game.game.getSettings();
 
-            musicClip = (Clip) AudioSystem.getLine(info);
-            musicClip.open(audioStream);
-            setVolume(musicClip, settings.getMusicVolume());
 
-            if (!settings.isMusicMuted())
-                musicClip.loop(Clip.LOOP_CONTINUOUSLY);
-        } catch (UnsupportedAudioFileException ex) {
-            System.out.println("The specified audio file is not supported.");
-            ex.printStackTrace();
-        } catch (LineUnavailableException ex) {
-            System.out.println("Audio line for playing back is unavailable.");
-            ex.printStackTrace();
-        } catch (IOException ex) {
-            System.out.println("Error playing the audio file.");
-            ex.printStackTrace();
-        }
+        playSong(audioFile);
 
-        settings.addListener(new Settings.Listener() {
+        this.settings.addListener(new Settings.Listener() {
             @Override
             public void propertyChanged(Settings.Properties property, Settings settings) {
                 switch (property) {
@@ -66,8 +49,36 @@ public class AudioPlayer {
         });
     }
 
+    private void playSong(File audioFile) {
+        try (AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile)) {
+
+            AudioFormat format = audioStream.getFormat();
+            DataLine.Info info = new DataLine.Info(Clip.class, format);
+
+            musicClip = (Clip) AudioSystem.getLine(info);
+            musicClip.open(audioStream);
+            setVolume(musicClip, settings.getMusicVolume());
+
+            if (!settings.isMusicMuted())
+                musicClip.loop(Clip.LOOP_CONTINUOUSLY);
+        } catch (UnsupportedAudioFileException ex) {
+            System.out.println("The specified audio file is not supported.");
+            ex.printStackTrace();
+        } catch (LineUnavailableException ex) {
+            System.out.println("Audio line for playing back is unavailable.");
+            ex.printStackTrace();
+        } catch (IOException ex) {
+            System.out.println("Error playing the audio file.");
+            ex.printStackTrace();
+        }
+    }
+
+    private void stopSong() {
+        musicClip.stop();
+    }
+
     public void playEffect(String effect) {
-        Settings settings = Game.game.getSettings();
+        this.settings = Game.game.getSettings();
         try {
             URL url = new URL(effect);
             AudioInputStream audioStream = AudioSystem.getAudioInputStream(url);
@@ -109,5 +120,19 @@ public class AudioPlayer {
         float range = gainControl.getMaximum() - gainControl.getMinimum();
         float gain = (range * volume) + gainControl.getMinimum();
         gainControl.setValue(gain);
+    }
+
+    public void changeSongAudioPlayer(String song) {
+        File audioFile = Assets.getResourceFile("lat1.wav");;
+        stopSong();
+        switch (song) {
+            case "PickWord" -> audioFile = Assets.getResourceFile("giss.wav");
+            case "Draw" -> audioFile = Assets.getResourceFile("lat3.wav");
+            case "Guess" -> audioFile = Assets.getResourceFile("giss.wav");
+            case "Waiting" -> audioFile = Assets.getResourceFile("lat2.wav");
+            case "Reveal" -> audioFile = Assets.getResourceFile("lat2.wav");
+            case "Winner" -> audioFile = Assets.getResourceFile("lat2.wav");
+        }
+        playSong(audioFile);
     }
 }

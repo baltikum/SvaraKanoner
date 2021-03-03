@@ -102,17 +102,17 @@ public class Game implements ActionListener, WindowListener {
         Image unmuteEffectsIcon = Assets.getTile(icons, 3, 1, 1, 1, 4);
 
         // Mute settings
-        JLabel copyRight = new JLabel("Music: www.bensound.com");
+       // JLabel copyRight = new JLabel("Music: www.bensound.com");
         AwesomeButton muteMusic = new AwesomeButton(settings.isMusicMuted() ? unmuteMusicIcon : muteMusicIcon);
         AwesomeButton muteEffects = new AwesomeButton(settings.isEffectsMuted() ? unmuteEffectsIcon : muteEffectsIcon);
         muteMusic.setPreferredSize(new Dimension(32, 32));
         muteEffects.setPreferredSize(new Dimension(32, 32));
         parent.add(muteMusic, JLayeredPane.POPUP_LAYER);
         parent.add(muteEffects, JLayeredPane.POPUP_LAYER);
-        parent.add(copyRight, JLayeredPane.POPUP_LAYER);
-        layout.putConstraint(SpringLayout.NORTH, copyRight, 5, SpringLayout.NORTH, parent);
-        layout.putConstraint(SpringLayout.EAST, copyRight, -10, SpringLayout.EAST, parent);
-        layout.putConstraint(SpringLayout.NORTH, muteMusic, 5, SpringLayout.SOUTH, copyRight);
+        //parent.add(copyRight, JLayeredPane.POPUP_LAYER);
+        //layout.putConstraint(SpringLayout.NORTH, copyRight, 5, SpringLayout.NORTH, parent);
+        //layout.putConstraint(SpringLayout.EAST, copyRight, -10, SpringLayout.EAST, parent);
+        //layout.putConstraint(SpringLayout.NORTH, muteMusic, 5, SpringLayout.SOUTH, copyRight);
         layout.putConstraint(SpringLayout.EAST, muteMusic, -10, SpringLayout.EAST, parent);
         layout.putConstraint(SpringLayout.NORTH, muteEffects, 5, SpringLayout.SOUTH, muteMusic);
         layout.putConstraint(SpringLayout.EAST, muteEffects, -10, SpringLayout.EAST, parent);
@@ -246,17 +246,24 @@ public class Game implements ActionListener, WindowListener {
         } else if (msg.type == Message.Type.GOTO) {
             String targetPhase = (String) msg.data.get("phase");
             switch (targetPhase) {
-                case "PickWordPhase" -> setCurrentPhase(new PickWordPhase(msg));
-                case "DrawPhase" -> setCurrentPhase(new DrawPhase(msg));
-                case "GuessPhase" -> setCurrentPhase(new GuessPhase(msg));
-                case "RevealPhase" -> setCurrentPhase(new RevealPhase(msg));
-                case "WaitingPhase" -> setCurrentPhase(new WaitingPhase(msg));
-                case "WinnerPhase" -> setCurrentPhase(new WinnerPhase(msg));
+                case "PickWordPhase" -> { setCurrentPhase(new PickWordPhase(msg));
+                                            audioPlayer.changeSongAudioPlayer("PickWord");}
+                case "DrawPhase" -> { setCurrentPhase(new DrawPhase(msg));
+                                            audioPlayer.changeSongAudioPlayer("Draw");}
+                case "GuessPhase" -> { setCurrentPhase(new GuessPhase(msg));
+                                            audioPlayer.changeSongAudioPlayer("Guess");}
+                case "RevealPhase" -> { setCurrentPhase(new RevealPhase(msg));
+                                            audioPlayer.changeSongAudioPlayer("Reveal");}
+                case "WaitingPhase" -> { setCurrentPhase(new WaitingPhase(msg));
+                                            audioPlayer.changeSongAudioPlayer("Waiting");}
+                case "WinnerPhase" -> { setCurrentPhase(new WinnerPhase(msg));
+                                            audioPlayer.changeSongAudioPlayer("Winner");}
             }
         } else {
             if (currentPhase != null) currentPhase.message(msg);
         }
     }
+
 
     public PhaseUI getPhaseUI() {
         return phaseUI;
