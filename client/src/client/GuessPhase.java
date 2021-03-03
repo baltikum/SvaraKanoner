@@ -87,15 +87,24 @@ public class GuessPhase extends Phase {
         boolean sent = false;
         String str = guessed.trim();
         str = str.toLowerCase(Locale.ROOT);
-
         if ( isAlphabetical(str)){
-            System.out.println(str);
             Message submitMessage = new Message(Message.Type.SUBMIT_GUESS);
-            submitMessage.addParameter("guess", str );
+            submitMessage.addParameter("guess", str);
             Game.game.sendMessage(submitMessage);
             sent = true;
         }
         return sent;
+    }
+
+    /**
+     *
+     */
+    private void sendGuess(String guess) {
+        if (!checkAndSendGuess(guess)) {
+            Message submitMessage = new Message(Message.Type.SUBMIT_GUESS);
+            submitMessage.addParameter("guess", "");
+            Game.game.sendMessage(submitMessage);
+        }
     }
 
 
@@ -118,7 +127,7 @@ public class GuessPhase extends Phase {
     @Override
     public void message(Message msg) {
         if (msg.type == Message.Type.TIMES_UP) {
-            checkAndSendGuess(guessField.getText());
+            sendGuess(guessField.getText());
         }
     }
 }
