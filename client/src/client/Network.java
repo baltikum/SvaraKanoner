@@ -32,6 +32,7 @@ public class Network extends Thread {
             objectOutputStream.flush();
         } catch (Exception e) {
             Game.game.setErrorMsg("Could not send to the server: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -42,6 +43,7 @@ public class Network extends Thread {
             responseListeners.add(responseListener);
         } catch (Exception e) {
             Game.game.setErrorMsg("Could not send to the server: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -71,11 +73,13 @@ public class Network extends Thread {
                     }
                 } catch (Exception e) {
                     Game.game.setErrorMsg("Received invalid message: " + e.toString());
+                    e.printStackTrace();
                 }
             }
 
         } catch(Exception e) {
             Game.game.setErrorMsg("Can't connect to the server: " + e.toString());
+            e.printStackTrace();
         } finally {
             Game.game.setErrorMsg("Lost connection to the server");
             try {
@@ -83,7 +87,7 @@ public class Network extends Thread {
                 objectOutputStream.close();
                 objectInputStream.close();
             } catch (Exception e) {
-
+                e.printStackTrace();
             }
         }
     }
