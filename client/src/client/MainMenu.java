@@ -128,7 +128,7 @@ public class MainMenu extends Phase {
         panel.add(quitButton);
         panel.add(rocketFlame);
 
-        layout.setConstraintsRatioByWidth(title, 0.5f, 0.15f, .5f, .2f);
+        layout.setConstraintsRatioByWidth(title, 0.5f, 0.10f, .5f, .2f);
         layout.setConstraintsRatioByWidth(ip, 0.4f, 0.20f, .5f, .1f);
         layout.setConstraintsRatioByWidth(setIPButton, 0.8f, 0.20f, .3f, .5f);
         layout.setConstraintsRatioByWidth(joinGameButton, 0.25f, 0.4f, .4f, .5f);
