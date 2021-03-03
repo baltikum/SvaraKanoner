@@ -161,6 +161,7 @@ public class JoinPhase extends Phase {
         String givenName = requestedName;
         while (doesNameExist(givenName)) {
             givenName = requestedName + "#" + i;
+            i += 1;
         }
         return givenName;
     }

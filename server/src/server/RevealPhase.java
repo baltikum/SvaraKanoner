@@ -2,7 +2,6 @@ package server;
 
 import common.Message;
 import common.Phase;
-import common.Pair;
 
 /**
  *
@@ -32,14 +31,15 @@ public class RevealPhase extends Phase {
             if (tracker == null){
                 fillRevealWordMessage(revealNextMsg);
             } else {
-                Pair pair = shouldRevealDrawing ? tracker.getDrawing(currentRevealIndex) :
-                                                  tracker.getGuess(currentRevealIndex);
-                revealNextMsg.addParameter("playerId", pair.getPlayerId());
+                WordTracker.Entry entry = tracker.getEntry(currentRevealIndex);
                 if (shouldRevealDrawing) {
-                    revealNextMsg.addParameter("drawing", pair.getImage());
+                    revealNextMsg.addParameter("playerId", entry.getImageSubmitterId());
+                    revealNextMsg.addParameter("drawing", entry.getImage());
                 } else {
-                    revealNextMsg.addParameter("guess", pair.getGuess());
-                    if (++currentRevealIndex == tracker.getAllGuesses().size()) {
+                    revealNextMsg.addParameter("playerId", entry.getGuessSubmitterId());
+                    revealNextMsg.addParameter("guess", entry.getGuess());
+                    revealNextMsg.addParameter("correct", entry.isCorrect());
+                    if (entry == tracker.getLatestEntry()) {
                         ++currentWordIndex;
                         currentRevealIndex = 0;
                         tracker = null;
@@ -57,10 +57,9 @@ public class RevealPhase extends Phase {
     }
 
     private void fillRevealWordMessage(Message msg) {
-        String word = round.getRoundWords().get(currentWordIndex);
-        tracker = round.getWordTracker(word);
-        msg.addParameter("word", word);
-        msg.addParameter("playerId", tracker.getWordOwnerId());
+        tracker = round.getWordTracker(currentWordIndex);
+        msg.addParameter("word", tracker.getPickedWord());
+        msg.addParameter("playerId", tracker.getPickerId());
     }
 
     @Override

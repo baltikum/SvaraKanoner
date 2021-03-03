@@ -1,8 +1,5 @@
 package server;
 
-import common.Pair;
-
-
 import java.util.ArrayList;
 import java.util.*;
 import common.PaintPoint;
@@ -22,11 +19,9 @@ import common.PaintPoint;
 
 public class RoundData {
 
-    private int numberOfWords;
-    private GameSession gameSession;
+    private final GameSession gameSession;
     private final ArrayList<Integer> playerOrder = new ArrayList<>();
-    private final ArrayList<String> wordResolver = new ArrayList<>();
-    private final HashMap<String,WordTracker> wordMap = new HashMap<>();
+    private final ArrayList<WordTracker> wordTrackers = new ArrayList<>();
     private int roundPartCount = 0;
     private int saved = 0;
 
@@ -37,16 +32,14 @@ public class RoundData {
      */
     public RoundData(GameSession session, HashMap<Integer,String> pickedWords ){
         this.gameSession = session;
-        this.numberOfWords = pickedWords.size();
 
         for ( ClientHandler client : session.getConnectedPlayers()) {
             playerOrder.add(client.getId());
         }
-        for ( int i = 0; i < numberOfWords; i++ ) {
+        for ( int i = 0; i < pickedWords.size(); i++ ) {
             int id = playerOrder.get(i);
             String str = pickedWords.get(id);
-            this.wordMap.put(str, new WordTracker(id,str));
-            this.wordResolver.add(str);
+            wordTrackers.add(new WordTracker(id,str));
         }
     }
 
@@ -54,14 +47,12 @@ public class RoundData {
      * Used to retrieve words to draw.
      * @return HashMap, playerId maps the Word.
      */
-    public HashMap<Integer, WordTracker> getWordsToDraw(){
-        HashMap<Integer, WordTracker> toReturn = new HashMap<>();
-        for ( int i = 0; i < numberOfWords; i++ ) {
-            WordTracker temp = wordMap.get(wordResolver.get(i));
-            toReturn.put(playerOrder.get(i), temp);
+    public HashMap<Integer, String> getWordsToDraw(){
+        HashMap<Integer, String> toReturn = new HashMap<>();
+        for ( int i = 0; i < wordTrackers.size(); i++ ) {
+            toReturn.put(playerOrder.get(i), wordTrackers.get(i).getLatestGuess());
         }
         roundPartCount++;
-        rotateOrder();
         return toReturn;
     }
 
@@ -69,42 +60,35 @@ public class RoundData {
      * Used to retrieve images for guessing in guessPhase.
      * @return HashMap playerId maps Images.
      */
-    public HashMap<Integer,ArrayList<List<PaintPoint>>> getImagesToGuessOn(){
-        HashMap<Integer,ArrayList<List<PaintPoint>>> toReturn = new HashMap<>();
-        for ( int i = 0; i < numberOfWords; i++ ) {
-            WordTracker temp = wordMap.get(wordResolver.get(i));
-            int index = (temp.getAllImages().size()-1);
-            Pair tempPair = temp.getDrawing(index);
-            toReturn.put(playerOrder.get(i),tempPair.getImage());
+    public HashMap<Integer, ArrayList<List<PaintPoint>>> getImagesToGuessOn(){
+        HashMap<Integer, ArrayList<List<PaintPoint>>> toReturn = new HashMap<>();
+        for ( int i = 0; i < wordTrackers.size(); i++ ) {
+            toReturn.put(playerOrder.get(i), wordTrackers.get(i).getLatestImage());
         }
         roundPartCount++;
         return toReturn;
     }
 
     /**
-     * Used to retrieve a list of all the words used in this round.
-     * @return ArrayList of strings
+     * Gets a word tracker at the given index
+     * @return The word tracker
      */
-    public ArrayList<String> getRoundWords() { return wordResolver; }
-
-    /**
-     * Used to retrieve a words WordTracker for use of further functions inside.
-     * @return wordTracker
-     */
-    public WordTracker getWordTracker(String word){ return wordMap.get(word); }
+    public WordTracker getWordTracker(int index) { return wordTrackers.get(index); }
 
     /**
      * Used to save a drawn image to the wordTracker.
      * @param id personalId of the artist.
-     * @param word The word drawn
      * @param image The image
      * @return boolean true if all images for this round is saved.
      */
-    public boolean saveImage(int id, String word, ArrayList<List<PaintPoint>> image ) {
-        boolean success = wordMap.get(word).saveDrawing(id,image);
+    public boolean saveImage(int id, ArrayList<List<PaintPoint>> image ) {
+        int index = playerOrder.indexOf(id);
+        WordTracker tracker = wordTrackers.get(index);
+
+        boolean success = tracker.saveDrawing(id,image);
         if ( success ) {
             this.saved++;
-            if ( this.saved == this.numberOfWords ) {
+            if ( this.saved == wordTrackers.size() ) {
                 saved = 0;
                 return true;
             }
@@ -120,33 +104,24 @@ public class RoundData {
      */
     public boolean saveGuess(int id, String guess ) {
         int index = playerOrder.indexOf(id);
+        WordTracker tracker = wordTrackers.get(index);
+        boolean success = tracker.saveGuess(id,guess);
 
-        boolean success = wordMap.get(wordResolver.get(index)).saveGuess(id,guess);
-
-        if (success && checkAnswer(guess,wordResolver.get(index))) {
-            gameSession.getConnectedPlayer(id).givePoints(1);
+        WordTracker.Entry latestEntry = tracker.getLatestEntry();
+        if (success && latestEntry.isCorrect()) {
+            gameSession.getConnectedPlayer(latestEntry.getImageSubmitterId()).givePoints(1);
+            gameSession.getConnectedPlayer(latestEntry.getGuessSubmitterId()).givePoints(1);
         }
 
         if ( success ) {
             this.saved++;
-            if ( this.saved == this.numberOfWords ) {
+            if ( this.saved == wordTrackers.size() ) {
                 saved = 0;
+                rotateOrder();
                 return true;
             }
         }
         return false;
-    }
-
-    /**
-     * Helper function, used to check for correct answer.
-     * @param guess the guess
-     * @param answer correct answer
-     * @return boolean
-     */
-    private boolean checkAnswer(String guess, String answer) {
-        guess = guess.trim().toLowerCase(Locale.ROOT);
-        answer = answer.toLowerCase(Locale.ROOT);
-        return guess.equals(answer);
     }
 
     /**
@@ -167,7 +142,7 @@ public class RoundData {
      * Used to retrieve the number of words used in this round.
      * @return integer, numberOfWords
      */
-    public int getNumberOfWords(){ return numberOfWords; }
+    public int getNumberOfWords(){ return wordTrackers.size(); }
 
     /**
      * Displays a RoundData as String.
@@ -175,8 +150,8 @@ public class RoundData {
      */
     public String toString() {
         StringBuilder words = new StringBuilder();
-        for ( int i = 0; i < wordResolver.size(); i++ ) {
-            words.append(i).append(wordResolver.get(i)).append("\n");
+        for ( int i = 0; i < wordTrackers.size(); i++ ) {
+            words.append(i).append(wordTrackers.get(i)).append("\n");
         }
         return words.toString();
     }
