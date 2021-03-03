@@ -32,7 +32,10 @@ public class DrawPhase extends Phase {
         this.roundData = this.gameSession.getCurrentRoundData();
         this.gameSettings = gameSession.getGameSettings();
 
-        timeLeft = new Timer((int) gameSettings.getDrawTimeMilliseconds(), e -> gameSession.sendMessageToAll(new Message(Message.Type.TIMES_UP)));
+        timeLeft = new Timer((int) gameSettings.getDrawTimeMilliseconds(), e -> {
+            gameSession.sendMessageToAll(new Message(Message.Type.TIMES_UP));
+            timeLeft.stop();
+        });
         timeLeft.start();
 
         words = roundData.getWordsToDraw();

@@ -56,7 +56,9 @@ public class GuessPhase extends Phase {
             if ( checkAndSendGuess(guessField.getText())) {
                 this.text1 = new AwesomeText("Guess sent!! Waiting for others..");
                 layout.setConstraintsRatioByWidth(this.text1, .5f, .5f, .8f, 0.25f);
-                panel.remove(this.text2);
+                if (text2 != null) {
+                    panel.remove(text2);
+                }
                 panel.remove(guessField);
                 panel.remove(submit);
                 panel.remove(image);
