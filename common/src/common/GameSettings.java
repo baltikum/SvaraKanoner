@@ -35,7 +35,7 @@ public class GameSettings implements Serializable {
         this.revealTimeMilliseconds = 8L * 1000L;
         this.courtTimeMilliseconds = 15L * 1000L;
         this.keepScore = true;
-        this.chooseWords = false;
+        this.chooseWords = true;
         this.shakyHands = false;
         this.maxPlayers = 4;
         this.numRounds = 5;

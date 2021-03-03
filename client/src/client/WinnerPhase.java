@@ -27,7 +27,7 @@ public class WinnerPhase extends Phase {
             float xOffset = width / 2.0f;
             for (int i = 0; i < numPlayers; i++) {
                 addPlayerToPodium(panel, placements[i], playerIds[i], points[i],
-                        xOffset + width * i, 0.2f + i * yAdvance, width);
+                        xOffset + width * i, 0.2f + (placements[i] - 1) * yAdvance, width);
             }
         } else {
             AwesomeText allWinners = new AwesomeText("You are all winners!");
