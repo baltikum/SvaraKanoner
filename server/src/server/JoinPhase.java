@@ -38,8 +38,8 @@ public class JoinPhase extends Phase {
             while ((takenAvatarIds & (0x1 << avatarId)) != 0)
                 ++avatarId;
             client.setAvatarId(avatarId);
+            takenAvatarIds |= 0x1 << client.getAvatarId();
         }
-        takenAvatarIds |= 0x1 << client.getAvatarId();
 
         List<ClientHandler> connectedClients = session.getConnectedPlayers();
 
@@ -82,7 +82,7 @@ public class JoinPhase extends Phase {
                 ClientHandler joiner = (ClientHandler) msg.player;
                 Message response = new Message(Message.Type.RESPONSE);
                 joiner.setName((String) msg.data.getOrDefault("requestedName", ""));
-                joiner.setAvatarId((int) msg.data.getOrDefault("requestAvatarId", 0));
+                joiner.setAvatarId((int) msg.data.getOrDefault("requestedAvatarId", 0));
 
                 // Add the existing players to the response message before adding the new player
                 List<ClientHandler> existingPlayers = session.getConnectedPlayers();
