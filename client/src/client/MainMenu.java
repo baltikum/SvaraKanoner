@@ -133,6 +133,8 @@ public class MainMenu extends Phase {
      * @param root
      */
     private void initJoinGamePanel(JPanel root) {
+        Settings clientSettings = Game.game.getSettings();
+
         PercentLayout layout = new PercentLayout(1.0f);
         JPanel panel = new JPanel(layout);
         panel.setBackground(new Color(0xe67e22));
@@ -144,10 +146,8 @@ public class MainMenu extends Phase {
         AwesomeButton accept = new AwesomeButton("Go!");
         AwesomeButton back = new AwesomeButton("Back");
         JTextField codeInput = new JTextField();
-        JTextField nameInput = new JTextField();
-        codeInput.setFont(Assets.getFont().deriveFont(32.0f));
+        JTextField nameInput = new JTextField(clientSettings.getPreferredName());
         codeInput.setHorizontalAlignment(SwingConstants.CENTER);
-        nameInput.setFont(Assets.getFont().deriveFont(32.0f));
         nameInput.setHorizontalAlignment(SwingConstants.CENTER);
 
         AwesomeUtil.dynamicFont(codeLabel, .8f);
@@ -198,9 +198,9 @@ public class MainMenu extends Phase {
             }
         });
         nameInput.getDocument().addDocumentListener(new DocumentListener() {
-            @Override public void insertUpdate(DocumentEvent e) { Game.game.getSettings().setPreferredName(nameInput.getText()); }
-            @Override public void removeUpdate(DocumentEvent e) { Game.game.getSettings().setPreferredName(nameInput.getText()); }
-            @Override public void changedUpdate(DocumentEvent e) { Game.game.getSettings().setPreferredName(nameInput.getText()); }
+            @Override public void insertUpdate(DocumentEvent e) { clientSettings.setPreferredName(nameInput.getText()); }
+            @Override public void removeUpdate(DocumentEvent e) { clientSettings.setPreferredName(nameInput.getText()); }
+            @Override public void changedUpdate(DocumentEvent e) { clientSettings.setPreferredName(nameInput.getText()); }
         });
     }
 
@@ -209,16 +209,32 @@ public class MainMenu extends Phase {
      * @param root
      */
     private void initCreateGamePanel(JPanel root) {
+        Settings clientSettings = Game.game.getSettings();
+        GameSettings gameSettings = Game.game.getGameSettings();
+
         PercentLayout layout = new PercentLayout(1.0f);
         JPanel panel = new JPanel(layout);
         panel.setBackground(new Color(0xe67e22));
         root.add(panel);
 
+        float y = 0.15f;
+        AwesomeText nameInputLabel = new AwesomeText("YOUR NAME: ");
+        JTextField nameInput = new JTextField(clientSettings.getPreferredName());
+        nameInput.setHorizontalAlignment(SwingConstants.CENTER);
+        panel.add(nameInput);
+        panel.add(nameInputLabel);
+        layout.setConstraintsRatioByWidth(nameInputLabel, 0.3f, y, 0.4f, 0.25f);
+        layout.setConstraintsRatioByWidth(nameInput, 0.75f, y, 0.4f, 0.25f);
+        nameInput.getDocument().addDocumentListener(new DocumentListener() {
+            @Override public void insertUpdate(DocumentEvent e) { clientSettings.setPreferredName(nameInput.getText()); }
+            @Override public void removeUpdate(DocumentEvent e) { clientSettings.setPreferredName(nameInput.getText()); }
+            @Override public void changedUpdate(DocumentEvent e) { clientSettings.setPreferredName(nameInput.getText()); }
+        });
+
+        y += .1f;
         AwesomeText maxPlayersLabel = new AwesomeText("MAX PLAYERS:");
         AwesomeButton increaseMaxPlayers = new AwesomeButton(rightArrow);
         AwesomeButton decreaseMaxPlayers = new AwesomeButton(leftArrow);
-
-        GameSettings gameSettings = Game.game.getGameSettings();
         AwesomeText maxPlayers = new AwesomeText(String.valueOf(gameSettings.getMaxPlayers()));
         increaseMaxPlayers.addActionListener(e -> {
             if (gameSettings.setMaxPlayers(gameSettings.getMaxPlayers() + 1)) {
@@ -238,11 +254,12 @@ public class MainMenu extends Phase {
         panel.add(increaseMaxPlayers);
         panel.add(decreaseMaxPlayers);
         panel.add(maxPlayers);
-        layout.setConstraintsRatioByWidth(maxPlayersLabel, 0.3f, 0.15f, 0.4f, 0.25f);
-        layout.setConstraintsRatioByWidth(increaseMaxPlayers, 0.9f, 0.15f, 0.1f, 1.0f);
-        layout.setConstraintsRatioByWidth(decreaseMaxPlayers, 0.6f, 0.15f, 0.1f, 1.0f);
-        layout.setConstraintsRatioByWidth(maxPlayers, 0.75f, 0.15f, 0.2f, 0.5f);
+        layout.setConstraintsRatioByWidth(maxPlayersLabel, 0.3f, y, 0.4f, 0.25f);
+        layout.setConstraintsRatioByWidth(increaseMaxPlayers, 0.9f, y, 0.1f, 1.0f);
+        layout.setConstraintsRatioByWidth(decreaseMaxPlayers, 0.6f, y, 0.1f, 1.0f);
+        layout.setConstraintsRatioByWidth(maxPlayers, 0.75f, y, 0.2f, 0.5f);
 
+        y += .1f;
         AwesomeText numRoundsLabel = new AwesomeText("ROUNDS:");
         AwesomeButton increase = new AwesomeButton(rightArrow);
         AwesomeButton decrease = new AwesomeButton(leftArrow);
@@ -265,11 +282,12 @@ public class MainMenu extends Phase {
         panel.add(increase);
         panel.add(decrease);
         panel.add(numRounds);
-        layout.setConstraintsRatioByWidth(numRoundsLabel, 0.3f, 0.25f, 0.4f, 0.25f);
-        layout.setConstraintsRatioByWidth(decrease, 0.6f, 0.25f, 0.1f, 1.0f);
-        layout.setConstraintsRatioByWidth(increase, 0.9f, 0.25f, 0.1f, 1.0f);
-        layout.setConstraintsRatioByWidth(numRounds, 0.75f, 0.25f, 0.2f, 0.5f);
+        layout.setConstraintsRatioByWidth(numRoundsLabel, 0.3f, y, 0.4f, 0.25f);
+        layout.setConstraintsRatioByWidth(decrease, 0.6f, y, 0.1f, 1.0f);
+        layout.setConstraintsRatioByWidth(increase, 0.9f, y, 0.1f, 1.0f);
+        layout.setConstraintsRatioByWidth(numRounds, 0.75f, y, 0.2f, 0.5f);
 
+        y += .1f;
         AwesomeText drawTimeLabel = new AwesomeText("DRAW TIME:");
         AwesomeButton drawTimeIncrease = new AwesomeButton(rightArrow);
         AwesomeButton drawTimeDecrease = new AwesomeButton(leftArrow);
@@ -294,11 +312,12 @@ public class MainMenu extends Phase {
         panel.add(drawTimeIncrease);
         panel.add(drawTimeDecrease);
         panel.add(drawTime);
-        layout.setConstraintsRatioByWidth(drawTimeLabel, 0.3f, 0.35f, 0.4f, 0.25f);
-        layout.setConstraintsRatioByWidth(drawTimeDecrease, 0.6f, 0.35f, 0.1f, 1.0f);
-        layout.setConstraintsRatioByWidth(drawTimeIncrease, 0.9f, 0.35f, 0.1f, 1.0f);
-        layout.setConstraintsRatioByWidth(drawTime, 0.75f, 0.35f, 0.2f, 0.5f);
+        layout.setConstraintsRatioByWidth(drawTimeLabel, 0.3f, y, 0.4f, 0.25f);
+        layout.setConstraintsRatioByWidth(drawTimeDecrease, 0.6f, y, 0.1f, 1.0f);
+        layout.setConstraintsRatioByWidth(drawTimeIncrease, 0.9f, y, 0.1f, 1.0f);
+        layout.setConstraintsRatioByWidth(drawTime, 0.75f, y, 0.2f, 0.5f);
 
+        y += .1f;
         AwesomeText guessTimeLabel = new AwesomeText("GUESS TIME:");
         AwesomeButton guessTimeIncrease = new AwesomeButton(rightArrow);
         AwesomeButton guessTimeDecrease = new AwesomeButton(leftArrow);
@@ -323,11 +342,12 @@ public class MainMenu extends Phase {
         panel.add(guessTimeIncrease);
         panel.add(guessTimeDecrease);
         panel.add(guessTime);
-        layout.setConstraintsRatioByWidth(guessTimeLabel, 0.3f, 0.45f, 0.4f, 0.25f);
-        layout.setConstraintsRatioByWidth(guessTimeDecrease, 0.6f, 0.45f, 0.1f, 1.0f);
-        layout.setConstraintsRatioByWidth(guessTimeIncrease, 0.9f, 0.45f, 0.1f, 1.0f);
-        layout.setConstraintsRatioByWidth(guessTime, 0.75f, 0.45f, 0.2f, 0.5f);
+        layout.setConstraintsRatioByWidth(guessTimeLabel, 0.3f, y, 0.4f, 0.25f);
+        layout.setConstraintsRatioByWidth(guessTimeDecrease, 0.6f, y, 0.1f, 1.0f);
+        layout.setConstraintsRatioByWidth(guessTimeIncrease, 0.9f, y, 0.1f, 1.0f);
+        layout.setConstraintsRatioByWidth(guessTime, 0.75f, y, 0.2f, 0.5f);
 
+        y += .1f;
         AwesomeText getChoicesLabel = new AwesomeText("CHOICES ENABLED:");
         AwesomeButton choicesCountIncrease = new AwesomeButton(rightArrow);
         AwesomeButton choicesCountDecrease = new AwesomeButton(leftArrow);
@@ -338,10 +358,10 @@ public class MainMenu extends Phase {
         panel.add(choicesCountIncrease);
         panel.add(choicesCountDecrease);
         panel.add(getChoices);
-        layout.setConstraintsRatioByWidth(getChoicesLabel, 0.3f, 0.55f, 0.4f, 0.25f);
-        layout.setConstraintsRatioByWidth(choicesCountIncrease, 0.9f, 0.55f, 0.1f, 1.0f);
-        layout.setConstraintsRatioByWidth(choicesCountDecrease, 0.6f, 0.55f, 0.1f, 1.0f);
-        layout.setConstraintsRatioByWidth(getChoices, 0.75f, 0.55f, 0.2f, 0.5f);
+        layout.setConstraintsRatioByWidth(getChoicesLabel, 0.3f, y, 0.4f, 0.25f);
+        layout.setConstraintsRatioByWidth(choicesCountIncrease, 0.9f, y, 0.1f, 1.0f);
+        layout.setConstraintsRatioByWidth(choicesCountDecrease, 0.6f, y, 0.1f, 1.0f);
+        layout.setConstraintsRatioByWidth(getChoices, 0.75f, y, 0.2f, 0.5f);
 
         AwesomeButton create = new AwesomeButton("Create");
         AwesomeButton back = new AwesomeButton("Back");
@@ -384,7 +404,6 @@ public class MainMenu extends Phase {
                 for (int i = 0; i < existingPlayerIds.length; i++) {
                     joinPhase.addPlayer(new Player(existingPlayerIds[i], existingPlayerNames[i], existingPlayerAvatarIds[i]));
                 }
-
                 Game.game.getSettings().removeListener(settingsListener);
             }
 
@@ -409,9 +428,13 @@ public class MainMenu extends Phase {
         Game.game.sendMessage(msg, new MessageResponseListener() {
             @Override
             public void onSuccess(Message msg) {
+                Player player = Game.game.getThisPlayer();
                 Game.game.setGameCode((String) msg.data.get("sessionId"));
-                Game.game.getThisPlayer().setId((int) msg.data.get("playerId"));
-                Game.game.getThisPlayer().setName((String) msg.data.get("playerName"));
+
+                player.setId((int) msg.data.get("playerId"));
+                player.setName((String) msg.data.get("playerName"));
+                player.setAvatarId((int) msg.data.get("playerAvatarId"));
+
                 JoinPhase joinPhase = new JoinPhase();
                 Game.game.setCurrentPhase(joinPhase);
 

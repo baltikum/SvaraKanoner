@@ -30,8 +30,8 @@ public class Main {
 
     public static synchronized void createGameSession(Message msg) {
         ClientHandler host = (ClientHandler) msg.player;
-        host.setName((String) msg.data.getOrDefault("requestPlayerName", ""));
-        host.setAvatarId((int) msg.data.getOrDefault("requestAvatarId", 0));
+        host.setName((String) msg.data.getOrDefault("requestedName", ""));
+        host.setAvatarId((int) msg.data.getOrDefault("requestedAvatarId", 0));
         GameSession gameSession = new GameSession(host, (GameSettings) msg.data.get("settings"));
         gameSessions.add(gameSession);
 
@@ -39,6 +39,7 @@ public class Main {
         Message message = new Message(Message.Type.RESPONSE);
         message.addParameter("playerId", host.getId());
         message.addParameter("playerName", host.getName());
+        message.addParameter("playerAvatarId", host.getAvatarId());
         message.addParameter("sessionId", gameSession.sessionID);
         host.sendMessage(message);
     }
