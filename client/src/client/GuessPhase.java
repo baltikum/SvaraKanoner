@@ -18,6 +18,8 @@ public class GuessPhase extends Phase {
     private final JTextField guessField;
     private final Image wham;
 
+    private AwesomeText text;
+
     private String guess;
 
     public GuessPhase(Message msg) {
@@ -49,16 +51,20 @@ public class GuessPhase extends Phase {
         layout.setConstraintsRatioByWidth(submit, .73f, .1f, .3f, 0.35f);
         panel.add(submit);
 
+        text.setTextColor(Color.BLUE);
+        layout.setConstraintsRatioByWidth(text, .5f, .17f, .8f, 0.25f);
+        AwesomeUtil.dynamicFont(text, 0.25f);
+
         submit.addActionListener(e -> {
-            AwesomeText text;
             if ( checkAndSendGuess(guessField.getText())) {
+                layout.setConstraintsRatioByWidth(text, .5f, .5f, .8f, 0.25f);
                 text = new AwesomeText("Guess sent!! Waiting for others..");
+                panel.remove(guessField);
+                panel.remove(submit);
+                panel.remove(image);
             } else {
                 text = new AwesomeText("Only characters allowed a-z");
             }
-            AwesomeUtil.dynamicFont(text, 0.25f);
-            text.setTextColor(Color.BLUE);
-            layout.setConstraintsRatioByWidth(text, .5f, .17f, .8f, 0.25f);
             panel.remove(text);
             panel.add(text);
         });
