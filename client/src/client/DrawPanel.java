@@ -57,10 +57,6 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
         this.paintPoints = paintPoints;
     }
 
-    public ArrayList<List<PaintPoint>> getDrawData() {
-        return paintPoints;
-    }
-
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -96,7 +92,7 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
     }
 
     public synchronized void mouseDragged(MouseEvent e) {
-        if (canEdit) {
+        if (canEdit && paintPoints != null) {
             double xValue = e.getX();
             double xValueAdjusted = xValue / getWidth();
             double yValue = e.getY();
@@ -109,7 +105,7 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
     }
 
     public synchronized void mouseClicked(MouseEvent e) {
-        if (canEdit) {
+        if (canEdit && e.getButton() == MouseEvent.BUTTON1) {
             currentPath = new ArrayList<>();
             double xValue = e.getX();
             double xValueAdjusted = xValue / getWidth();
@@ -127,7 +123,7 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
     }
 
     public synchronized void mousePressed(MouseEvent e) {
-        if (canEdit) {
+        if (canEdit && e.getButton() == MouseEvent.BUTTON1) {
             currentPath = new ArrayList<>();
             double xValue = e.getX();
             double xValueAdjusted = xValue / getWidth();
@@ -140,7 +136,9 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
     }
 
     public synchronized void mouseReleased(MouseEvent e) {
-        currentPath = null;
+        if (e.getButton() == MouseEvent.BUTTON1) {
+            currentPath = null;
+        }
     }
 
     @Override
@@ -156,8 +154,10 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
     }
 
     public void clearPanel() {
-        paintPoints.clear();
-        repaint();
+        if (canEdit) {
+            paintPoints.clear();
+            repaint();
+        }
     }
 
     public void setColor(String colorToSet){
