@@ -28,6 +28,7 @@ public class RoundData {
     private final ArrayList<String> wordResolver = new ArrayList<>();
     private final HashMap<String,WordTracker> wordMap = new HashMap<>();
     private int roundPartCount = 0;
+    private int saved = 0;
 
     /**
      * Constructor
@@ -97,27 +98,44 @@ public class RoundData {
      * @param id personalId of the artist.
      * @param word The word drawn
      * @param image The image
-     * @return boolean
+     * @return boolean true if all images for this round is saved.
      */
     public boolean saveImage(int id, String word, ArrayList<List<PaintPoint>> image ) {
-        return wordMap.get(word).saveDrawing(id,image);
+        boolean success = wordMap.get(word).saveDrawing(id,image);
+        if ( success ) {
+            this.saved++;
+            if ( this.saved == this.numberOfWords ) {
+                saved = 0;
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
      * Used to save a guess on a image.
      * @param id guesser ID
      * @param guess guess
-     * @return boolean
+     * @return boolean true if all guesses this round is saved.
      */
     public boolean saveGuess(int id, String guess ) {
         int index = playerOrder.indexOf(id);
-        boolean toReturn = wordMap.get(wordResolver.get(index)).saveGuess(id,guess);
-        if (toReturn && checkAnswer(guess,wordResolver.get(index))) {
+
+        boolean success = wordMap.get(wordResolver.get(index)).saveGuess(id,guess);
+
+        if (success && checkAnswer(guess,wordResolver.get(index))) {
             gameSession.getConnectedPlayer(id).givePoints(1);
         }
-        return toReturn;
-    }
 
+        if ( success ) {
+            this.saved++;
+            if ( this.saved == this.numberOfWords ) {
+                saved = 0;
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * Helper function, used to check for correct answer.
