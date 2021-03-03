@@ -23,7 +23,6 @@ public class GuessPhase extends Phase {
     private RoundData roundData;
     private GameSettings settings;
     private HashMap<Integer, ArrayList<java.util.List<PaintPoint>>> guessImages;
-    private int submits;
 
     /**
      * Contructor takes a GameSession
@@ -34,7 +33,6 @@ public class GuessPhase extends Phase {
         this.roundData = this.gameSession.getCurrentRoundData();
         this.guessImages = this.roundData.getImagesToGuessOn();
         this.settings = this.gameSession.getGameSettings();
-        this.submits = 0;
         this.timeLeft = new Timer((int) settings.getGuessTimeMilliseconds(),
                 timeOut -> session.sendMessageToAll(new Message(Message.Type.TIMES_UP)));
 
@@ -68,11 +66,6 @@ public class GuessPhase extends Phase {
     }
 
     /**
-     * Increments submit by one.
-     */
-    private void incrementSubmit() { this.submits++; };
-
-    /**
      * Message handling of this phase, server side.
      * @param msg Message
      */
@@ -80,10 +73,7 @@ public class GuessPhase extends Phase {
     public void message(Message msg) {
         switch (msg.type) {
             case SUBMIT_GUESS -> {
-                if (roundData.saveGuess(msg.player.getId(), (String) msg.data.get("guess"))) {
-                    incrementSubmit();
-                }
-                if (submits == roundData.getNumberOfWords() ) {
+                if (roundData.saveGuess(msg.player.getId(), (String) msg.data.get("guess")) ) {
                     advancePhase();
                 }
             }
