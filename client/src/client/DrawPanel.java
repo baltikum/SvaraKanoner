@@ -33,6 +33,7 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
     private String lastSelectedBrushSize;
     private ArrayList<List<PaintPoint>> paintPoints;
     private List<PaintPoint> currentPath;
+    private boolean canEdit = true;
 
     public DrawPanel() {
         super();
@@ -94,59 +95,64 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
         }
     }
 
-    public void mouseDragged(MouseEvent e) {
-        double xValue = e.getX();
-        double xValueAdjusted = xValue / getWidth();
-        double yValue = e.getY();
-        double yValueAdjusted = yValue / getHeight();
+    public synchronized void mouseDragged(MouseEvent e) {
+        if (canEdit) {
+            double xValue = e.getX();
+            double xValueAdjusted = xValue / getWidth();
+            double yValue = e.getY();
+            double yValueAdjusted = yValue / getHeight();
 
-        PaintPoint dragPoint = new PaintPoint(xValueAdjusted, yValueAdjusted, color, brushSize / getWidth());
-        currentPath.add(dragPoint);
-        repaint();
-
+            PaintPoint dragPoint = new PaintPoint(xValueAdjusted, yValueAdjusted, color, brushSize / getWidth());
+            currentPath.add(dragPoint);
+            repaint();
+        }
     }
 
-    public void mouseClicked(MouseEvent e) {
-        currentPath = new ArrayList<>();
-        double xValue = e.getX();
-        double xValueAdjusted = xValue / getWidth();
-        double yValue = e.getY();
-        double yValueAdjusted = yValue / getHeight();
+    public synchronized void mouseClicked(MouseEvent e) {
+        if (canEdit) {
+            currentPath = new ArrayList<>();
+            double xValue = e.getX();
+            double xValueAdjusted = xValue / getWidth();
+            double yValue = e.getY();
+            double yValueAdjusted = yValue / getHeight();
 
-        currentPath.add(new PaintPoint(xValueAdjusted, yValueAdjusted, color, brushSize / getWidth()));
+            currentPath.add(new PaintPoint(xValueAdjusted, yValueAdjusted, color, brushSize / getWidth()));
 
-        paintPoints.add(currentPath);
-        PaintPoint dragPoint = new PaintPoint(xValueAdjusted, yValueAdjusted, color, brushSize / getWidth());
-        currentPath.add(dragPoint);
+            paintPoints.add(currentPath);
+            PaintPoint dragPoint = new PaintPoint(xValueAdjusted, yValueAdjusted, color, brushSize / getWidth());
+            currentPath.add(dragPoint);
+            currentPath = null;
+            repaint();
+        }
+    }
+
+    public synchronized void mousePressed(MouseEvent e) {
+        if (canEdit) {
+            currentPath = new ArrayList<>();
+            double xValue = e.getX();
+            double xValueAdjusted = xValue / getWidth();
+            double yValue = e.getY();
+            double yValueAdjusted = yValue / getHeight();
+
+            currentPath.add(new PaintPoint(xValueAdjusted, yValueAdjusted, color, brushSize / getWidth()));
+            paintPoints.add(currentPath);
+        }
+    }
+
+    public synchronized void mouseReleased(MouseEvent e) {
         currentPath = null;
-        repaint();
-    }
-
-    public void mousePressed(MouseEvent e) {
-        currentPath = new ArrayList<>();
-        double xValue = e.getX();
-        double xValueAdjusted = xValue / getWidth();
-        double yValue = e.getY();
-        double yValueAdjusted = yValue / getHeight();
-
-        currentPath.add(new PaintPoint(xValueAdjusted, yValueAdjusted, color, brushSize / getWidth()));
-        paintPoints.add(currentPath);
-    }
-
-    public void mouseReleased(MouseEvent e) {
-        currentPath = null;
     }
 
     @Override
-    public void mouseEntered(MouseEvent e) {
+    public synchronized void mouseEntered(MouseEvent e) {
     }
 
     @Override
-    public void mouseMoved(MouseEvent e) {
+    public synchronized void mouseMoved(MouseEvent e) {
     }
 
     @Override
-    public void mouseExited(MouseEvent e) {
+    public synchronized void mouseExited(MouseEvent e) {
     }
 
     public void clearPanel() {
@@ -187,7 +193,6 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
         }
         colorSetup();
     }
-
 
     public void setSmallBrush() {
         brushSetup();
@@ -260,7 +265,6 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
         }
     }
 
-
     public void brushSetup(){
         color = lastColor;
         try {
@@ -269,7 +273,6 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
         } catch (Exception e) {
         }
     }
-
 
     @Override
     public void setEffect(AwesomeEffect effect) {
@@ -287,4 +290,8 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
         return this;
     }
 
+    public synchronized ArrayList<List<PaintPoint>> getPictureAndStopPainting() {
+        canEdit = false;
+        return paintPoints;
+    }
 }

@@ -352,7 +352,7 @@ public class DrawPhase extends Phase implements ActionListener {
 
     private void submitPicture() {
         Message msg = new Message(Message.Type.SUBMIT_PICTURE);
-        msg.addParameter("drawing", drawPanel.getDrawData());
+        msg.addParameter("drawing", drawPanel.getPictureAndStopPainting());
         Game.game.sendMessage(msg);
     }
 }
