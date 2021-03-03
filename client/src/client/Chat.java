@@ -33,6 +33,7 @@ public class Chat extends JPanel {
         super(new BorderLayout());
         setPreferredSize(new Dimension(400, 32 * 3));
         setOpaque(false);
+        setFont(getFont().deriveFont(17.0f));
 
         Image upIcon = Assets.getTile(icons, 2, 0, 1, 1, 4);
         Image downIcon = Assets.getTile(icons, 3, 0, 1, 1, 4);
@@ -111,7 +112,7 @@ public class Chat extends JPanel {
      * Scroll up a little bit.
      */
     public void scrollUp() {
-        scrolledLines = Math.min(Math.min(scrolledLines + 3, lines.size() - 4), 0);
+        scrolledLines = Math.max(Math.min(scrolledLines + 3, lines.size() - 4), 0);
     }
 
     /**
