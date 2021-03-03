@@ -9,6 +9,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.net.URLDecoder;
 import java.util.*;
 import java.util.List;
 
@@ -38,7 +39,7 @@ public class Game implements ActionListener, WindowListener {
         game = this;
 
         try {
-            IniStream.read(settings, new File(Assets.getResourcesPath() + "settings.ini"));
+            IniStream.read(settings, new File(getJarDir() + "/settings.ini"));
             settings.validate();
         } catch (IOException e) {
             System.out.println(e.getMessage());
@@ -273,11 +274,17 @@ public class Game implements ActionListener, WindowListener {
         return gameSettings;
     }
 
+    private String getJarDir() {
+        String path = Main.class.getProtectionDomain().getCodeSource().getLocation().getFile();
+        int index = path.lastIndexOf('/');
+        return path.substring(0, index);
+    }
     @Override
     public void windowClosing(WindowEvent e) {
         settings.setWindowBounds(frame.getX(), frame.getY(), frame.getWidth(), frame.getHeight());
         try {
-            IniStream.write(settings, new File(Assets.getResourcesPath() + "settings.ini"));
+            System.out.println(getJarDir() + "/settings.ini");
+            IniStream.write(settings, new File(getJarDir() + "/settings.ini"));
         } catch (IOException ignored) {}
         try {
             network.closeConnection();
