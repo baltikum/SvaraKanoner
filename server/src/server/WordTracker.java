@@ -104,7 +104,7 @@ public class WordTracker {
         if (latestEntry.getGuess() == null) {
             latestEntry.submitGuess(id, guess);
             if (!latestEntry.isCorrect()) {
-                wrongAnswerSubmittedOnce = false;
+                wrongAnswerSubmittedOnce = true;
             }
             return true;
         }
