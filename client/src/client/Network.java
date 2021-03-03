@@ -30,6 +30,7 @@ public class Network extends Thread {
         try {
             objectOutputStream.writeObject(message);
             objectOutputStream.flush();
+            objectOutputStream.reset();
         } catch (Exception e) {
             Game.game.setErrorMsg("Could not send to the server: " + e.getMessage());
             e.printStackTrace();
@@ -40,6 +41,7 @@ public class Network extends Thread {
         try {
             objectOutputStream.writeObject(message);
             objectOutputStream.flush();
+            objectOutputStream.reset();
             responseListeners.add(responseListener);
         } catch (Exception e) {
             Game.game.setErrorMsg("Could not send to the server: " + e.getMessage());
@@ -61,6 +63,7 @@ public class Network extends Thread {
             while (true) { // listen to messages from server
                 try {
                     Message message = (Message) objectInputStream.readObject();
+                    objectInputStream.reset();
                     System.out.println("Received message: " + message.toString());
 
                     if (message.type == Message.Type.RESPONSE) {

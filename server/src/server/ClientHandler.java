@@ -28,6 +28,7 @@ public class ClientHandler extends Player implements Runnable {
         try {
             objectOutputStream.writeObject(message);
             objectOutputStream.flush();
+            objectOutputStream.reset();
         } catch (Exception e) {
 
         }
@@ -42,6 +43,8 @@ public class ClientHandler extends Player implements Runnable {
             while (true) { // listen to messages loop
                 try {
                     Message message = (Message) objectInputStream.readObject();
+                    objectInputStream.reset();
+
                     message.player = this;
                     synchronized (System.out) {
                         System.out.println("Received message: " + message.toString());
