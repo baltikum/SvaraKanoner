@@ -1,8 +1,10 @@
 package client;
 
 import javax.sound.sampled.*;
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -23,7 +25,7 @@ public class AudioPlayer {
      * The background music plays directly if Settings muteMusic is not true.
      */
     public AudioPlayer() {
-        File audioFile = Assets.getResourceFile("lat1.wav");
+        InputStream audioFile = Main.class.getResourceAsStream("/lat1.wav");
         this.settings = Game.game.getSettings();
 
 
@@ -49,8 +51,9 @@ public class AudioPlayer {
         });
     }
 
-    private void playSong(File audioFile) {
-        try (AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile)) {
+    private void playSong(InputStream audioFile) {
+
+        try (AudioInputStream audioStream = AudioSystem.getAudioInputStream(new BufferedInputStream(audioFile))) {
 
             AudioFormat format = audioStream.getFormat();
             DataLine.Info info = new DataLine.Info(Clip.class, format);
@@ -123,15 +126,15 @@ public class AudioPlayer {
     }
 
     public void changeSongAudioPlayer(String song) {
-        File audioFile = Assets.getResourceFile("lat1.wav");;
+        InputStream audioFile = Main.class.getResourceAsStream("/lat1.wav");;
         stopSong();
         switch (song) {
-            case "PickWord" -> audioFile = Assets.getResourceFile("giss.wav");
-            case "Draw" -> audioFile = Assets.getResourceFile("lat3.wav");
-            case "Guess" -> audioFile = Assets.getResourceFile("giss.wav");
-            case "Waiting" -> audioFile = Assets.getResourceFile("lat2.wav");
-            case "Reveal" -> audioFile = Assets.getResourceFile("lat2.wav");
-            case "Winner" -> audioFile = Assets.getResourceFile("lat2.wav");
+            case "PickWord" -> audioFile = Main.class.getResourceAsStream("/giss.wav");
+            case "Draw" -> audioFile = Main.class.getResourceAsStream("/lat3.wav");
+            case "Guess" -> audioFile = Main.class.getResourceAsStream("/giss.wav");
+            case "Waiting" -> audioFile = Main.class.getResourceAsStream("/lat2.wav");
+            case "Reveal" -> audioFile = Main.class.getResourceAsStream("/lat2.wav");
+            case "Winner" -> audioFile = Main.class.getResourceAsStream("/lat2.wav");
         }
         playSong(audioFile);
     }

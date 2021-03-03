@@ -28,14 +28,6 @@ public class Assets {
         return Main.class.getProtectionDomain().getCodeSource().getLocation().getPath();
     }
 
-    /**
-     *
-     * @param name The file of the name with no slash in the beginning.
-     * @return The file.
-     */
-    public static File getResourceFile(String name) {
-        return new File(getResourcesPath() + name);
-    }
 
     /**
      *
@@ -44,7 +36,7 @@ public class Assets {
     public static Font getFont() {
         if (font == null) {
             try {
-                font = Font.createFont(Font.TRUETYPE_FONT, new File(getResourcesPath() + "GloriaHallelujah.ttf")).deriveFont(30.0f);
+                font = Font.createFont(Font.TRUETYPE_FONT, Main.class.getResourceAsStream("/GloriaHallelujah.ttf")).deriveFont(30.0f);
             } catch (FontFormatException | IOException e) {
                 e.printStackTrace();
                 font = new Font(Font.SERIF, Font.BOLD, 30);
@@ -73,11 +65,10 @@ public class Assets {
      * @return On success the loaded image else getErrorImage.
      */
     public static BufferedImage loadImage(String name) {
-        String path = getResourcesPath() +  name;
         try {
-            return ImageIO.read(new File(path));
+            return ImageIO.read(Main.class.getResource("/"+name));
         } catch (IOException e) {
-            System.out.println("Could not load asset: " + path);
+            System.out.println("Could not load asset: " + name);
         }
         return getErrorImage();
     }

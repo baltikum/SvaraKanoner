@@ -2,6 +2,7 @@ package client;
 
 import client.ui.*;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
