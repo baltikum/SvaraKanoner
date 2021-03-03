@@ -19,10 +19,8 @@ import java.util.HashMap;
 
 public class GuessPhase extends Phase {
 
-    private GameSession gameSession;
-    private RoundData roundData;
-    private GameSettings settings;
-    private HashMap<Integer, ArrayList<java.util.List<PaintPoint>>> guessImages;
+    private final GameSession gameSession;
+    private final RoundData roundData;
 
     /**
      * Contructor takes a GameSession
@@ -31,20 +29,19 @@ public class GuessPhase extends Phase {
     public GuessPhase(GameSession session) {
         this.gameSession = session;
         this.roundData = this.gameSession.getCurrentRoundData();
-        this.guessImages = this.roundData.getImagesToGuessOn();
-        this.settings = this.gameSession.getGameSettings();
-        this.timeLeft = new Timer((int) settings.getGuessTimeMilliseconds(),
+        this.timeLeft = new Timer((int) gameSession.getGameSettings().getGuessTimeMilliseconds(),
                 timeOut -> session.sendMessageToAll(new Message(Message.Type.TIMES_UP)));
 
+        HashMap<Integer, ArrayList<java.util.List<PaintPoint>>> playerImageMap = this.roundData.getImagesToGuessOn();
         for (ClientHandler client: gameSession.getConnectedPlayers()) {
             Message message;
-            if ( !guessImages.containsKey(client.getId())) {
+            if ( !playerImageMap.containsKey(client.getId())) {
                 message = new Message(Message.Type.GOTO);
                 message.addParameter("phase","WaitingPhase");
             } else {
                 message = new Message(Message.Type.GOTO);
                 message.addParameter("phase","GuessPhase");
-                message.addParameter("image", guessImages.get(client.getId()));
+                message.addParameter("image", playerImageMap.get(client.getId()));
             }
             client.sendMessage(message);
         }
