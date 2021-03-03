@@ -63,7 +63,6 @@ public class Network extends Thread {
             while (true) { // listen to messages from server
                 try {
                     Message message = (Message) objectInputStream.readObject();
-                    objectInputStream.reset();
                     System.out.println("Received message: " + message.toString());
 
                     if (message.type == Message.Type.RESPONSE) {

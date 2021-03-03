@@ -5,6 +5,7 @@ import common.MessageResponseListener;
 import common.Player;
 
 import java.awt.*;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -43,7 +44,6 @@ public class ClientHandler extends Player implements Runnable {
             while (true) { // listen to messages loop
                 try {
                     Message message = (Message) objectInputStream.readObject();
-                    objectInputStream.reset();
 
                     message.player = this;
                     synchronized (System.out) {
@@ -66,9 +66,10 @@ public class ClientHandler extends Player implements Runnable {
                             gameSession.receiveMessage(message);
                         }
                     }
+                } catch (EOFException ignore) {
+                    break;
                 } catch (Exception e) {
                     e.printStackTrace();
-                    break;
                 }
             }
         } catch (IOException e) {
