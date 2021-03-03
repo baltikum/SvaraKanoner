@@ -26,7 +26,7 @@ public class Network extends Thread {
         portNumber = settings.getSocket();
     }
 
-    public void sendMessage(Message message) {
+    public synchronized void sendMessage(Message message) {
         try {
             objectOutputStream.writeObject(message);
             objectOutputStream.flush();
@@ -37,7 +37,7 @@ public class Network extends Thread {
         }
     }
 
-    public void sendMessage(Message message, MessageResponseListener responseListener) {
+    public synchronized void sendMessage(Message message, MessageResponseListener responseListener) {
         try {
             objectOutputStream.writeObject(message);
             objectOutputStream.flush();

@@ -86,8 +86,7 @@ public class GuessPhase extends Phase {
     private boolean checkAndSendGuess(String guessed) {
         boolean sent = false;
         String str = guessed.trim();
-        str = str.toLowerCase(Locale.ROOT);
-        if ( isAlphabetical(str)){
+        if (isAlphabetical(str) && !str.isEmpty()){
             Message submitMessage = new Message(Message.Type.SUBMIT_GUESS);
             submitMessage.addParameter("guess", str);
             Game.game.sendMessage(submitMessage);
