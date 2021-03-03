@@ -1,9 +1,48 @@
 package client;
 
+import common.IniStream;
+
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * Handles one game session from start to finish.
+ * Any shared data between the phases should be in here.
+ *
+ * @author Jesper Jansson
+ * @version 03/03/21
+ */
 public class Settings {
+
+    private static Settings settingsInstance;
+
+    private static String getJarDir() {
+        String path = Main.class.getProtectionDomain().getCodeSource().getLocation().getFile();
+        int index = path.lastIndexOf('/');
+        return path.substring(0, index);
+    }
+
+    public static void saveSettings() {
+        try {
+            System.out.println(getJarDir() + "/settings.ini");
+            IniStream.write(settingsInstance, new File(getJarDir() + "/settings.ini"));
+        } catch (IOException ignored) {}
+    }
+
+    public static Settings getSettings() {
+        if (settingsInstance == null) {
+            settingsInstance = new Settings();
+            try {
+                IniStream.read(settingsInstance, new File(getJarDir() + "/settings.ini"));
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
+            }
+            settingsInstance.validate();
+        }
+        return settingsInstance;
+    }
 
     public enum Properties {
         MUTE_MUSIC,
@@ -34,6 +73,8 @@ public class Settings {
     private short socket = 12345;
 
     private final ArrayList<Listener> listeners = new ArrayList<>();
+
+    private Settings() {}
 
     public void addListener(Listener listener) {
         listeners.add(listener);
@@ -129,7 +170,7 @@ public class Settings {
         return socket;
     }
 
-    public void validate() {
+    private void validate() {
         setMusicVolume(musicVolume);
         setEffectsVolume(effectsVolume);
         preferredAvatarId = Math.min(Math.max(preferredAvatarId, 0), 15);

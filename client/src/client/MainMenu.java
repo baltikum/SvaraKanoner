@@ -2,14 +2,9 @@ package client;
 
 import client.ui.*;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.AbstractDocument;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DocumentFilter;
+import javax.swing.event.*;
+import javax.swing.text.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
@@ -20,19 +15,22 @@ import common.*;
  *
  * Can send a CREATE_GAME or JOIN_GAME message to the server and enters join phase on successfull response.
  */
-public class MainMenu extends Phase {
+public class MainMenu extends JPanel {
 
     private boolean hasPlayedQuitAnimation = false;
     private final Image wham, leftArrow, rightArrow;
     private final Image rocket, flame0, flame1, block;
     private Settings.Listener settingsListener;
+    private final Game game;
+    private final GameSettings gameSettings = new GameSettings();
 
     /**
      * Initiates a MainMenu phase and sets up the ui.
      */
-    MainMenu() {
-        JPanel root = new JPanel(new CardLayout());
-        root.setBackground(new Color(0xe67e22));
+    public MainMenu(Game game) {
+        super(new CardLayout());
+        this.game = game;
+        setBackground(new Color(0xe67e22));
 
         BufferedImage tileMap = Assets.loadImage("mainmenu.png");
         wham = Assets.getTile(tileMap, 0, 0, 3, 1, 8);
@@ -43,24 +41,21 @@ public class MainMenu extends Phase {
         flame1 = Assets.getTile(tileMap, 1, 3, 1, 1, 8);
         block = Assets.getTile(tileMap, 4, 3, 4, 5, 8);
 
-        initMainMenu(root);
-        initJoinGamePanel(root);
-        initCreateGamePanel(root);
-
-        Game.game.setContentPanel(root);
+        initMainMenu();
+        initJoinGamePanel();
+        initCreateGamePanel();
     }
 
 
     /**
      * Add a panel as a card to root with the main menu buttons.
-     * @param root The panel to add the card to.
      */
-    private void initMainMenu(JPanel root) {
-        Game.game.chat.setVisible(false);
+    private void initMainMenu() {
+        game.getChat().setVisible(false);
         PercentLayout layout = new PercentLayout(1.0f);
         JPanel panel = new JPanel(layout);
         panel.setBackground(new Color(0xe67e22));
-        root.add(panel);
+        this.add(panel);
 
         AwesomeText title = new AwesomeText("Hello!");
         AwesomeButton joinGameButton = new AwesomeButton("Join Game", wham);
@@ -79,14 +74,14 @@ public class MainMenu extends Phase {
         AwesomeUtil.wiggleOnHover(joinGameButton, 10.0f);
         AwesomeUtil.scaleOnHover(createGameButton, 1.3f);
 
-        joinGameButton.addActionListener(e -> ((CardLayout)root.getLayout()).next(root) );
-        createGameButton.addActionListener(e -> ((CardLayout)root.getLayout()).last(root) );
+        joinGameButton.addActionListener(e -> ((CardLayout)this.getLayout()).next(this) );
+        createGameButton.addActionListener(e -> ((CardLayout)this.getLayout()).last(this) );
 
         quitButton.addActionListener(e -> {
             if (!hasPlayedQuitAnimation) {
                 AwesomeEffect.Builder builder = AwesomeEffect.create();
-                builder .addTranslationXKey(root.getWidth(), 1000)
-                        .addTranslationXKey(-root.getWidth(), 1001)
+                builder .addTranslationXKey(this.getWidth(), 1000)
+                        .addTranslationXKey(-this.getWidth(), 1001)
                         .addTranslationXKey(0, 2000).animate(quitButton);
                 for (int i = 0; i < 10; i++) {
                     builder.addSpriteKey(flame0, i * 200);
@@ -100,11 +95,12 @@ public class MainMenu extends Phase {
             }
         });
 
+        Settings settings = Settings.getSettings();
         AwesomeButton nextIcon = new AwesomeButton(rightArrow);
         AwesomeButton prevIcon = new AwesomeButton(leftArrow);
-        AwesomeImage playerIcon = new AwesomeImage(Assets.getPlayerIcons()[Game.game.getSettings().getPreferredAvatarId()]);
-        nextIcon.addActionListener( e -> Game.game.getSettings().nextPreferredIcon());
-        prevIcon.addActionListener( e -> Game.game.getSettings().prevPreferredIcon());
+        AwesomeImage playerIcon = new AwesomeImage(Assets.getPlayerIcons()[settings.getPreferredAvatarId()]);
+        nextIcon.addActionListener( e -> settings.nextPreferredIcon());
+        prevIcon.addActionListener( e -> settings.prevPreferredIcon());
 
         panel.add(nextIcon);
         panel.add(prevIcon);
@@ -112,8 +108,7 @@ public class MainMenu extends Phase {
         layout.setConstraintsRatioByWidth(prevIcon, 0.1f, 0.1f, 0.05f, 1.0f);
         layout.setConstraintsRatioByWidth(playerIcon, 0.15f, 0.1f, 0.05f, 1.0f);
         layout.setConstraintsRatioByWidth(nextIcon, 0.2f, 0.1f, 0.05f, 1.0f);
-        settingsListener = (property, settings) -> playerIcon.setImage(Assets.getPlayerIcons()[settings.getPreferredAvatarId()]);
-        Game.game.getSettings().addListener(settingsListener);
+        settings.addListener((property, clientSettings) -> playerIcon.setImage(Assets.getPlayerIcons()[clientSettings.getPreferredAvatarId()]));
 
         panel.add(title);
         panel.add(joinGameButton);
@@ -130,15 +125,14 @@ public class MainMenu extends Phase {
 
     /**
      * Add a panel as a card to root with the join game inputs.
-     * @param root
      */
-    private void initJoinGamePanel(JPanel root) {
-        Settings clientSettings = Game.game.getSettings();
+    private void initJoinGamePanel() {
+        Settings clientSettings = Settings.getSettings();
 
         PercentLayout layout = new PercentLayout(1.0f);
         JPanel panel = new JPanel(layout);
         panel.setBackground(new Color(0xe67e22));
-        root.add(panel);
+        this.add(panel);
 
         AwesomeImage bg = new AwesomeImage(block);
         AwesomeText codeLabel = new AwesomeText("Enter code");
@@ -176,7 +170,7 @@ public class MainMenu extends Phase {
         AwesomeUtil.wiggleOnHover(back, 10.0f);
         AwesomeUtil.wiggleOnHover(accept, 10.0f);
 
-        back.addActionListener(e -> ((CardLayout)root.getLayout()).previous(root) );
+        back.addActionListener(e -> ((CardLayout)this.getLayout()).previous(this) );
         accept.addActionListener(e -> joinGame(codeInput.getText()));
 
         // Allow uppercase only
@@ -206,16 +200,14 @@ public class MainMenu extends Phase {
 
     /**
      * Add a panel as a card to root with the create game inputs.
-     * @param root
      */
-    private void initCreateGamePanel(JPanel root) {
-        Settings clientSettings = Game.game.getSettings();
-        GameSettings gameSettings = Game.game.getGameSettings();
+    private void initCreateGamePanel() {
+        Settings clientSettings = Settings.getSettings();
 
         PercentLayout layout = new PercentLayout(1.0f);
         JPanel panel = new JPanel(layout);
         panel.setBackground(new Color(0xe67e22));
-        root.add(panel);
+        this.add(panel);
 
         float y = 0.15f;
         AwesomeText nameInputLabel = new AwesomeText("YOUR NAME: ");
@@ -370,7 +362,7 @@ public class MainMenu extends Phase {
         layout.setConstraintsRatioByWidth(create, 0.75f, 0.8f, 0.3f, 0.5f);
         layout.setConstraintsRatioByWidth(back, 0.25f, 0.8f, 0.3f, 0.5f);
         create.addActionListener(e -> createGame() );
-        back.addActionListener(e -> ((CardLayout)root.getLayout()).first(root));
+        back.addActionListener(e -> ((CardLayout)this.getLayout()).first(this));
         AwesomeUtil.wiggleOnHover(create, 10.0f);
         AwesomeUtil.wiggleOnHover(back, 10.0f);
     }
@@ -380,37 +372,37 @@ public class MainMenu extends Phase {
     private void joinGame(String code) {
         if (joinGameClicked) return;
         joinGameClicked = true;
-        Settings clientSettings = Game.game.getSettings();
+        Settings clientSettings = Settings.getSettings();
         Message msg = new Message(Message.Type.JOIN_GAME);
         msg.data.put("sessionId", code);
         msg.data.put("requestedName", clientSettings.getPreferredName());
         msg.data.put("requestedAvatarId", clientSettings.getPreferredAvatarId());
-        Game.game.sendMessage(msg, new MessageResponseListener() {
+        game.sendMessage(msg, new MessageResponseListener() {
             @Override
             public void onSuccess(Message msg) {
-                Game.game.setGameCode((String) msg.data.get("sessionId"));
-                Game.game.setGameSettings((GameSettings) msg.data.get("gameSettings"));
+                int playerId = (int) msg.data.get("playerId");
+                String playerName = (String) msg.data.get("playerName");
+                int avatarId = (int) msg.data.get("playerAvatarId");
+                Player player = new Player(playerId, playerName, avatarId);
 
-                Player thisPlayer = Game.game.getThisPlayer();
-                thisPlayer.setAvatarId((int) msg.data.get("playerAvatarId"));
-                thisPlayer.setName((String) msg.data.get("playerName"));
-                thisPlayer.setId((int) msg.data.get("playerId"));
+                game.startSession(player, (GameSettings) msg.data.get("gameSettings"), (String) msg.data.get("sessionId"));
 
                 JoinPhase joinPhase = new JoinPhase();
-                Game.game.setCurrentPhase(joinPhase);
+                game.getSession().setCurrentPhase(joinPhase);
                 int[] existingPlayerIds = (int[]) msg.data.get("existingPlayerIds");
                 String[] existingPlayerNames = (String[]) msg.data.get("existingPlayerNames");
                 int[] existingPlayerAvatarIds = (int[]) msg.data.get("existingPlayerAvatarIds");
                 for (int i = 0; i < existingPlayerIds.length; i++) {
                     joinPhase.addPlayer(new Player(existingPlayerIds[i], existingPlayerNames[i], existingPlayerAvatarIds[i]));
                 }
-                Game.game.getSettings().removeListener(settingsListener);
+
+                Settings.getSettings().removeListener(settingsListener);
             }
 
             @Override
             public void onError(String errorMsg) {
                 joinGameClicked = false;
-                Game.game.setErrorMsg(msg.error);
+                game.setErrorMsg(msg.error);
             }
         });
     }
@@ -420,37 +412,30 @@ public class MainMenu extends Phase {
     private void createGame() {
         if (createGameClicked) return;
         createGameClicked = true;
-        Settings clientSettings = Game.game.getSettings();
+        Settings clientSettings = Settings.getSettings();
         Message msg =  new Message(Message.Type.CREATE_GAME);
-        msg.data.put("settings", Game.game.getGameSettings());
+        msg.data.put("settings", gameSettings);
         msg.data.put("requestedName", clientSettings.getPreferredName());
         msg.data.put("requestedAvatarId", clientSettings.getPreferredAvatarId());
-        Game.game.sendMessage(msg, new MessageResponseListener() {
+        game.sendMessage(msg, new MessageResponseListener() {
             @Override
             public void onSuccess(Message msg) {
-                Player player = Game.game.getThisPlayer();
-                Game.game.setGameCode((String) msg.data.get("sessionId"));
+                int playerId = (int) msg.data.get("playerId");
+                String playerName = (String) msg.data.get("playerName");
+                int avatarId = (int) msg.data.get("playerAvatarId");
+                Player player = new Player(playerId, playerName, avatarId);
 
-                player.setId((int) msg.data.get("playerId"));
-                player.setName((String) msg.data.get("playerName"));
-                player.setAvatarId((int) msg.data.get("playerAvatarId"));
+                game.startSession(player, gameSettings, (String) msg.data.get("sessionId"));
+                game.getSession().setCurrentPhase(new JoinPhase());
 
-                JoinPhase joinPhase = new JoinPhase();
-                Game.game.setCurrentPhase(joinPhase);
-
-                Game.game.getSettings().removeListener(settingsListener);
+                Settings.getSettings().removeListener(settingsListener);
             }
 
             @Override
             public void onError(String errorMsg) {
                 createGameClicked = false;
-                Game.game.setErrorMsg(errorMsg);
+                game.setErrorMsg(errorMsg);
             }
         });
-    }
-
-    @Override
-    public void message(Message msg) {
-        // Doesn't expect any messages
     }
 }

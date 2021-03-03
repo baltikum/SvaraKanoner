@@ -1,6 +1,7 @@
 package client.ui;
 
 import client.Assets;
+import common.Phase;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,6 +17,7 @@ public class AwesomeButton extends JButton implements AwesomeEffect.User {
 
     private AwesomeEffect effect;
     private Image background;
+    private Phase currentPhase;
 
     /**
      * Creates a button with text and no background.

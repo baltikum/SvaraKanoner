@@ -22,6 +22,7 @@ public class DrawPhase extends Phase implements ActionListener {
 
     private String wordToDraw;
 
+    private final GameSession session;
     private final DrawPanel drawPanel;
     private final Image wham;
     //private Object AwesomeText;
@@ -31,9 +32,11 @@ public class DrawPhase extends Phase implements ActionListener {
     public DrawPhase(Message msg) {    //  ?
         super();
 
+        session = Game.getInstance().getSession();
+
         // JFrame mainFrame = new JFrame("Ryktet går!");
         BufferedImage tileMap = Assets.loadImage("mainmenu.png");
-       wham = Assets.getTile(tileMap, 0, 0, 3, 1, 8);
+        wham = Assets.getTile(tileMap, 0, 0, 3, 1, 8);
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
 
@@ -316,8 +319,8 @@ public class DrawPhase extends Phase implements ActionListener {
 
         //  Game.game.setContentPanel(panel);      //  korrekt?
 
-        Game.game.getPhaseUI().setContent(panel);
-        Game.game.getPhaseUI().startTimer((int)(Game.game.getGameSettings().getDrawTimeMilliseconds() / 1000));
+        session.getPhaseUI().setContent(panel);
+        session.getPhaseUI().startTimer((int)(session.getGameSettings().getDrawTimeMilliseconds() / 1000));
 
         this.wordToDraw = (String) msg.data.get("word");
         addWord(wordToDraw);
@@ -328,12 +331,9 @@ public class DrawPhase extends Phase implements ActionListener {
     //     new DrawPhase();
     //   }
 
-
-
     public void clearPaintArea(){
 
     }
-
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -347,12 +347,12 @@ public class DrawPhase extends Phase implements ActionListener {
     }
 
     private void addWord(String word) {
-        Game.game.getPhaseUI().setTitle("Draw " + word);
+        session.getPhaseUI().setTitle("Draw " + word);
     }
 
     private void submitPicture() {
         Message msg = new Message(Message.Type.SUBMIT_PICTURE);
         msg.addParameter("drawing", drawPanel.getPictureAndStopPainting());
-        Game.game.sendMessage(msg);
+        Game.getInstance().sendMessage(msg);
     }
 }

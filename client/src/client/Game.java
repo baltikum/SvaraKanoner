@@ -8,48 +8,32 @@ import javax.swing.Timer;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.io.*;
-import java.net.URLDecoder;
-import java.util.*;
-import java.util.List;
 
-
+/**
+ * Handles all permanent ui/data from when the game is started until the user closes it.
+ *
+ * @author Jesper Jansson
+ * @version 03/03/21
+ */
 public class Game implements ActionListener, WindowListener {
-    public static Game game;
 
-    public final Random random = new Random();
+    private static Game instance;
+    public static Game getInstance() {
+        return instance;
+    }
+
     private final JFrame frame;
-    private Phase currentPhase;
 
-    private final Settings settings = new Settings();
-    public Chat chat;
-    private final AudioPlayer audioPlayer;
-
+    private GameSession session;
     private Network network;
     private JLabel errorMsg;
-
-    private GameSettings gameSettings = new GameSettings();
-    private String gameCode = "---";
-    private final Player thisPlayer = new Player(-1, "Bengt", 0);
-    private final List<Player> players = new ArrayList<>();
-
-    private final PhaseUI phaseUI = new PhaseUI();
+    private Chat chat;
 
     Game() {
-        game = this;
-
-        try {
-            IniStream.read(settings, new File(getJarDir() + "/settings.ini"));
-            settings.validate();
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-        }
-
-        audioPlayer = new AudioPlayer();
-
+        Settings settings = Settings.getSettings();
+        Rectangle windowBounds = settings.getWindowBounds();
 
         // Initiate the window
-        Rectangle windowBounds = settings.getWindowBounds();
         frame = new JFrame("Ryktet går!");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.addWindowListener(this);
@@ -61,19 +45,12 @@ public class Game implements ActionListener, WindowListener {
         // Initiate the LayeredPane
         initTopLayer();
 
-        // Start the network
-        network = new Network(settings);
-        network.start();
+        // Start in the main menu
+        setContentPanel(new MainMenu(this));
 
-        // Start with
-        setCurrentPhase(new MainMenu());
-        // Message msg = new Message(Message.Type.PICK_WORD);
-        // msg.addParameter("words", new String[]{"aaa", "aaa", "asd", "aasd"});
-        // setCurrentPhase(new PickWordPhase(msg));
-        // setCurrentPhase(new WinnerPhase(new Message(Message.Type.GOTO)));
-        // setCurrentPhase(new DrawPhase(new Message(Message.Type.GOTO)));
-        // setCurrentPhase(new WaitingPhase(new Message(Message.Type.GOTO)));
-        // setCurrentPhase(new GuessPhase(new Message(Message.Type.GOTO)));
+        // Start the network
+        network = new Network(this);
+        network.start();
 
         // Move and show window
         if (windowBounds.x < 0 || windowBounds.y < 0)
@@ -87,9 +64,11 @@ public class Game implements ActionListener, WindowListener {
         timer.setInitialDelay(1000 / 30);
         timer.start();
 
+        instance = this;
     }
 
     private void initTopLayer() {
+        Settings settings = Settings.getSettings();
         SpringLayout layout = new SpringLayout();
         JPanel panel = new JPanel(layout) {
             @Override
@@ -135,10 +114,10 @@ public class Game implements ActionListener, WindowListener {
         muteMusic.addActionListener(e -> settings.setMuteMusic(!settings.isMusicMuted()) );
         muteEffects.addActionListener(e -> settings.setMuteEffects(!settings.isEffectsMuted()) );
 
-        settings.addListener((property, settings) -> {
+        settings.addListener((property, clientSettings) -> {
             switch (property) {
-                case MUTE_MUSIC -> muteMusic.setBackground(settings.isMusicMuted() ? unmuteMusicIcon : muteMusicIcon);
-                case MUTE_EFFECTS -> muteEffects.setBackground(settings.isEffectsMuted() ? unmuteEffectsIcon : muteEffectsIcon);
+                case MUTE_MUSIC -> muteMusic.setBackground(clientSettings.isMusicMuted() ? unmuteMusicIcon : muteMusicIcon);
+                case MUTE_EFFECTS -> muteEffects.setBackground(clientSettings.isEffectsMuted() ? unmuteEffectsIcon : muteEffectsIcon);
             }
         });
 
@@ -165,54 +144,13 @@ public class Game implements ActionListener, WindowListener {
         frame.repaint();
     }
 
-    public void setCurrentPhase(Phase phase) {
-        currentPhase = phase;
-    }
-
     public void setContentPanel(Container panel) {
         frame.setContentPane(panel);
-        frame.dispatchEvent(new ComponentEvent(frame, ComponentEvent.COMPONENT_RESIZED));
-        frame.doLayout();
+        frame.revalidate();
     }
 
     public Container getContentPanel() {
         return frame.getContentPane();
-    }
-
-    public void setGameCode(String code) {
-        gameCode = code;
-    }
-
-    public String getGameCode() {
-        return gameCode;
-    }
-
-    public List<Player> getPlayers() {
-        return players;
-    }
-
-    public Player getThisPlayer() {
-        return thisPlayer;
-    }
-
-    public Player getPlayer(int id) {
-        for (Player player : players) {
-            if (player.getId() == id)
-                return player;
-        }
-        return null;
-    }
-
-    public Settings getSettings() {
-        return settings;
-    }
-
-    public AudioPlayer getAudioPlayer() {
-        return audioPlayer;
-    }
-
-    public void updateUI() {
-        frame.pack();
     }
 
     public void setErrorMsg(String msg) {
@@ -234,55 +172,28 @@ public class Game implements ActionListener, WindowListener {
         network.sendMessage(message, responseListener);
     }
 
-    public void receiveMessage(Message msg) {
-        if (msg.type == Message.Type.CHAT_MESSAGE) {
-            chat.message(msg);
-        } else if (msg.type == Message.Type.GOTO) {
-            String targetPhase = (String) msg.data.get("phase");
-            switch (targetPhase) {
-                case "PickWordPhase" -> { setCurrentPhase(new PickWordPhase(msg));
-                                            audioPlayer.changeSongAudioPlayer("PickWord");}
-                case "DrawPhase" -> { setCurrentPhase(new DrawPhase(msg));
-                                            audioPlayer.changeSongAudioPlayer("Draw");}
-                case "GuessPhase" -> { setCurrentPhase(new GuessPhase(msg));
-                                            audioPlayer.changeSongAudioPlayer("Guess");}
-                case "RevealPhase" -> { setCurrentPhase(new RevealPhase(msg));
-                                            audioPlayer.changeSongAudioPlayer("Reveal");}
-                case "WaitingPhase" -> { setCurrentPhase(new WaitingPhase(msg));
-                                            audioPlayer.changeSongAudioPlayer("Waiting");}
-                case "WinnerPhase" -> { setCurrentPhase(new WinnerPhase(msg));
-                                            audioPlayer.changeSongAudioPlayer("Winner");}
-            }
-        } else {
-            if (currentPhase != null) currentPhase.message(msg);
-        }
+    public Chat getChat() {
+        return chat;
     }
 
-
-    public PhaseUI getPhaseUI() {
-        return phaseUI;
+    public GameSession getSession() {
+        return session;
     }
 
-    public void setGameSettings(GameSettings settings) {
-        this.gameSettings = settings;
+    public void startSession(Player thisPlayer, GameSettings gameSettings, String sessionId) {
+        session = new GameSession(thisPlayer, gameSettings, sessionId);
     }
 
-    public GameSettings getGameSettings() {
-        return gameSettings;
+    public void leaveSession() {
+        chat.clear();
+        session = null;
+        setContentPanel(new MainMenu(this));
     }
 
-    private String getJarDir() {
-        String path = Main.class.getProtectionDomain().getCodeSource().getLocation().getFile();
-        int index = path.lastIndexOf('/');
-        return path.substring(0, index);
-    }
     @Override
     public void windowClosing(WindowEvent e) {
-        settings.setWindowBounds(frame.getX(), frame.getY(), frame.getWidth(), frame.getHeight());
-        try {
-            System.out.println(getJarDir() + "/settings.ini");
-            IniStream.write(settings, new File(getJarDir() + "/settings.ini"));
-        } catch (IOException ignored) {}
+        Settings.getSettings().setWindowBounds(frame.getX(), frame.getY(), frame.getWidth(), frame.getHeight());
+        Settings.saveSettings();
         try {
             network.closeConnection();
         } catch (Exception ignored) {}

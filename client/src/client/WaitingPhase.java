@@ -13,7 +13,7 @@ import java.util.Map;
 public class WaitingPhase extends Phase {
     private final JPanel panel;
 
-    private Image rocket,flame0,flame1;
+    private final Image rocket,flame0,flame1;
 
     private final Map<Integer, AwesomeIconLabel> playerIdToLabel = new HashMap<>();
 
@@ -64,7 +64,7 @@ public class WaitingPhase extends Phase {
         layout.setConstraintsRatioByWidth(rocketButton, 0.5f, 0.7f, .6f, .5f);
         layout.setConstraintsRatioByWidth(rocketFlame, 0.28f, 0.7f, .1f, 1.0f);
 
-        Game.game.setContentPanel(panel);
+        Game.getInstance().setContentPanel(panel);
     }
 
     @Override

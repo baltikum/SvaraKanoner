@@ -19,6 +19,8 @@ public class JoinPhase extends Phase {
     private static final int NUM_POSITIONS = 16;
     private static final int POSITION_DATA_COMPONENTS = 3;
 
+    private final GameSession session;
+    private final Random random = new Random();
     private final float[] positionData;
     private final ArrayList<Integer> freePositions;
     private final JPanel panel;
@@ -29,8 +31,10 @@ public class JoinPhase extends Phase {
      * Initiates the join phase ui.
      */
     public JoinPhase() {
-        Game.game.chat.setVisible(true);
-        Random random = Game.game.random;
+        Game game = Game.getInstance();
+        session = game.getSession();
+
+        game.getChat().setVisible(true);
         freePositions = new ArrayList<>(16);
         positionData = new float[NUM_POSITIONS * POSITION_DATA_COMPONENTS];
 
@@ -60,7 +64,7 @@ public class JoinPhase extends Phase {
         panel.setOpaque(true);
         panel.setBackground(new Color(0, 0, 0, 0));
 
-        AwesomeText gameCode = new AwesomeText(Game.game.getGameCode());
+        AwesomeText gameCode = new AwesomeText(session.getSessionId());
         panel.add(gameCode);
         layout.setConstraintsRatioByWidth(gameCode, 0.5f, .167f * 2, .35f, 0.25f);
         AwesomeUtil.dynamicFont(gameCode, 1.0f);
@@ -72,29 +76,29 @@ public class JoinPhase extends Phase {
         layout.setConstraintsRatioByWidth(ready, .75f, .167f * 5, .3f, 0.25f);
         layout.setConstraintsRatioByWidth(leave, .25f, .167f * 5, .3f, 0.25f);
         ready.addActionListener(e -> {
-            Game.game.sendMessage(new Message(Message.Type.TOGGLE_READY_STATUS));
+            game.sendMessage(new Message(Message.Type.TOGGLE_READY_STATUS));
         });
         leave.addActionListener(e -> {
-            Game.game.sendMessage(new Message(Message.Type.DISCONNECT));
-            Game.game.setCurrentPhase(new MainMenu());
+            game.sendMessage(new Message(Message.Type.DISCONNECT));
+            game.leaveSession();
         });
         AwesomeUtil.dynamicFont(ready, 1.0f);
         AwesomeUtil.dynamicFont(leave, 1.0f);
         AwesomeUtil.wiggleOnHover(ready, 20.0f);
         AwesomeUtil.wiggleOnHover(leave, 20.0f);
 
-        addPlayer(Game.game.getThisPlayer());
-        Game.game.setContentPanel(panel);
+        addPlayer(session.getThisPlayer());
+        game.setContentPanel(panel);
     }
 
     public void addPlayer(Player player) {
-        List<Player> players = Game.game.getPlayers();
+        List<Player> players = session.getPlayers();
         players.add(player);
-        Game.game.getPhaseUI().addPlayerToList(player);
+        session.getPhaseUI().addPlayerToList(player);
 
         int positionIndex = players.size() < 8 ?
-                freePositions.remove(Game.game.random.nextInt(8 - players.size())) :
-                freePositions.remove(Game.game.random.nextInt(freePositions.size()));
+                freePositions.remove(random.nextInt(8 - players.size())) :
+                freePositions.remove(random.nextInt(freePositions.size()));
         AwesomeIconLabel playerLabel = new AwesomeIconLabel(Assets.getPlayerIcons()[player.getAvatarId()], player.getName());
         panel.add(playerLabel);
         ((PercentLayout)panel.getLayout()).setConstraintsRatioByWidth(playerLabel,
@@ -126,7 +130,8 @@ public class JoinPhase extends Phase {
                 int playerId = (int) msg.data.getOrDefault("playerId", -1);
                 AwesomeIconLabel label = playerIdToLabel.get(playerId);
                 if (label != null) panel.remove(label);
-                Game.game.getPhaseUI().removePlayerFromList(Game.game.getPlayer(playerId));
+
+                session.getPhaseUI().removePlayerFromList(session.getPlayerById(playerId));
             }
             case PLAYER_READY_STATUS_CHANGED -> {
                 int playerId = (int) msg.data.getOrDefault("playerId", -1);

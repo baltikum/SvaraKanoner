@@ -1,29 +1,25 @@
 package client;
 
-import common.GameSettings;
-import common.Message;
-import common.MessageResponseListener;
-
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
-import java.net.SocketException;
-import java.util.ArrayDeque;
-import java.util.Queue;
+import common.*;
+import java.io.*;
+import java.net.*;
+import java.util.*;
 
 public class Network extends Thread {
 
-    Socket socket;
-    ObjectOutputStream objectOutputStream;
-    ObjectInputStream objectInputStream;
+    private final Game game;
+    private Socket socket;
+    private ObjectOutputStream objectOutputStream;
+    private ObjectInputStream objectInputStream;
     private final Queue<MessageResponseListener> responseListeners = new ArrayDeque<>();
     private final String ipAddress;
     private final short portNumber;
 
-    public Network(Settings settings) {
+    public Network(Game game) {
+        this.game = game;
+
+        Settings settings = Settings.getSettings();
         ipAddress = settings.getIpAddress();
-        //ipAddress = "localhost";
         portNumber = settings.getSocket();
     }
 
@@ -33,7 +29,7 @@ public class Network extends Thread {
             objectOutputStream.flush();
             objectOutputStream.reset();
         } catch (Exception e) {
-            Game.game.setErrorMsg("Could not send to the server: " + e.getMessage());
+            game.setErrorMsg("Could not send to the server: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -45,7 +41,7 @@ public class Network extends Thread {
             objectOutputStream.reset();
             responseListeners.add(responseListener);
         } catch (Exception e) {
-            Game.game.setErrorMsg("Could not send to the server: " + e.getMessage());
+            game.setErrorMsg("Could not send to the server: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -56,7 +52,6 @@ public class Network extends Thread {
             System.out.println(ipAddress);
             System.out.println(portNumber);
             socket = new Socket(ipAddress, portNumber);
-
 
             objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
             objectInputStream = new ObjectInputStream(socket.getInputStream());
@@ -72,21 +67,24 @@ public class Network extends Thread {
                         else
                             responseListeners.poll().onError(message.error);
                     } else {
-                        Game.game.receiveMessage(message);
+                        GameSession session = game.getSession();
+                        if (session != null) {
+                            session.receiveMessage(message);
+                        }
                     }
                 } catch(SocketException ignored) {
                     break;
                 } catch (Exception e) {
-                    Game.game.setErrorMsg("Received invalid message: " + e.toString());
+                    game.setErrorMsg("Received invalid message: " + e.toString());
                     e.printStackTrace();
                 }
             }
 
         } catch(Exception e) {
-            Game.game.setErrorMsg("Can't connect to the server: " + e.toString());
+            game.setErrorMsg("Can't connect to the server: " + e.toString());
             e.printStackTrace();
         } finally {
-            Game.game.setErrorMsg("Lost connection to the server");
+            game.setErrorMsg("Lost connection to the server");
             try {
                 socket.close();
                 objectOutputStream.close();

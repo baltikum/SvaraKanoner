@@ -13,12 +13,16 @@ import java.util.List;
 
 
 public class RevealPhase extends Phase {
+    private final GameSession session;
+
     private final AwesomeIconLabel drawingOwnerLabel = new AwesomeIconLabel(null, "DREW");
     private final AwesomeIconLabel guessOwnerLabel = new AwesomeIconLabel(null, "GUESSED");
     private final AwesomeText guessComp = new AwesomeText("");
     private final DrawPanel drawingComp = new DrawPanel(null);
 
     public RevealPhase(Message gotoMessage) {
+        session = Game.getInstance().getSession();
+
         drawingOwnerLabel.setVisible(false);
         guessOwnerLabel.setVisible(false);
         guessComp.setVisible(false);
@@ -53,17 +57,17 @@ public class RevealPhase extends Phase {
 
         revealNext(gotoMessage);
 
-        PhaseUI phaseUI = Game.game.getPhaseUI();
+        PhaseUI phaseUI = session.getPhaseUI();
         phaseUI.hideTimer();
         phaseUI.setContent(panel);
     }
 
     public void next() {
-        Game.game.sendMessage(new Message(Message.Type.REVEAL_NEXT_REQUEST));
+        Game.getInstance().sendMessage(new Message(Message.Type.REVEAL_NEXT_REQUEST));
     }
 
     public void revealNext(Message msg) {
-        Player player = Game.game.getPlayer((int) msg.data.get("playerId"));
+        Player player = session.getPlayerById((int) msg.data.get("playerId"));
         if (msg.data.containsKey("drawing")) {
             revealNextDrawing((ArrayList<List<PaintPoint>>) msg.data.get("drawing"), player);
         } else if (msg.data.containsKey("guess")) {
@@ -74,7 +78,7 @@ public class RevealPhase extends Phase {
     }
 
     public void revealNextWord(String word) {
-        Game.game.getPhaseUI().setTitle(word);
+        session.getPhaseUI().setTitle(word);
         drawingOwnerLabel.setVisible(false);
         drawingComp.setVisible(false);
         guessOwnerLabel.setVisible(false);

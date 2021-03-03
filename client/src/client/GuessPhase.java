@@ -14,6 +14,7 @@ import java.util.List;
 
 public class GuessPhase extends Phase {
 
+    private final GameSession session;
     private final JPanel panel;
     private final JTextField guessField;
     private final Image wham;
@@ -21,9 +22,8 @@ public class GuessPhase extends Phase {
     private AwesomeText text1;
     private AwesomeText text2;
 
-    private String guess;
-
     public GuessPhase(Message msg) {
+        session = Game.getInstance().getSession();
 
         PercentLayout layout = new PercentLayout(1.0f);
         panel = new JPanel(layout);
@@ -71,9 +71,9 @@ public class GuessPhase extends Phase {
             }
         });
 
-        PhaseUI phaseUI = Game.game.getPhaseUI();
+        PhaseUI phaseUI = session.getPhaseUI();
         phaseUI.setTitle("");
-        phaseUI.startTimer((int) (Game.game.getGameSettings().getGuessTimeMilliseconds() / 1000));
+        phaseUI.startTimer((int) (session.getGameSettings().getGuessTimeMilliseconds() / 1000));
         phaseUI.setContent(panel);
     }
 
@@ -89,7 +89,7 @@ public class GuessPhase extends Phase {
         if (isAlphabetical(str) && !str.isEmpty()){
             Message submitMessage = new Message(Message.Type.SUBMIT_GUESS);
             submitMessage.addParameter("guess", str);
-            Game.game.sendMessage(submitMessage);
+            Game.getInstance().sendMessage(submitMessage);
             sent = true;
         }
         return sent;
@@ -102,7 +102,7 @@ public class GuessPhase extends Phase {
         if (!checkAndSendGuess(guess)) {
             Message submitMessage = new Message(Message.Type.SUBMIT_GUESS);
             submitMessage.addParameter("guess", "");
-            Game.game.sendMessage(submitMessage);
+            Game.getInstance().sendMessage(submitMessage);
         }
     }
 

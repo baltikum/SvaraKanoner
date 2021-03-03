@@ -130,14 +130,15 @@ public class Chat extends JPanel {
 
         String msg = inputField.getText();
         if (!msg.isEmpty()) {
-            msg = Game.game.getThisPlayer().getName() + ": " + msg + "\n";
+            Game game = Game.getInstance();
+            msg = game.getSession().getThisPlayer().getName() + ": " + msg + "\n";
             lines.add(msg);
             inputField.setText("");
             if (scrolledLines != 0) ++scrolledLines;
 
             Message serverMsg = new Message(Message.Type.CHAT_MESSAGE);
             serverMsg.addParameter("message", msg);
-            Game.game.sendMessage(serverMsg);
+            Game.getInstance().sendMessage(serverMsg);
         }
     }
 
@@ -148,6 +149,11 @@ public class Chat extends JPanel {
     public void message(Message msg) {
         lines.add((String) msg.data.get("message"));
         if (scrolledLines != 0) ++scrolledLines;
+    }
+
+    public void clear() {
+        lines.clear();
+        scrolledLines = 0;
     }
 
     @Override

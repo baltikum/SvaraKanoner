@@ -10,7 +10,11 @@ import java.awt.*;
 
 public class WinnerPhase extends Phase {
 
+    private final GameSession session;
+
     public WinnerPhase(Message gotoMessage) {
+        session = Game.getInstance().getSession();
+
         PercentLayout layout = new PercentLayout(1.0f);
         JPanel panel = new JPanel(layout);
         panel.setBackground(new Color(0xe67e22));
@@ -41,16 +45,16 @@ public class WinnerPhase extends Phase {
         }
 
         AwesomeButton leave = new AwesomeButton("leave");
-        leave.addActionListener( e -> Game.game.setCurrentPhase(new MainMenu()) );
+        leave.addActionListener( e -> Game.getInstance().leaveSession() );
         panel.add(leave);
         layout.setConstraintsRatioByWidth(leave, 0.5f, 0.9f, 0.2f, 0.25f);
 
-        Game.game.getAudioPlayer().playEffect(AudioPlayer.CLAPS_EFFECT);
-        Game.game.setContentPanel(panel);
+        AudioPlayer.getInstance().playEffect(AudioPlayer.CLAPS_EFFECT);
+        Game.getInstance().setContentPanel(panel);
     }
 
     private void addPlayerToPodium(JPanel panel, int placement, int playerId, int points, float x, float y, float width) {
-        Player player = Game.game.getPlayer(playerId);
+        Player player = session.getPlayerById(playerId);
         if (player == null) return;
 
         AwesomeText placementLabel = new AwesomeText(placement + " (" + points + ")");

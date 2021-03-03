@@ -101,7 +101,7 @@ public class PhaseUI {
     }
 
     public void setContent(JPanel content) {
-        Game.game.setContentPanel(panel);
+        Game.getInstance().setContentPanel(panel);
         panel.remove(phaseContent);
         panel.add(content, BorderLayout.CENTER);
         phaseContent = content;

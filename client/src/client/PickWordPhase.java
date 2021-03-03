@@ -23,11 +23,13 @@ public class PickWordPhase extends Phase {
     JPanel panel;
     JPanel wordsPanel;
     PercentLayout percentLayout;
+    private final GameSession session;
 
     boolean pressedWord = false;
 
     public PickWordPhase(Message msg) {
-        PhaseUI phaseUI = Game.game.getPhaseUI();
+        session = Game.getInstance().getSession();
+        PhaseUI phaseUI = session.getPhaseUI();
 
         panel = new JPanel();
         panel.setOpaque(false);
@@ -52,7 +54,7 @@ public class PickWordPhase extends Phase {
 
         phaseUI.setTitle("Pick a word!");
         phaseUI.setContent(panel);
-        phaseUI.startTimer((int)Game.game.getGameSettings().getPickTimeMilliseconds() / 1000);
+        phaseUI.startTimer((int)session.getGameSettings().getPickTimeMilliseconds() / 1000);
     }
 
     @Override
@@ -72,10 +74,10 @@ public class PickWordPhase extends Phase {
             System.out.println("pressed word "+ word + index);
             Message message = new Message(Message.Type.PICK_WORD);
             message.addParameter("wordIndex", index);
-            Game.game.sendMessage(message);
+            Game.getInstance().sendMessage(message);
 
             panel.remove(wordsPanel);
-            Game.game.getPhaseUI().setTitle("Waiting on players...");
+            session.getPhaseUI().setTitle("Waiting on players...");
         });
     }
 }
