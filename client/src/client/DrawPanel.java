@@ -61,6 +61,7 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
         /**
          * Second constructor for DrawPanel
          * Used for exporting points to draw for GuessPhase
+         * @param paintPoints A list with points to draw
          */
     public DrawPanel(ArrayList<List<PaintPoint>> paintPoints) {
         super();
@@ -70,6 +71,7 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
 
         /**
          * Sets up the draw data. Used in RevealPhase
+         * @param paintPoints A list with points to draw
          */
     public void setDrawData(ArrayList<List<PaintPoint>> paintPoints) {
         this.paintPoints = paintPoints;
@@ -77,6 +79,7 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
 
         /**
          * Paints lines between the points that are saved.
+         * @param g A Graphics object
          */
     @Override
     protected void paintComponent(Graphics g) {
@@ -113,6 +116,7 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
 
         /**
          * Saves points to a list when the left mouse button is dragged
+         * @param e The event to be processed
          */
     public synchronized void mouseDragged(MouseEvent e) {
             if (canEdit && paintPoints != null && (SwingUtilities.isLeftMouseButton(e)) ) {
@@ -129,6 +133,7 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
 
         /**
          * Saves points to a list when the left mouse button is clicked
+         * @param e The event to be processed
          */
     public synchronized void mouseClicked(MouseEvent e) {
         if (canEdit && (SwingUtilities.isLeftMouseButton(e))) {
@@ -150,6 +155,7 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
 
         /**
          * Saves points to a list when the left mouse button is pressed
+         * @param e The event to be processed
          */
     public synchronized void mousePressed(MouseEvent e) {
         if (canEdit && (SwingUtilities.isLeftMouseButton(e))) {
@@ -165,6 +171,7 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
     }
         /**
          * Sets currentPath to null when the left mouse button are released
+         * @param e The event to be processed
          */
     public synchronized void mouseReleased(MouseEvent e) {
         if (SwingUtilities.isLeftMouseButton(e)) {
@@ -196,6 +203,7 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
 
         /**
          * Sets the color
+         * @param colorToSet The color that this methods sets
          */
     public void setColor(String colorToSet){
         switch(colorToSet)
@@ -327,6 +335,7 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
 
         /**
          * Set the effects used for RevealPhase.
+         @param effect
          */
     @Override
     public void setEffect(AwesomeEffect effect) {
@@ -334,18 +343,25 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
         this.effect = effect;
     }
 
+        /**
+         * @return The effect
+         */
     @Override
     public AwesomeEffect getEffect() {
         return effect;
     }
 
+        /**
+         * @return The component
+         */
     @Override
     public Component getComponent() {
         return this;
     }
 
         /**
-         * Makes sure that its not possible to paint anymore. Returns paintPoints.
+         * Makes sure that its not possible to paint anymore.
+         * @return paintPoints, a list with points that gets drawn with lines.
          */
     public synchronized ArrayList<List<PaintPoint>> getPictureAndStopPainting() {
         canEdit = false;

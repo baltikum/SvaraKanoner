@@ -27,6 +27,7 @@ public class DrawPhase extends Phase {
     /**
      * Constructs a GuessPhase and tells all clients to goto it.
      * Also handles if a player should go to the WaitingPhase if the number of players are uneven.
+     * @param session The game session that should go to DrawPhase.
      */
     public DrawPhase(GameSession session){
         System.out.println("Wohoo! In draw phase!");
@@ -54,6 +55,7 @@ public class DrawPhase extends Phase {
 
     /**
      * Message handling of this phase, server side.
+     * @param msg
      */
     @Override
     public void message(Message msg) {

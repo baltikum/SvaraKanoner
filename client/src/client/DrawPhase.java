@@ -30,6 +30,7 @@ public class DrawPhase extends Phase implements ActionListener {
      * Constructor DrawPhase Client side.
      *
      * Sets up the drawing UI with buttons and panels.
+     * @param msg Message containing the word to draw
      */
     public DrawPhase(Message msg) {
         super();
@@ -286,6 +287,7 @@ public class DrawPhase extends Phase implements ActionListener {
 
     /**
      * Handles messages recieved, TIMES UP triggers a submit of the picture.
+     * @param msg
      */
     @Override
     public void message(Message msg) {
@@ -296,6 +298,7 @@ public class DrawPhase extends Phase implements ActionListener {
 
     /**
      * Sets up a word for the player to draw.
+     * @param word
      */
     private void addWord(String word) {
         session.getPhaseUI().setTitle("Draw " + word);
