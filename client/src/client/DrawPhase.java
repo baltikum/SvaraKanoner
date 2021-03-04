@@ -24,15 +24,10 @@ public class DrawPhase extends Phase implements ActionListener {
 
     private final GameSession session;
     private final DrawPanel drawPanel;
-    private final Image doneImage;
 
     public DrawPhase(Message msg) {
         super();
         session = Game.getInstance().getSession();
-
-        // JFrame mainFrame = new JFrame("Ryktet går!");
-        BufferedImage tileMap = Assets.loadImage("mainmenu.png");
-        doneImage = Assets.getTile(tileMap, 0, 0, 3, 1, 8);
 
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
@@ -257,7 +252,7 @@ public class DrawPhase extends Phase implements ActionListener {
             }
         });
 
-        AwesomeButton done = new AwesomeButton("Done!", doneImage);
+        AwesomeButton done = new AwesomeButton("Done!", Assets.getMainmenuIcon(Assets.MENU_WHAM));
         bottomPanel.add(done);
         done.addActionListener(e -> {
             submitPicture();

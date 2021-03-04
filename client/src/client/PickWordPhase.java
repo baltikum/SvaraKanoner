@@ -61,7 +61,7 @@ public class PickWordPhase extends Phase {
     public void message(Message msg) { }
 
     private void addWordToList(String word,int index, float x, float y) {
-        AwesomeButton wordButton = new AwesomeButton(word, Assets.getButtonIcon());
+        AwesomeButton wordButton = new AwesomeButton(word, Assets.getMainmenuIcon(Assets.MENU_WHAM));
         AwesomeUtil.dynamicFont(wordButton, 0.5f);
         percentLayout.setConstraintsRatioByWidth(wordButton, x, y, 0.4f, 0.4f);
 

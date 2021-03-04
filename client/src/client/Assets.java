@@ -15,10 +15,19 @@ import java.io.IOException;
  */
 public class Assets {
 
+    public static int MENU_WHAM = 0;
+    public static int MENU_ROCKET = 1;
+    public static int MENU_FLAME0 = 2;
+    public static int MENU_FLAME1 = 3;
+    public static int MENU_BLOCK = 4;
+    public static int MENU_LEFT_ARROW = 5;
+    public static int MENU_RIGHT_ARROW = 6;
+
     private static Font font;
     private static BufferedImage errorImage = null;
+
     private static Image[] playerIcons;
-    private static BufferedImage buttonIcon;
+    private static Image[] mainmenyIcons;
 
     /**
      *
@@ -137,12 +146,21 @@ public class Assets {
         return playerIcons[avatarId];
     }
 
-    public static BufferedImage getButtonIcon() {
-        if (buttonIcon == null) {
+    public static Image getMainmenuIcon(int icon) {
+        if (mainmenyIcons == null) {
+            mainmenyIcons = new Image[7];
             BufferedImage tileMap = Assets.loadImage("mainmenu.png");
-            buttonIcon = Assets.getTile(tileMap, 0, 0, 3, 1, 8);
+            mainmenyIcons[MENU_WHAM] = Assets.getTile(tileMap, 0, 0, 3, 1, 8);
+            mainmenyIcons[MENU_LEFT_ARROW] = Assets.getTile(tileMap, 0, 4, 1, 1,8);
+            mainmenyIcons[MENU_RIGHT_ARROW] = Assets.getTile(tileMap, 1, 4, 1, 1, 8);
+            mainmenyIcons[MENU_ROCKET] = Assets.getTile(tileMap, 0, 1, 6, 2, 8);
+            mainmenyIcons[MENU_FLAME0] = Assets.getTile(tileMap, 0, 3, 1, 1, 8);
+            mainmenyIcons[MENU_FLAME1] = Assets.getTile(tileMap, 1, 3, 1, 1, 8);
+            mainmenyIcons[MENU_BLOCK] = Assets.getTile(tileMap, 4, 3, 4, 5, 8);
         }
-        return buttonIcon;
+        return mainmenyIcons[icon];
     }
+
+
 
 }
