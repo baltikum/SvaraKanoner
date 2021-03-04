@@ -1,10 +1,7 @@
 package client;
 
 import client.ui.*;
-import common.Message;
-import common.PaintPoint;
-import common.Phase;
-import common.Player;
+import common.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,6 +9,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+/**
+ * Takes care of the client side responsibilities during the reveal phase.
+ *
+ * Waits until a REVEAL_NEXT message and then reveals the appropriate word/drawing/guess.
+ *
+ * @author Jesper Jansson
+ * @version 04/03/21
+ */
 public class RevealPhase extends Phase {
     private final GameSession session;
 
@@ -20,6 +25,11 @@ public class RevealPhase extends Phase {
     private final AwesomeText guessComp = new AwesomeText("");
     private final DrawPanel drawingComp = new DrawPanel(null);
 
+    /**
+     *
+     *
+     * @param gotoMessage GOTO message with the appropriate data for revealing the first word.
+     */
     public RevealPhase(Message gotoMessage) {
         session = Game.getInstance().getSession();
 
@@ -62,10 +72,16 @@ public class RevealPhase extends Phase {
         phaseUI.setContent(panel);
     }
 
+    /**
+     * Tells the server to go to the next word/drawing/guess.
+     */
     public void next() {
         Game.getInstance().sendMessage(new Message(Message.Type.REVEAL_NEXT_REQUEST));
     }
 
+    /**
+     * @param msg A message containing what to reveal.
+     */
     public void revealNext(Message msg) {
         Player player = session.getPlayerById((int) msg.data.get("playerId"));
         if (msg.data.containsKey("drawing")) {
@@ -78,6 +94,9 @@ public class RevealPhase extends Phase {
         }
     }
 
+    /**
+     * @param word The word to reveal
+     */
     public void revealNextWord(String word) {
         session.getPhaseUI().setTitle(word);
         drawingOwnerLabel.setVisible(false);
@@ -88,6 +107,10 @@ public class RevealPhase extends Phase {
         session.getPhaseUI().resetPlayerColors();
     }
 
+    /**
+     * @param drawing The drawing to reveal.
+     * @param player The player who drew it.
+     */
     public void revealNextDrawing(ArrayList<List<PaintPoint>> drawing, Player player) {
         Image playerIcon = Assets.getAvatarImage(player.getAvatarId());
         drawingComp.setDrawData(drawing);
@@ -95,6 +118,12 @@ public class RevealPhase extends Phase {
         reveal(drawingComp, drawingOwnerLabel);
     }
 
+    /**
+     * @param guess The guess to reveal.
+     * @param player The player who guessed the word.
+     * @param imagePlayerId The id of the player who drew the accompanying drawing.
+     * @param receivesPoints True if points were received else false.
+     */
     public void revealNextGuess(String guess, Player player, Player imagePlayerId, boolean receivesPoints) {
         Image playerIcon = Assets.getAvatarImage(player.getAvatarId());
         guessComp.setText(guess);
@@ -107,6 +136,11 @@ public class RevealPhase extends Phase {
         }
     }
 
+    /**
+     * Helper function for revealing, makes the components visible and animates them.
+     * @param ownerComp The owner label to show and animate.
+     * @param revealComp The reveal component to show and animate.
+     */
     private void reveal(JComponent ownerComp, JComponent revealComp) {
         AwesomeEffect.Builder effectBuilder = AwesomeEffect.create();
 
