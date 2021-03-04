@@ -7,14 +7,13 @@ import common.Phase;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
-import java.awt.image.BufferedImage;
 
 /**
  *
+ * DrawPhase client side. Sets up the drawing UI with a word to draw.
  *
- *
- * @author johnnla
- *
+ * @author Johnny Larsson
+ * @version 04/03/21
  */
 
 public class DrawPhase extends Phase implements ActionListener {
@@ -25,6 +24,13 @@ public class DrawPhase extends Phase implements ActionListener {
     private final GameSession session;
     private final DrawPanel drawPanel;
 
+
+
+    /**
+     * Constructor DrawPhase Client side.
+     *
+     * Sets up the drawing UI with buttons and panels.
+     */
     public DrawPhase(Message msg) {
         super();
         session = Game.getInstance().getSession();
@@ -277,6 +283,10 @@ public class DrawPhase extends Phase implements ActionListener {
     public void actionPerformed(ActionEvent e) {
     }
 
+
+    /**
+     * Handles messages recieved, TIMES UP triggers a submit of the picture.
+     */
     @Override
     public void message(Message msg) {
         if (msg.type == Message.Type.TIMES_UP) {
@@ -284,10 +294,17 @@ public class DrawPhase extends Phase implements ActionListener {
         }
     }
 
+    /**
+     * Sets up a word for the player to draw.
+     */
     private void addWord(String word) {
         session.getPhaseUI().setTitle("Draw " + word);
     }
 
+
+    /**
+     * Sends a message to submit the picture and to stop drawing.
+     */
     private void submitPicture() {
         Message msg = new Message(Message.Type.SUBMIT_PICTURE);
         msg.addParameter("drawing", drawPanel.getPictureAndStopPainting());

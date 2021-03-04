@@ -3,18 +3,31 @@ package server;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
 import javax.swing.Timer;
 
 import common.Message;
 import common.PaintPoint;
 import common.Phase;
 
+
+/**
+ * The DrawPhase on the sever.
+ * Controls the phase, hands out words to paint for clients.
+ * Advances to GuessPhase when all players have sent their drawings.
+ *
+ * @author Johnny Larsson.
+ * @version 04/03/21
+ */
+
 public class DrawPhase extends Phase {
 
     private final GameSession gameSession;
     private final RoundData roundData;
 
+    /**
+     * Constructs a GuessPhase and tells all clients to goto it.
+     * Also handles if a player should go to the WaitingPhase if the number of players are uneven.
+     */
     public DrawPhase(GameSession session){
         System.out.println("Wohoo! In draw phase!");
         this.gameSession = session;
@@ -39,6 +52,9 @@ public class DrawPhase extends Phase {
         }
     }
 
+    /**
+     * Message handling of this phase, server side.
+     */
     @Override
     public void message(Message msg) {
         if (msg.type == Message.Type.SUBMIT_PICTURE) {
@@ -49,6 +65,9 @@ public class DrawPhase extends Phase {
         }
     }
 
+    /**
+     * Advances to the next phase that is the GuessPhase
+     */
     private void advancePhase() {
         timeLeft.stop();
         gameSession.setPhase(new GuessPhase(gameSession));

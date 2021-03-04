@@ -17,10 +17,10 @@ import javax.swing.*;
 
 
     /**
-     * A class for with a JPanel for drawing.
-     *
+     * A class with a panel that handles all the drawing.
      *
      * @author Johnny Larsson
+     * @version 04/03/21
      */
 
 
@@ -43,6 +43,11 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
     private List<PaintPoint> currentPath;
     private boolean canEdit = true;
 
+        /**
+         * Constructor for DrawPanel
+         *
+         * Sets up the standard brush size, color and adds a mouse listener.
+         */
     public DrawPanel() {
         super();
         colorSetup();
@@ -51,20 +56,28 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
         paintPoints = new ArrayList<List<PaintPoint>>(25);
         addMouseListener(this);
         addMouseMotionListener(this);
-
     }
 
-
+        /**
+         * Second constructor for DrawPanel
+         * Used for exporting points to draw for GuessPhase
+         */
     public DrawPanel(ArrayList<List<PaintPoint>> paintPoints) {
         super();
         setBackground(Color.WHITE);
         this.paintPoints = paintPoints;
     }
 
+        /**
+         * Sets up the draw data. Used in RevealPhase
+         */
     public void setDrawData(ArrayList<List<PaintPoint>> paintPoints) {
         this.paintPoints = paintPoints;
     }
 
+        /**
+         * Paints lines between the points that are saved.
+         */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -98,6 +111,9 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
         }
     }
 
+        /**
+         * Saves points to a list when the left mouse button is dragged
+         */
     public synchronized void mouseDragged(MouseEvent e) {
             if (canEdit && paintPoints != null && (SwingUtilities.isLeftMouseButton(e)) ) {
                 double xValue = e.getX();
@@ -111,6 +127,9 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
             }
     }
 
+        /**
+         * Saves points to a list when the left mouse button is clicked
+         */
     public synchronized void mouseClicked(MouseEvent e) {
         if (canEdit && (SwingUtilities.isLeftMouseButton(e))) {
             currentPath = new ArrayList<>();
@@ -129,6 +148,9 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
         }
     }
 
+        /**
+         * Saves points to a list when the left mouse button is pressed
+         */
     public synchronized void mousePressed(MouseEvent e) {
         if (canEdit && (SwingUtilities.isLeftMouseButton(e))) {
             currentPath = new ArrayList<>();
@@ -141,7 +163,9 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
             paintPoints.add(currentPath);
         }
     }
-
+        /**
+         * Sets currentPath to null when the left mouse button are released
+         */
     public synchronized void mouseReleased(MouseEvent e) {
         if (SwingUtilities.isLeftMouseButton(e)) {
             currentPath = null;
@@ -160,6 +184,9 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
     public synchronized void mouseExited(MouseEvent e) {
     }
 
+        /**
+         * Removes all points from a list and clears the painting area.
+         */
     public void clearPanel() {
         if (canEdit) {
             paintPoints.clear();
@@ -167,6 +194,9 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
         }
     }
 
+        /**
+         * Sets the color
+         */
     public void setColor(String colorToSet){
         switch(colorToSet)
         {
@@ -192,6 +222,10 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
         colorSetup();
     }
 
+        /**
+         * Changes to the small brush, scales the size depending on window area
+         * and sets up the correct mouse pointer
+         */
     public void setSmallBrush() {
         brushSetup();
         selectedBrushSize = "small";
@@ -199,7 +233,10 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
         double rescaledSize = width / 878;
         brushSize = brushSizeSmall * rescaledSize;
     }
-
+        /**
+         * Changes to the normal brush, scales the size depending on window area
+         * and sets up the correct mouse pointer
+         */
     public void setNormalBrush() {
         brushSetup();
         selectedBrushSize = "normal";
@@ -207,7 +244,10 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
         double rescaledSize = width / 878;
         brushSize = brushSizeNormal * rescaledSize;
     }
-
+        /**
+         * Changes to the big brush, scales the size depending on window area
+         * and sets up the painting mouse pointer
+         */
     public void setBigBrush() {
         brushSetup();
         selectedBrushSize = "big";
@@ -216,6 +256,10 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
         brushSize = brushSizeBig * rescaledSize;
     }
 
+        /**
+         * Changes to the eraser, scales the size depending on window area
+         * and sets up the eraser mouse pointer
+         */
     public void setEraser() {
         if (!selectedBrushSize.equals("eraser")) {
             lastBrushSize = brushSize;
@@ -235,6 +279,9 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
         }
     }
 
+        /**
+         * Updates the brush size. Used when changing window size.
+         */
     public void updateBrushSize() {
         double width = getWidth();
         double rescaledSize = width / 878;
@@ -250,6 +297,9 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
         }
     }
 
+        /**
+         * Saves the last color used and changes to the painting mouse pointer
+         */
     public void colorSetup() {
         if (selectedBrushSize.equals("eraser")) {
             brushSize = lastBrushSize;
@@ -263,6 +313,9 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
         }
     }
 
+        /**
+         * Set the color to the last one used and changes to the painting mouse pointer.
+         */
     public void brushSetup(){
         color = lastColor;
         try {
@@ -272,6 +325,9 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
         }
     }
 
+        /**
+         * Set the effects used for RevealPhase.
+         */
     @Override
     public void setEffect(AwesomeEffect effect) {
         AwesomeUtil.register(this, effect);
@@ -288,6 +344,9 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
         return this;
     }
 
+        /**
+         * Makes sure that its not possible to paint anymore. Returns paintPoints.
+         */
     public synchronized ArrayList<List<PaintPoint>> getPictureAndStopPainting() {
         canEdit = false;
         return paintPoints;
