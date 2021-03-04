@@ -16,6 +16,7 @@ public class Message implements Serializable {
         CHAT_MESSAGE,
 
         // Server to client messages
+        CONNECTION_SUCCESS,
         GOTO,
         PLAYER_CONNECTED,      // JoinPhase -> JoinPhase
         PLAYER_DISCONNECTED,   // JoinPhase -> JoinPhase

@@ -7,7 +7,6 @@ import javax.swing.event.*;
 import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
 
 import common.*;
 
@@ -19,9 +18,10 @@ import common.*;
 public class MainMenu extends JPanel {
 
     private boolean hasPlayedQuitAnimation = false;
-    private Settings.Listener settingsListener;
+    private final Settings.Listener settingsListener;
     private final Game game;
     private final GameSettings gameSettings = new GameSettings();
+    private AwesomeImage playerIcon;
 
     /**
      * Initiates a MainMenu phase and sets up the ui.
@@ -34,6 +34,13 @@ public class MainMenu extends JPanel {
         initMainMenu();
         initJoinGamePanel();
         initCreateGamePanel();
+
+
+        settingsListener = (property, clientSettings) -> {
+            if (property == Settings.Properties.PREFERRED_AVATAR) {
+                playerIcon.setImage(Assets.getAvatarImage(clientSettings.getPreferredAvatarId()));
+            }
+        };
     }
 
 
@@ -48,8 +55,7 @@ public class MainMenu extends JPanel {
         this.add(panel);
 
         AwesomeText title = new AwesomeText("Hello!");
-        JTextField ip = new JTextField("Enter IP Address of Host");
-        AwesomeButton setIPButton = new AwesomeButton("Set IP", Assets.getMainmenuIcon(Assets.MENU_WHAM));
+        AwesomeButton setIPButton = new AwesomeButton("Change IP", Assets.getMainmenuIcon(Assets.MENU_WHAM));
         AwesomeButton joinGameButton = new AwesomeButton("Join Game", Assets.getMainmenuIcon(Assets.MENU_WHAM));
         AwesomeButton createGameButton = new AwesomeButton("Create Game", Assets.getMainmenuIcon(Assets.MENU_WHAM));
         AwesomeButton quitButton = new AwesomeButton("Quit", Assets.getMainmenuIcon(Assets.MENU_ROCKET));
@@ -68,9 +74,9 @@ public class MainMenu extends JPanel {
         AwesomeUtil.wiggleOnHover(joinGameButton, 10.0f);
         AwesomeUtil.scaleOnHover(createGameButton, 1.3f);
 
-        setIPButton.addActionListener(e -> Settings.getSettings().setIpAddress(ip.getText()));
-        joinGameButton.addActionListener(e -> ((CardLayout)this.getLayout()).next(this) );
-        createGameButton.addActionListener(e -> ((CardLayout)this.getLayout()).last(this) );
+        setIPButton.addActionListener(e -> openIpPopup());
+        joinGameButton.addActionListener(e -> changePanel("JoinGame") );
+        createGameButton.addActionListener(e -> changePanel("CreateGame") );
 
         quitButton.addActionListener(e -> {
             if (!hasPlayedQuitAnimation) {
@@ -93,7 +99,7 @@ public class MainMenu extends JPanel {
         Settings settings = Settings.getSettings();
         AwesomeButton nextIcon = new AwesomeButton(Assets.getMainmenuIcon(Assets.MENU_RIGHT_ARROW));
         AwesomeButton prevIcon = new AwesomeButton(Assets.getMainmenuIcon(Assets.MENU_LEFT_ARROW));
-        AwesomeImage playerIcon = new AwesomeImage(Assets.getAvatarImage(settings.getPreferredAvatarId()));
+        playerIcon = new AwesomeImage(Assets.getAvatarImage(settings.getPreferredAvatarId()));
         nextIcon.addActionListener( e -> settings.nextPreferredIcon());
         prevIcon.addActionListener( e -> settings.prevPreferredIcon());
 
@@ -103,11 +109,9 @@ public class MainMenu extends JPanel {
         layout.setConstraintsRatioByWidth(prevIcon, 0.1f, 0.1f, 0.05f, 1.0f);
         layout.setConstraintsRatioByWidth(playerIcon, 0.15f, 0.1f, 0.05f, 1.0f);
         layout.setConstraintsRatioByWidth(nextIcon, 0.2f, 0.1f, 0.05f, 1.0f);
-        settingsListener = (property, clientSettings) -> playerIcon.setImage(Assets.getAvatarImage(clientSettings.getPreferredAvatarId()));
         settings.addListener(settingsListener);
 
         panel.add(title);
-        panel.add(ip);
         panel.add(setIPButton);
         panel.add(joinGameButton);
         panel.add(createGameButton);
@@ -115,8 +119,7 @@ public class MainMenu extends JPanel {
         panel.add(rocketFlame);
 
         layout.setConstraintsRatioByWidth(title, 0.5f, 0.10f, .5f, .2f);
-        layout.setConstraintsRatioByWidth(ip, 0.4f, 0.20f, .5f, .1f);
-        layout.setConstraintsRatioByWidth(setIPButton, 0.8f, 0.20f, .3f, .5f);
+        layout.setConstraintsRatioByWidth(setIPButton, 0.8f, 0.9f, .3f, .5f);
         layout.setConstraintsRatioByWidth(joinGameButton, 0.25f, 0.4f, .4f, .5f);
         layout.setConstraintsRatioByWidth(createGameButton, 0.75f, 0.4f, .4f, .5f);
         layout.setConstraintsRatioByWidth(quitButton, 0.5f, 0.7f, .6f, .5f);
@@ -170,7 +173,7 @@ public class MainMenu extends JPanel {
         AwesomeUtil.wiggleOnHover(back, 10.0f);
         AwesomeUtil.wiggleOnHover(accept, 10.0f);
 
-        back.addActionListener(e -> ((CardLayout)this.getLayout()).previous(this) );
+        back.addActionListener(e -> changePanel("MainMenu") );
         accept.addActionListener(e -> joinGame(codeInput.getText()));
 
         // Allow uppercase only
@@ -312,13 +315,12 @@ public class MainMenu extends JPanel {
         layout.setConstraintsRatioByWidth(create, 0.75f, 0.8f, 0.3f, 0.5f);
         layout.setConstraintsRatioByWidth(back, 0.25f, 0.8f, 0.3f, 0.5f);
         create.addActionListener(e -> createGame() );
-        back.addActionListener(e -> ((CardLayout)this.getLayout()).first(this));
+        back.addActionListener(e -> changePanel("MainMenu"));
         AwesomeUtil.wiggleOnHover(create, 10.0f);
         AwesomeUtil.wiggleOnHover(back, 10.0f);
     }
 
-
-    private AwesomeText createIncreaseField(JPanel panel, String label, AwesomeText valueText, float y, ActionListener onDecrease, ActionListener onIncrease) {
+    private void createIncreaseField(JPanel panel, String label, AwesomeText valueText, float y, ActionListener onDecrease, ActionListener onIncrease) {
         PercentLayout layout = (PercentLayout) panel.getLayout();
         AwesomeText labelText = new AwesomeText(label);
         AwesomeButton increaseBtn = new AwesomeButton(Assets.getMainmenuIcon(Assets.MENU_RIGHT_ARROW));
@@ -333,13 +335,35 @@ public class MainMenu extends JPanel {
         layout.setConstraintsRatioByWidth(increaseBtn, 0.9f, y, 0.1f, 1.0f);
         layout.setConstraintsRatioByWidth(decreaseBtn, 0.6f, y, 0.1f, 1.0f);
         layout.setConstraintsRatioByWidth(valueText, 0.75f, y, 0.2f, 0.5f);
-        return valueText;
     }
 
+    private void changePanel(String target) {
+        switch (target) {
+            case "MainMenu" -> ((CardLayout)this.getLayout()).first(this);
+            case "JoinGame" ->  ((CardLayout)this.getLayout()).next(this);
+            case "CreateGame" -> ((CardLayout)this.getLayout()).last(this);
+        }
+        if (target.equals("JoinGame") || target.equals("CreateGame")) {
+            Network network = game.getNetwork();
+            if (network == null || !network.isConnected()) {
+                game.establishConnection(new Network.ConnectedListener() {
+                    @Override
+                    public void connectionSuccess() {
+                        game.setErrorMsg("");
+                    }
+                    @Override
+                    public void connectionFailed() {
+                        game.setErrorMsg("Could not connect to the server, try another ip. ");
+                    }
+                });
+            }
+        }
+    }
 
     private boolean joinGameClicked = false;
     private void joinGame(String code) {
         if (joinGameClicked) return;
+        if (!game.getNetwork().isConnected()) return;
         joinGameClicked = true;
         Settings clientSettings = Settings.getSettings();
         Message msg = new Message(Message.Type.JOIN_GAME);
@@ -376,10 +400,10 @@ public class MainMenu extends JPanel {
         });
     }
 
-
     private boolean createGameClicked = false;
     private void createGame() {
         if (createGameClicked) return;
+        if (!game.getNetwork().isConnected()) return;
         createGameClicked = true;
         Settings clientSettings = Settings.getSettings();
         Message msg =  new Message(Message.Type.CREATE_GAME);
@@ -406,5 +430,22 @@ public class MainMenu extends JPanel {
                 game.setErrorMsg(errorMsg);
             }
         });
+    }
+
+    private void openIpPopup() {
+        String result = (String)JOptionPane.showInputDialog(
+                null,
+                null,
+                "Ip address",
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                null,
+                ""
+        );
+        if (result != null) {
+            if (!Settings.getSettings().setIpAddress(result)) {
+                game.setErrorMsg("Invalid ip address format should be 'xx:xx:xx:xx'.");
+            }
+        }
     }
 }

@@ -24,13 +24,14 @@ public class ClientHandler extends Player implements Runnable {
         } catch (Exception e) {
 
         }
-
     }
 
     public void run() {
         try {
             ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
             objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+
+            sendMessage(new Message(Message.Type.CONNECTION_SUCCESS));
 
             while (true) { // listen to messages loop
                 try {
