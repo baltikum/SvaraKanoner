@@ -18,10 +18,12 @@ public class Message implements Serializable {
         // Server to client messages
         CONNECTION_SUCCESS,
         GOTO,
-        PLAYER_CONNECTED,      // JoinPhase -> JoinPhase
-        PLAYER_DISCONNECTED,   // JoinPhase -> JoinPhase
+
+        PLAYER_CONNECTED,            // JoinPhase -> JoinPhase
+        PLAYER_DISCONNECTED,         // JoinPhase -> JoinPhase
         PLAYER_READY_STATUS_CHANGED, // JoinPhase -> JoinPhase
         REVEAL_NEXT,                 // RevealPhase -> RevealPhase
+        SOMEONE_OBJECTED,            // RevealPhase -> RevealPhase
 
         // Client to server messages
         CREATE_GAME,           // MainMenu -> Server
@@ -29,12 +31,13 @@ public class Message implements Serializable {
         DISCONNECT,            // JoinPhase -> JoinPhase
         TOGGLE_READY_STATUS,   // JoinPhase -> JoinPhase
         REVEAL_NEXT_REQUEST,   // RevealPhase -> RevealPhase
+        OBJECT,                // RevealPhase -> RevealPhase
 
         PICK_WORD,             // PickWordPhase -> PickWordPhase
 
-        SUBMIT_GUESS,            // GuessPhase -> GuessPhase
+        SUBMIT_GUESS,          // GuessPhase -> GuessPhase
 
-        SUBMIT_PICTURE,            // DrawPhase -> DrawPhase
+        SUBMIT_PICTURE,        // DrawPhase -> DrawPhase
         TIMES_UP,              // DrawPhase -> DrawPhase
 
 
