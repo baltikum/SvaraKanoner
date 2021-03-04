@@ -31,16 +31,15 @@ public class MainMenu extends JPanel {
         this.game = game;
         setBackground(new Color(0xe67e22));
 
-        initMainMenu();
-        initJoinGamePanel();
-        initCreateGamePanel();
-
-
         settingsListener = (property, clientSettings) -> {
             if (property == Settings.Properties.PREFERRED_AVATAR) {
                 playerIcon.setImage(Assets.getAvatarImage(clientSettings.getPreferredAvatarId()));
             }
         };
+
+        initMainMenu();
+        initJoinGamePanel();
+        initCreateGamePanel();
     }
 
 
