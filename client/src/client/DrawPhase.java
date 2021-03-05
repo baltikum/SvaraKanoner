@@ -286,8 +286,8 @@ public class DrawPhase extends Phase implements ActionListener {
 
 
     /**
-     * Handles messages recieved, TIMES UP triggers a submit of the picture.
-     * @param msg
+     * Handles messages recieved
+     * @param msg The message TIMES UP triggers a submit of the picture.
      */
     @Override
     public void message(Message msg) {
@@ -297,8 +297,8 @@ public class DrawPhase extends Phase implements ActionListener {
     }
 
     /**
-     * Sets up a word for the player to draw.
-     * @param word
+     *
+     * @param word Sets up a word for the player to draw.
      */
     private void addWord(String word) {
         session.getPhaseUI().setTitle("Draw " + word);
