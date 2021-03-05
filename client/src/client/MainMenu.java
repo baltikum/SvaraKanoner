@@ -319,7 +319,7 @@ public class MainMenu extends JPanel {
         AwesomeUtil.wiggleOnHover(back, 10.0f);
     }
 
-    private void createIncreaseField(JPanel panel, String label, AwesomeText valueText, float y, ActionListener onDecrease, ActionListener onIncrease) {
+    private void createIncreaseField(JPanel panel, String label, AwesomeText valueText, float y, ActionListener onIncrease, ActionListener onDecrease) {
         PercentLayout layout = (PercentLayout) panel.getLayout();
         AwesomeText labelText = new AwesomeText(label);
         AwesomeButton increaseBtn = new AwesomeButton(Assets.getMainmenuIcon(Assets.MENU_RIGHT_ARROW));
