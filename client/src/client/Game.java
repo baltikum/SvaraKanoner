@@ -41,7 +41,7 @@ public class Game implements ActionListener, WindowListener {
         Rectangle windowBounds = settings.getWindowBounds();
 
         // Initiate the window
-        frame = new JFrame("Ryktet går!");
+        frame = new JFrame("Draw & Guess");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.addWindowListener(this);
         frame.setBackground(new Color(0xe67e22));
