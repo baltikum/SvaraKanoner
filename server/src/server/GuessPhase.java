@@ -1,9 +1,6 @@
 package server;
 
-import common.GameSettings;
-import common.Message;
-import common.PaintPoint;
-import common.Phase;
+import common.*;
 
 import javax.swing.*;
 import java.util.ArrayList;

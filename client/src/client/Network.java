@@ -7,20 +7,22 @@ import java.util.*;
 
 public class Network extends Thread {
 
+    public interface ConnectedListener {
+        void connectionSuccess();
+        void connectionFailed();
+    }
+
     private final Game game;
     private Socket socket;
     private ObjectOutputStream objectOutputStream;
     private ObjectInputStream objectInputStream;
     private final Queue<MessageResponseListener> responseListeners = new ArrayDeque<>();
-    private final String ipAddress;
-    private final short portNumber;
+    private ConnectedListener connectedListener;
+    private boolean isConnected = false;
 
-    public Network(Game game) {
+    public Network(Game game, ConnectedListener listener) {
         this.game = game;
-
-        Settings settings = Settings.getSettings();
-        ipAddress = settings.getIpAddress();
-        portNumber = settings.getSocket();
+        connectedListener = listener;
     }
 
     public synchronized void sendMessage(Message message) {
@@ -48,10 +50,8 @@ public class Network extends Thread {
 
     public void run() {
         try {
-
-            System.out.println(ipAddress);
-            System.out.println(portNumber);
-            socket = new Socket(ipAddress, portNumber);
+            Settings settings = Settings.getSettings();
+            socket = new Socket(settings.getIpAddress(), settings.getSocket());
 
             objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
             objectInputStream = new ObjectInputStream(socket.getInputStream());
@@ -61,7 +61,11 @@ public class Network extends Thread {
                     Message message = (Message) objectInputStream.readObject();
                     System.out.println("Received message: " + message.toString());
 
-                    if (message.type == Message.Type.RESPONSE) {
+                    if (message.type == Message.Type.CONNECTION_SUCCESS) {
+                        connectedListener.connectionSuccess();
+                        connectedListener = null;
+                        isConnected = true;
+                    } else if (message.type == Message.Type.RESPONSE) {
                         if (message.error == null)
                             responseListeners.poll().onSuccess(message);
                         else
@@ -79,27 +83,37 @@ public class Network extends Thread {
                     e.printStackTrace();
                 }
             }
-
-        } catch(Exception e) {
+        } catch (ConnectException ignore) {
+        } catch (Exception e) {
             game.setErrorMsg("Can't connect to the server: " + e.toString());
             e.printStackTrace();
         } finally {
             game.setErrorMsg("Lost connection to the server");
             try {
-                socket.close();
-                objectOutputStream.close();
-                objectInputStream.close();
+                if (socket != null) socket.close();
+                if (objectOutputStream != null) objectOutputStream.close();
+                if (objectInputStream != null) objectInputStream.close();
             } catch (Exception e) {
                 e.printStackTrace();
+            }
+            isConnected = false;
+            if (connectedListener != null) {
+                connectedListener.connectionFailed();
             }
         }
     }
 
     public void closeConnection() {
         try {
-            socket.close();
+            if (socket != null) {
+                socket.close();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public boolean isConnected() {
+        return isConnected;
     }
 }

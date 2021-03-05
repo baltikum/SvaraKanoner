@@ -256,11 +256,14 @@ public class Settings {
     /**
      * Used to set preferred host IP address.
      * @param ip the ip.
+     * @return True if the ip address was valid and updated, else false.
      */
-    public void setIpAddress(String ip ) {
+    public boolean setIpAddress(String ip ) {
         if (validateIP(ip)) {
             this.ipAddress = ip;
+            return true;
         }
+        return false;
     }
 
     /**
@@ -269,6 +272,7 @@ public class Settings {
      * @return True if it's valid else false.
      */
     private boolean validateIP(String ip) {
+        if (ip.equals("localhost")) return true;
         String[] temp = ip.split("[.]");
 
         if ( !(temp.length == 4) ) {

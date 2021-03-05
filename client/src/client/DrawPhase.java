@@ -7,14 +7,13 @@ import common.Phase;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
-import java.awt.image.BufferedImage;
 
 /**
  *
+ * DrawPhase client side. Sets up the drawing UI with a word to draw.
  *
- *
- * @author johnnla
- *
+ * @author Johnny Larsson
+ * @version 04/03/21
  */
 
 public class DrawPhase extends Phase implements ActionListener {
@@ -24,15 +23,18 @@ public class DrawPhase extends Phase implements ActionListener {
 
     private final GameSession session;
     private final DrawPanel drawPanel;
-    private final Image doneImage;
 
+
+
+    /**
+     * Constructor DrawPhase Client side.
+     *
+     * Sets up the drawing UI with buttons and panels.
+     * @param msg Message containing the word to draw
+     */
     public DrawPhase(Message msg) {
         super();
         session = Game.getInstance().getSession();
-
-        // JFrame mainFrame = new JFrame("Ryktet går!");
-        BufferedImage tileMap = Assets.loadImage("mainmenu.png");
-        doneImage = Assets.getTile(tileMap, 0, 0, 3, 1, 8);
 
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
@@ -257,7 +259,7 @@ public class DrawPhase extends Phase implements ActionListener {
             }
         });
 
-        AwesomeButton done = new AwesomeButton("Done!", doneImage);
+        AwesomeButton done = new AwesomeButton("Done!", Assets.getMainmenuIcon(Assets.MENU_WHAM));
         bottomPanel.add(done);
         done.addActionListener(e -> {
             submitPicture();
@@ -282,6 +284,11 @@ public class DrawPhase extends Phase implements ActionListener {
     public void actionPerformed(ActionEvent e) {
     }
 
+
+    /**
+     * Handles messages recieved, TIMES UP triggers a submit of the picture.
+     * @param msg
+     */
     @Override
     public void message(Message msg) {
         if (msg.type == Message.Type.TIMES_UP) {
@@ -289,10 +296,18 @@ public class DrawPhase extends Phase implements ActionListener {
         }
     }
 
+    /**
+     * Sets up a word for the player to draw.
+     * @param word
+     */
     private void addWord(String word) {
         session.getPhaseUI().setTitle("Draw " + word);
     }
 
+
+    /**
+     * Sends a message to submit the picture and to stop drawing.
+     */
     private void submitPicture() {
         Message msg = new Message(Message.Type.SUBMIT_PICTURE);
         msg.addParameter("drawing", drawPanel.getPictureAndStopPainting());

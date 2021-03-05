@@ -28,7 +28,7 @@ public class Game implements ActionListener, WindowListener {
     private final JFrame frame;
 
     private GameSession session;
-    private final Network network;
+    private Network network;
     private JLabel errorMsg;
     private Chat chat;
 
@@ -55,10 +55,6 @@ public class Game implements ActionListener, WindowListener {
         // Start in the main menu
         setContentPanel(new MainMenu(this));
 
-        // Start the network
-        network = new Network(this);
-        network.start();
-
         // Move and show window
         if (windowBounds.x < 0 || windowBounds.y < 0)
             frame.setLocationRelativeTo(null);
@@ -72,6 +68,15 @@ public class Game implements ActionListener, WindowListener {
         timer.start();
 
         instance = this;
+    }
+
+    /**
+     * Opens a connection to the server.
+     */
+    public void establishConnection(Network.ConnectedListener listener) {
+        if (network != null) network.closeConnection();
+        network = new Network(this, listener);
+        network.start();
     }
 
     /**
@@ -172,6 +177,14 @@ public class Game implements ActionListener, WindowListener {
      */
     public void sendMessage(Message message) {
         network.sendMessage(message);
+    }
+
+    /**
+     *
+     * @return The network instance for the game.
+     */
+    public Network getNetwork() {
+        return network;
     }
 
     /**

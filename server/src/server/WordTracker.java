@@ -10,7 +10,8 @@ import java.util.Locale;
  * A Class that keeps track of one word.
  * The word, String. The guesses, Strings. The Images images.
  *
- *@author Mattias Davidsson 20210223
+ * @author Mattias Davidsson
+ * @version 23/02/21
  */
 
 public class WordTracker {

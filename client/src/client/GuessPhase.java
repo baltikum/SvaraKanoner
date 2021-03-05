@@ -17,7 +17,6 @@ public class GuessPhase extends Phase {
     private final GameSession session;
     private final JPanel panel;
     private final JTextField guessField;
-    private final Image wham;
 
     private AwesomeText text1;
     private AwesomeText text2;
@@ -35,9 +34,6 @@ public class GuessPhase extends Phase {
         panel.setOpaque(true);
         panel.setBackground(new Color(23, 0, 0, 0));
 
-        BufferedImage tileMap = Assets.loadImage("mainmenu.png");
-        wham = Assets.getTile(tileMap, 0, 0, 3, 1, 8);
-
         AwesomeText guessMessage = new AwesomeText("What is this?");
         guessMessage.setTextColor(Color.RED);
         layout.setConstraintsRatioByWidth(guessMessage, .5f, .85f, .85f, 0.25f);
@@ -52,7 +48,7 @@ public class GuessPhase extends Phase {
         panel.add(guessField);
         layout.setConstraintsRatioByWidth(guessField, .33f, .1f, .41f, 0.15f);
 
-        AwesomeButton submit = new AwesomeButton("Guess!!", wham);
+        AwesomeButton submit = new AwesomeButton("Guess!!", Assets.getMainmenuIcon(Assets.MENU_WHAM));
         AwesomeUtil.dynamicFont(submit, 0.4f);
         layout.setConstraintsRatioByWidth(submit, .73f, .1f, .3f, 0.35f);
         panel.add(submit);

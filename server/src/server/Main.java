@@ -7,10 +7,16 @@ import common.GameSettings;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.Executors;
 
 
+/**
+ * Main is responsible for accepting new connections to the server and coordinate
+ * the creation and joining of game sessions.
+ *
+ * @author Lukas Magnusson
+ * @version 03/03/21
+ */
 public class Main {
 
     public static final int PORT = 12345;
