@@ -8,7 +8,7 @@ import java.awt.*;
 /**
  * Handles the ui during the winner phase.
  */
-public class WinnerPhase extends Phase {
+public class WinnerPhase implements Phase {
 
     private final GameSession session;
 

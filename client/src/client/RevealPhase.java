@@ -17,7 +17,7 @@ import java.util.List;
  * @author Jesper Jansson
  * @version 04/03/21
  */
-public class RevealPhase extends Phase {
+public class RevealPhase implements Phase {
     private final GameSession session;
 
     private final AwesomeIconLabel drawingOwnerLabel = new AwesomeIconLabel(null, "DREW");

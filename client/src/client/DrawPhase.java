@@ -16,7 +16,7 @@ import java.awt.event.*;
  * @version 04/03/21
  */
 
-public class DrawPhase extends Phase implements ActionListener {
+public class DrawPhase implements Phase, ActionListener {
 
 
     private String wordToDraw;

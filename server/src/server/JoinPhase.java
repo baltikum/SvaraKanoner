@@ -14,7 +14,7 @@ import java.util.Random;
  * @author Jesper Jansson
  * @version 19/02/21
  */
-public class JoinPhase extends Phase {
+public class JoinPhase implements Phase {
 
     private final GameSession session;
     private int nextPlayerId = 1;

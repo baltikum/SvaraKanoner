@@ -1,13 +1,7 @@
 package server;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import javax.swing.Timer;
-
-import common.Message;
-import common.PaintPoint;
-import common.Phase;
+import java.util.*;
+import common.*;
 
 
 /**
@@ -19,10 +13,11 @@ import common.Phase;
  * @version 04/03/21
  */
 
-public class DrawPhase extends Phase {
+public class DrawPhase implements Phase {
 
     private final GameSession gameSession;
     private final RoundData roundData;
+    private final Timer timeLeft;
 
     /**
      * Constructs a GuessPhase and tells all clients to goto it.
@@ -34,11 +29,14 @@ public class DrawPhase extends Phase {
         this.gameSession = session;
         this.roundData = this.gameSession.getCurrentRoundData();
 
-        timeLeft = new Timer((int) gameSession.getGameSettings().getDrawTimeMilliseconds(), e -> {
-            gameSession.sendMessageToAll(new Message(Message.Type.TIMES_UP));
-            timeLeft.stop();
-        });
-        timeLeft.start();
+
+        timeLeft = new Timer();
+        timeLeft.schedule(new TimerTask() {
+                              @Override
+                              public void run() {
+                                  gameSession.sendMessageToAll(new Message(Message.Type.TIMES_UP));
+                              }
+                          }, gameSession.getGameSettings().getDrawTimeMilliseconds());
 
         HashMap<Integer, String> words = roundData.getWordsToDraw();
         for (ClientHandler client: gameSession.getConnectedPlayers()) {
@@ -71,7 +69,7 @@ public class DrawPhase extends Phase {
      * Advances to the next phase that is the GuessPhase
      */
     private void advancePhase() {
-        timeLeft.stop();
+        timeLeft.cancel();
         gameSession.setPhase(new GuessPhase(gameSession));
     }
 }

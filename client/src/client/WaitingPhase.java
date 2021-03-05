@@ -6,10 +6,9 @@ import common.Phase;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.HashMap;
-import java.util.Map;
 
-public class WaitingPhase extends Phase {
+
+public class WaitingPhase implements Phase {
     private final JPanel panel;
 
     public WaitingPhase(Message msg) {

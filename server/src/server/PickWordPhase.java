@@ -15,7 +15,7 @@ import java.util.*;
  *
  * @author Lukas Magnusson
  */
-public class PickWordPhase extends Phase {
+public class PickWordPhase implements Phase {
     private GameSession session;
     private GameSettings settings;
 

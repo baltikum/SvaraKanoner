@@ -12,7 +12,7 @@ import java.util.*;
 import java.util.List;
 
 
-public class GuessPhase extends Phase {
+public class GuessPhase implements Phase {
 
     private final GameSession session;
     private final JPanel panel;

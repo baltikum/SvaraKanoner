@@ -1,9 +1,6 @@
 package server;
 
-import common.Message;
-import common.Phase;
-import common.Player;
-
+import common.*;
 import java.util.ArrayList;
 
 /**
@@ -13,7 +10,7 @@ import java.util.ArrayList;
  * @author Jesper Jansson
  * @version 04/03/21
  */
-public class RevealPhase extends Phase {
+public class RevealPhase implements Phase {
 
     private final GameSession session;
     private final RoundData round;
@@ -22,7 +19,7 @@ public class RevealPhase extends Phase {
     private int currentWordIndex = 0;
     private int currentEntryIndex = 0;
     private WordTracker currentWordTracker;
-    private WordTracker.Entry currentEntry = null;
+    private WordTracker.Entry currentEntry;
 
     private final boolean keepScores;
     private final ArrayList<Integer> objectingPlayerIds;

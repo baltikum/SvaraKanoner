@@ -1,10 +1,7 @@
 package server;
 
-import common.Message;
-import common.Phase;
-
-import java.util.ArrayList;
-import java.util.List;
+import common.*;
+import java.util.*;
 
 /**
  * Keeps track of the winner phase responsibilities of the winner phase.
@@ -12,7 +9,7 @@ import java.util.List;
  * @author Jesper Jansson
  * @version 04/03/21
  */
-public class WinnerPhase extends Phase {
+public class WinnerPhase implements Phase {
 
     /**
      * Constructs a winner phase.

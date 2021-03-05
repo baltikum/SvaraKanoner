@@ -18,7 +18,7 @@ import java.awt.*;
  * @author Lukas Magnusson
  */
 
-public class PickWordPhase extends Phase {
+public class PickWordPhase implements Phase {
 
     JPanel panel;
     JPanel wordsPanel;

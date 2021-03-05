@@ -15,7 +15,7 @@ import java.util.List;
  * Can send a TOGGLE_PLAYER_READY or LEAVE message.
  * Gets a message from the server when all are ready to goto the next phase PickWord or DrawPhase.
  */
-public class JoinPhase extends Phase {
+public class JoinPhase implements Phase {
     private static final int NUM_POSITIONS = 16;
     private static final int POSITION_DATA_COMPONENTS = 3;
 

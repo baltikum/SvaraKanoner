@@ -14,14 +14,15 @@ import java.util.HashMap;
  * @author Mattias Davidsson 20210301
  */
 
-public class GuessPhase extends Phase {
+public class GuessPhase implements Phase {
 
     private final GameSession gameSession;
     private final RoundData roundData;
+    private final Timer timeLeft;
 
     /**
      * Contructor takes a GameSession
-     * @param session
+     * @param session The game session to move to guess phase.
      */
     public GuessPhase(GameSession session) {
         this.gameSession = session;
