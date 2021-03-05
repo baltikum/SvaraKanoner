@@ -8,6 +8,13 @@ import javax.swing.*;
 import java.awt.*;
 
 
+/**
+ * Waiting phase puts the client in an idle state waiting for the server to tell it to go the next phase.
+ * Used if an uneven amount of players are in the session.
+ *
+ * @author Jesper Jansson
+ * @version 05/03/21
+ */
 public class WaitingPhase implements Phase {
     private final JPanel panel;
 

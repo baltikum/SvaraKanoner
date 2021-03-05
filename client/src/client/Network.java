@@ -5,8 +5,17 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
+/**
+ * Network handles the communication between the client and server client side.
+ *
+ * @author Lukas Magnusson
+ * @version 05/03/21
+ */
 public class Network extends Thread {
 
+    /**
+     * ConnectedListener can be implemented to get a response about the success/failure to connect to a server.
+     */
     public interface ConnectedListener {
         void connectionSuccess();
         void connectionFailed();
@@ -20,11 +29,21 @@ public class Network extends Thread {
     private ConnectedListener connectedListener;
     private boolean isConnected = false;
 
+    /**
+     * Creates a new instance, does not try to connect until the thread is started.
+     *
+     * @param game The game instance.
+     * @param listener The listener to get information about the success of the connection.
+     */
     public Network(Game game, ConnectedListener listener) {
         this.game = game;
         connectedListener = listener;
     }
 
+    /**
+     * Send a message to the server.
+     * @param message The message.
+     */
     public synchronized void sendMessage(Message message) {
         try {
             objectOutputStream.writeObject(message);
@@ -36,6 +55,11 @@ public class Network extends Thread {
         }
     }
 
+    /**
+     * Sends a message that expects message of type RESPONSE back.
+     * @param message The message.
+     * @param responseListener Called when the RESPONSE message gets back.
+     */
     public synchronized void sendMessage(Message message, MessageResponseListener responseListener) {
         try {
             objectOutputStream.writeObject(message);
@@ -48,6 +72,9 @@ public class Network extends Thread {
         }
     }
 
+    /**
+     * Waits for messages from the server until the socket is closed or times out.
+     */
     public void run() {
         try {
             Settings settings = Settings.getSettings();
@@ -103,6 +130,9 @@ public class Network extends Thread {
         }
     }
 
+    /**
+     * Closes the connection.
+     */
     public void closeConnection() {
         try {
             if (socket != null) {
@@ -113,6 +143,10 @@ public class Network extends Thread {
         }
     }
 
+    /**
+     *
+     * @return True if the connection has connected once and not been closed or timed out, else false.
+     */
     public boolean isConnected() {
         return isConnected;
     }
