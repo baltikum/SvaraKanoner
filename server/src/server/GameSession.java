@@ -3,6 +3,13 @@ package server;
 import common.*;
 import java.util.*;
 
+/**
+ * Keeps track of the common information and logic between the phases server side.
+ * Any messages not handled by this class is relayed to the current phase.
+ * 
+ * @author Mattias Davidsson
+ * @version 05/03/21
+ */
 public class GameSession {
 
     public String sessionID;

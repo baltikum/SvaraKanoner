@@ -4,6 +4,13 @@ import common.*;
 import java.io.*;
 import java.net.*;
 
+/**
+ * Client handler is responsible for the communication between the client and server, server side.
+ * Also keeps track of the data for the player at what session the player is in if any.
+ *
+ * @author Lukas Magnusson
+ * @version 05/03/21
+ */
 public class ClientHandler extends Player implements Runnable {
 
     private final Socket socket;

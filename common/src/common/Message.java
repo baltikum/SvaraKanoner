@@ -10,6 +10,9 @@ import java.util.Map;
  */
 public class Message implements Serializable {
 
+    /**
+     * Describes if the receiver should handle this message or forward/drop it.
+     */
     public enum Type {
         // Both way messages
         RESPONSE,
