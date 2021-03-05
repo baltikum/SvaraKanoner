@@ -334,8 +334,8 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
     }
 
         /**
-         * Set the effects used for RevealPhase.
-         @param effect
+         *
+         @param effect Set the effects used for RevealPhase.
          */
     @Override
     public void setEffect(AwesomeEffect effect) {

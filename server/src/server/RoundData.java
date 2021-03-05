@@ -13,7 +13,7 @@ import common.PaintPoint;
  * Use getWordTracker to save and get data etc for words.
  *
  * @author Mattias Davidsson 20210223
- *
+ * @version 2021/02/23
  *
  */
 

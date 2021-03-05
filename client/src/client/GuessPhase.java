@@ -7,10 +7,18 @@ import common.Phase;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
 
+/**
+ *
+ * Handles the visual part of the guessphase client side.
+ * Can send in guesses. Can Display a received image. .
+ * 
+ *
+ * @author Mattias Davidsson
+ * @version 2021/03/01
+ */
 
 public class GuessPhase implements Phase {
 
