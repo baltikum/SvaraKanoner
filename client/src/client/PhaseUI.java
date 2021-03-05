@@ -33,6 +33,9 @@ public class PhaseUI {
 
     Timer timer;
 
+    /**
+     * setup UI
+     */
     public PhaseUI() {
 
         panel = new JPanel();
@@ -78,7 +81,7 @@ public class PhaseUI {
 
         timeLeftText = new AwesomeText("");
 
-        title = new AwesomeText("Pick a woprd!1!!");
+        title = new AwesomeText("");
         titlePanel.add(timeLeftText);
         titlePanel.add(title);
         layout.putConstraint(SpringLayout.WEST, timeLeftText, 30, SpringLayout.WEST, titlePanel);
@@ -100,6 +103,11 @@ public class PhaseUI {
         panel.add(phaseContent, BorderLayout.CENTER);
     }
 
+    /**
+     *
+     *
+     * @param content the phase content displayed in the center of the screen
+     */
     public void setContent(JPanel content) {
         Game.getInstance().setContentPanel(panel);
         panel.remove(phaseContent);
@@ -108,9 +116,18 @@ public class PhaseUI {
         phaseContent.revalidate();
     }
 
+    /**
+     *
+     * @param text title
+     */
     public void setTitle(String text) {
         title.setText(text);
     }
+
+    /**
+     * start a countdown timer
+     * @param seconds timer start value
+     */
     public void startTimer(int seconds) {
         stopTimer();
         secondsLeft = seconds;
@@ -125,16 +142,28 @@ public class PhaseUI {
         timer.start();
     }
 
+    /**
+     * stops the timer
+     */
     public void stopTimer() {
         if (timer != null)
             timer.stop();
     }
 
+    /**
+     * hides the timer
+     */
     public void hideTimer() {
         stopTimer();
         timeLeftText.setText("");
     }
 
+    /**
+     * Set the color of the player panel in the players list
+     *
+     * @param playerId
+     * @param color
+     */
     public void setColorOfPlayer(int playerId, Color color) {
         AwesomeIconLabel label = playerIdToLabel.get(playerId);
         if (label != null) {
@@ -142,12 +171,19 @@ public class PhaseUI {
         }
     }
 
+    /**
+     * resets the player list to default colors
+     */
     public void resetPlayerColors() {
         for (AwesomeIconLabel label : playerIdToLabel.values()) {
             label.setTextColor(Color.BLACK);
         }
     }
 
+    /**
+     * adds a player to the players list
+     * @param player
+     */
     public void addPlayerToList(Player player) {
         if (playerIdToLabel.containsKey(player.getId())) return;
 
@@ -160,6 +196,10 @@ public class PhaseUI {
         playerIdToLabel.put(player.getId(), playerLabel);
     }
 
+    /**
+     * removes a player from the players list
+     * @param player
+     */
     public void removePlayerFromList(Player player) {
         AwesomeIconLabel playerLabel = playerIdToLabel.get(player.getId());
         if (playerLabel != null) {

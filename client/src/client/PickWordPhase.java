@@ -44,7 +44,6 @@ public class PickWordPhase extends Phase {
 
         String[] words = (String[])msg.data.get("words");
 
-        // fixa bättre grid layout eller alltid ha 4 valbara ord
         addWordToList(words[0],0, 0.25f, 0.3f);
         addWordToList(words[1],1, 0.75f, 0.3f);
         addWordToList(words[2],2, 0.25f, 0.6f);
@@ -60,6 +59,16 @@ public class PickWordPhase extends Phase {
     @Override
     public void message(Message msg) { }
 
+    /**
+     * Add UI for a word that the client can pick.
+     *
+     * When word is clicked the client sends a message containing the word index to the server
+     *
+     * @param word the word to add
+     * @param index the word index
+     * @param x position x
+     * @param y position y
+     */
     private void addWordToList(String word,int index, float x, float y) {
         AwesomeButton wordButton = new AwesomeButton(word, Assets.getButtonIcon());
         AwesomeUtil.dynamicFont(wordButton, 0.5f);
