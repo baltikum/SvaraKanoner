@@ -6,7 +6,10 @@ import java.util.*;
 /**
  *
  * Class to manage the Words of the game.
- * 20210212 Mattias Davidsson
+ * Can genereate words to a game session. Can read words form textfile.
+ *
+ * @author Mattias Davidsson
+ * @version 20210301
  */
 
 public class AllWords {

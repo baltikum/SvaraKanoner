@@ -7,7 +7,9 @@ import java.io.*;
 /**
  *
  * Class to hold all the settings of a hosted game.
- * @author 20210212 Mattias Davidsson
+ *
+ * @author Mattias Davidsson
+ * @version 20210212
  */
 
 public class GameSettings implements Serializable {
