@@ -16,6 +16,7 @@ import java.awt.*;
  * sends the chosen word back to server
  *
  * @author Lukas Magnusson
+ * @version 05/03/21
  */
 
 public class PickWordPhase implements Phase {

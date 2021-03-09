@@ -14,6 +14,7 @@ import java.util.*;
  * sends out 4 options of words to later draw to each connected client
  *
  * @author Lukas Magnusson
+ * @version 05/03/21
  */
 public class PickWordPhase implements Phase {
     private GameSession session;

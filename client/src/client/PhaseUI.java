@@ -18,6 +18,7 @@ import java.util.HashMap;
  * such as the players panel, header and timer
  *
  * @author Lukas Magnusson
+ * @version 05/03/21
  */
 public class PhaseUI {
 
