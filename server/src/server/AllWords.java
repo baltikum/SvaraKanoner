@@ -13,7 +13,6 @@ import java.util.*;
  */
 
 public class AllWords {
-    private static File file;
     private static Random random;
     private static ArrayList<String> allWordsInGame;
     private static HashSet<String> allWordsNoDuplicates;
@@ -26,11 +25,10 @@ public class AllWords {
     public AllWords(){
 
         this.allWordsInGame = new ArrayList<>(700);
-        this.file = new File("server/words/en.txt");
         this.random = new Random();
-        this.allWordsNoDuplicates = new HashSet<String>(700);
+        this.allWordsNoDuplicates = new HashSet<>(700);
         
-        if ( loadWordsFromFile(file) ) {
+        if ( loadWordsFromFile(AllWords.class.getResourceAsStream("/en.txt")) ) {
             System.out.println("Words loaded.");
         }
 
@@ -39,13 +37,12 @@ public class AllWords {
     /**
      * Used to load words from file into a ArrayList via HashSet.
      * 
-     * @param file
+     * @param inputStream The stream of words, one per line.
      * @return boolean
      */
-    public boolean loadWordsFromFile(File file) {
+    public boolean loadWordsFromFile(InputStream inputStream) {
         try (
-                InputStream inStream = new FileInputStream(file);
-                InputStreamReader inStreamReader = new InputStreamReader(inStream);
+                InputStreamReader inStreamReader = new InputStreamReader(inputStream);
                 BufferedReader bufferedReader = new BufferedReader(inStreamReader);
         ) {
 

@@ -4,6 +4,7 @@
     <root id="archive" name="Server.jar">
       <element id="module-output" name="Server" />
       <element id="module-output" name="Common" />
+      <element id="dir-copy" path="$PROJECT_DIR$/server/words" />
     </root>
   </artifact>
 </component>
