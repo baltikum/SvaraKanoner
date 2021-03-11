@@ -37,8 +37,8 @@ public class JoinPhase implements Phase {
             while ((takenAvatarIds & (0x1 << avatarId)) != 0)
                 ++avatarId;
             client.setAvatarId(avatarId);
-            takenAvatarIds |= 0x1 << client.getAvatarId();
         }
+        takenAvatarIds |= 0x1 << client.getAvatarId();
 
         List<ClientHandler> connectedClients = session.getConnectedPlayers();
 
