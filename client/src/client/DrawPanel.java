@@ -284,7 +284,7 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
         brushSize = brushSizeEraser * rescaledSize;
 
         try {
-            setCursor(Toolkit.getDefaultToolkit().createCustomCursor(new ImageIcon("client\\assets\\eraser.png").getImage(),
+            setCursor(Toolkit.getDefaultToolkit().createCustomCursor(new ImageIcon(DrawPanel.class.getResource("/eraser.png")).getImage(),
                     new Point(0, 0), "custom cursor"));
         } catch (Exception e2) {
         }
@@ -330,7 +330,7 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
     public void brushSetup(){
         color = lastColor;
         try {
-            setCursor(Toolkit.getDefaultToolkit().createCustomCursor(new ImageIcon("client\\assets\\paintbrush.png").getImage(),
+            setCursor(Toolkit.getDefaultToolkit().createCustomCursor(new ImageIcon(DrawPanel.class.getResource("/paintbrush.png")).getImage(),
                     new Point(0, 0), "custom cursor"));
         } catch (Exception e) {
         }
