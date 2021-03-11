@@ -85,7 +85,7 @@ public class DrawPhase implements Phase, ActionListener {
         c.gridy = 1;
         rightPanel.add(blank, c);
 
-        JButton btnGreen = new JButton(new ImageIcon("client\\assets\\greenColor.png"));
+        JButton btnGreen = new JButton(new ImageIcon(DrawPhase.class.getResource("/greenColor.png")));
         btnGreen.setContentAreaFilled(false);
         btnGreen.setBorderPainted(false);
         c.gridx = 0;
@@ -99,7 +99,7 @@ public class DrawPhase implements Phase, ActionListener {
             }
         });
 
-        JButton btnBlue = new JButton(new ImageIcon("client\\assets\\blueColor.png"));
+        JButton btnBlue = new JButton(new ImageIcon(DrawPhase.class.getResource("/blueColor.png")));
         btnBlue.setContentAreaFilled(false);
         btnBlue.setBorderPainted(false);
         c.gridx = 0;
@@ -112,7 +112,7 @@ public class DrawPhase implements Phase, ActionListener {
             }
         });
 
-        JButton btnBlack = new JButton(new ImageIcon("client\\assets\\blackColor.png"));
+        JButton btnBlack = new JButton(new ImageIcon(DrawPhase.class.getResource("/blackColor.png")));
         btnBlack.setContentAreaFilled(false);
         btnBlack.setBorderPainted(false);
         c.gridx = 0;
@@ -126,7 +126,7 @@ public class DrawPhase implements Phase, ActionListener {
             }
         });
 
-        JButton btnYellow = new JButton(new ImageIcon("client\\assets\\yellowColor.png"));
+        JButton btnYellow = new JButton(new ImageIcon(DrawPhase.class.getResource("/yellowColor.png")));
         btnYellow.setContentAreaFilled(false);
         btnYellow.setBorderPainted(false);
         c.gridx = 0;
@@ -140,7 +140,7 @@ public class DrawPhase implements Phase, ActionListener {
             }
         });
 
-        JButton btnRed = new JButton(new ImageIcon("client\\assets\\redColor.png"));
+        JButton btnRed = new JButton(new ImageIcon(DrawPhase.class.getResource("/redColor.png")));
         btnRed.setContentAreaFilled(false);
         btnRed.setBorderPainted(false);
         c.gridx = 0;
@@ -148,7 +148,7 @@ public class DrawPhase implements Phase, ActionListener {
         rightPanel.add(btnRed, c);
         btnRed.addActionListener(e -> drawPanel.setColor("RED"));
 
-        JButton btnBrown = new JButton(new ImageIcon("client\\assets\\brownColor.png"));
+        JButton btnBrown = new JButton(new ImageIcon(DrawPhase.class.getResource("/brownColor.png")));
         btnBrown.setContentAreaFilled(false);
         btnBrown.setBorderPainted(false);
         c.gridx = 0;
@@ -161,7 +161,7 @@ public class DrawPhase implements Phase, ActionListener {
             }
         });
 
-        JButton btnPink = new JButton(new ImageIcon("client\\assets\\pinkColor.png"));
+        JButton btnPink = new JButton(new ImageIcon(DrawPhase.class.getResource("/pinkColor.png")));
         btnPink.setContentAreaFilled(false);
         btnPink.setBorderPainted(false);
         c.gridx = 0;
@@ -175,7 +175,7 @@ public class DrawPhase implements Phase, ActionListener {
             }
         });
 
-        JButton btnOrange = new JButton(new ImageIcon("client\\assets\\orangeColor.png"));
+        JButton btnOrange = new JButton(new ImageIcon(DrawPhase.class.getResource("/orangeColor.png")));
         btnOrange.setContentAreaFilled(false);
         btnOrange.setBorderPainted(false);
         c.gridx = 0;
@@ -189,7 +189,7 @@ public class DrawPhase implements Phase, ActionListener {
             }
         });
 
-        JButton btnGrey = new JButton(new ImageIcon("client\\assets\\greyColor.png"));
+        JButton btnGrey = new JButton(new ImageIcon(DrawPhase.class.getResource("/greyColor.png")));
         btnGrey.setContentAreaFilled(false);
         btnGrey.setBorderPainted(false);
         c.gridx = 0;
@@ -203,7 +203,7 @@ public class DrawPhase implements Phase, ActionListener {
             }
         });
 
-        JButton smallBrushSize = new JButton(new ImageIcon("client\\assets\\smallBrush.png"));
+        JButton smallBrushSize = new JButton(new ImageIcon(DrawPhase.class.getResource("/smallBrush.png")));
         smallBrushSize.setContentAreaFilled(false);
         smallBrushSize.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         smallBrushSize.setBorderPainted(true);
@@ -215,7 +215,7 @@ public class DrawPhase implements Phase, ActionListener {
             }
         });
 
-        JButton mediumBrushSize = new JButton(new ImageIcon("client\\assets\\mediumBrush.png"));
+        JButton mediumBrushSize = new JButton(new ImageIcon(DrawPhase.class.getResource("/mediumBrush.png")));
         mediumBrushSize.setContentAreaFilled(false);
         mediumBrushSize.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         bottomPanel.add(mediumBrushSize);
@@ -226,7 +226,7 @@ public class DrawPhase implements Phase, ActionListener {
             }
         });
 
-        JButton bigBrushSize = new JButton(new ImageIcon("client\\assets\\bigBrush.png"));
+        JButton bigBrushSize = new JButton(new ImageIcon(DrawPhase.class.getResource("/bigBrush.png")));
         bigBrushSize.setContentAreaFilled(false);
         bigBrushSize.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         bottomPanel.add(bigBrushSize);
@@ -237,7 +237,7 @@ public class DrawPhase implements Phase, ActionListener {
             }
         });
 
-        JButton eraserBtn = new JButton(new ImageIcon("client\\assets\\eraser2.png"));
+        JButton eraserBtn = new JButton(new ImageIcon(DrawPhase.class.getResource("/eraser2.png")));
         eraserBtn.setContentAreaFilled(false);
         eraserBtn.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         bottomPanel.add(eraserBtn);
@@ -248,7 +248,7 @@ public class DrawPhase implements Phase, ActionListener {
             }
         });
 
-        JButton clearBTN = new JButton(new ImageIcon("client\\assets\\trashcan.png"));
+        JButton clearBTN = new JButton(new ImageIcon(DrawPhase.class.getResource("/trashcan.png")));
         clearBTN.setContentAreaFilled(false);
         clearBTN.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         bottomPanel.add(clearBTN);

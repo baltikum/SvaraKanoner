@@ -51,8 +51,11 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
     public DrawPanel() {
         super();
         colorSetup();
+        setBackground(Color.WHITE);
         color = Color.BLACK;
+        lastColor = Color.BLACK;
         brushSize = brushSizeNormal;
+        setBackground(Color.WHITE);
         paintPoints = new ArrayList<List<PaintPoint>>(25);
         addMouseListener(this);
         addMouseMotionListener(this);
@@ -315,7 +318,7 @@ public class DrawPanel extends JPanel implements Serializable, MouseListener, Mo
         }
         lastColor = color;
         try {
-            setCursor(Toolkit.getDefaultToolkit().createCustomCursor(new ImageIcon("client\\assets\\paintbrush.png").getImage(),
+            setCursor(Toolkit.getDefaultToolkit().createCustomCursor(new ImageIcon(DrawPanel.class.getResource("/paintbrush.png")).getImage(),
                     new Point(0, 0), "custom cursor"));
         } catch (Exception e) {
         }

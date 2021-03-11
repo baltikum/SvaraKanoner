@@ -2,6 +2,7 @@ package common;
 
 import java.io.*;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Locale;
 
 /**
@@ -18,7 +19,8 @@ public class IniStream {
      * @throws IOException If the file doesn't exist or for other reasons can't be written to.
      */
     public static void read(Object obj, File file) throws IOException {
-       try (BufferedReader input = new BufferedReader(new FileReader(file))){
+       try (FileReader fileReader = new FileReader(file);
+            BufferedReader input = new BufferedReader(fileReader)){
             while (input.ready()){
                 String line = input.readLine();
                 line = line.strip();
@@ -82,6 +84,9 @@ public class IniStream {
     public static void write(Object obj, File file) throws IOException {
         try (FileOutputStream out = new FileOutputStream(file)){
             for (Field field : obj.getClass().getDeclaredFields()) {
+                if (Modifier.isStatic(field.getModifiers())) {
+                    continue;
+                }
                 field.setAccessible(true);
                 Class<?> type = field.getType();
                 if (type.isPrimitive()) {

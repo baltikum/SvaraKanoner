@@ -91,8 +91,8 @@ public class RoundData {
         if ( success ) {
             this.saved++;
             if ( this.saved == wordTrackers.size() ) {
-                saved = 0;
                 rotateOrder();
+                saved = 0;
                 return true;
             }
         }
@@ -120,7 +120,6 @@ public class RoundData {
             this.saved++;
             if ( this.saved == wordTrackers.size() ) {
                 saved = 0;
-                rotateOrder();
                 return true;
             }
         }
