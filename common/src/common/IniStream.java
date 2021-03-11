@@ -2,6 +2,7 @@ package common;
 
 import java.io.*;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Locale;
 
 /**
@@ -82,6 +83,9 @@ public class IniStream {
     public static void write(Object obj, File file) throws IOException {
         try (FileOutputStream out = new FileOutputStream(file)){
             for (Field field : obj.getClass().getDeclaredFields()) {
+                if (Modifier.isStatic(field.getModifiers())) {
+                    continue;
+                }
                 field.setAccessible(true);
                 Class<?> type = field.getType();
                 if (type.isPrimitive()) {

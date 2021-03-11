@@ -17,6 +17,7 @@ import java.util.ArrayList;
 public class Settings {
 
     private static Settings settingsInstance;
+    private static final ArrayList<Listener> listeners = new ArrayList<>();
 
     private static String getJarDir() {
         String path = Main.class.getProtectionDomain().getCodeSource().getLocation().getFile();
@@ -31,7 +32,9 @@ public class Settings {
         try {
             System.out.println(getJarDir() + "/settings.ini");
             IniStream.write(settingsInstance, new File(getJarDir() + "/settings.ini"));
-        } catch (IOException ignored) {}
+        } catch (IOException e) {
+            System.out.println("Failed saving settings: " + e.getMessage());
+        }
     }
 
     /**
@@ -84,7 +87,6 @@ public class Settings {
     private String ipAddress = "localhost";
     private short socket = 12345;
 
-    private final ArrayList<Listener> listeners = new ArrayList<>();
 
     private Settings() {}
 
