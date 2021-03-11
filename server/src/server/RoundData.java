@@ -55,7 +55,6 @@ public class RoundData {
             toReturn.put(playerOrder.get(i), wordTrackers.get(i).getLatestGuess());
         }
         roundPartCount++;
-        rotateOrder();
         return toReturn;
     }
 
@@ -92,6 +91,7 @@ public class RoundData {
         if ( success ) {
             this.saved++;
             if ( this.saved == wordTrackers.size() ) {
+                rotateOrder();
                 saved = 0;
                 return true;
             }
