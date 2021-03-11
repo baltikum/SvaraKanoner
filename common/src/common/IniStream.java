@@ -19,7 +19,8 @@ public class IniStream {
      * @throws IOException If the file doesn't exist or for other reasons can't be written to.
      */
     public static void read(Object obj, File file) throws IOException {
-       try (BufferedReader input = new BufferedReader(new FileReader(file))){
+       try (FileReader fileReader = new FileReader(file);
+            BufferedReader input = new BufferedReader(fileReader)){
             while (input.ready()){
                 String line = input.readLine();
                 line = line.strip();
