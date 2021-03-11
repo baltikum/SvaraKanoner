@@ -89,11 +89,12 @@ public class Game implements ActionListener, WindowListener {
             @Override
             public void paintComponent(Graphics g) {}
         };
-        // panel.setPreferredSize(new Dimension(500, 500));
         frame.setGlassPane(panel);
         panel.setVisible(true);
         panel.setOpaque(false);
         panel.setBackground(new Color(0, 0, 0, 0));
+        panel.setCursor(null);
+        panel.setEnabled(false);
 
         // Icons
         BufferedImage icons = Assets.loadImage("ui-icons.png");
